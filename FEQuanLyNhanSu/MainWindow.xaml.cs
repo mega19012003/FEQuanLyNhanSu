@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using FEQuanLyNhanSu.Screens.Dashboard;
 
 namespace FEQuanLyNhanSu
 {
@@ -80,7 +81,7 @@ namespace FEQuanLyNhanSu
 
         private void TrangChu_Click(object sender, RoutedEventArgs e)
         {
-            ShowDefaultContent(); // Quay về giao diện ban đầu
+            ShowPage(new PageDashboard());  // Quay về giao diện ban đầu
         }
 
         private void Dashboard(object sender, RoutedEventArgs e)

@@ -24,10 +24,10 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Content="Username" FontSize="20" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+            <Label Grid.Row="0" Grid.Column="0" Content="Username" FontSize="20" Foreground="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold"/>
             <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtUsername" FontSize="20" Height="41" Margin="0,5,50,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <Label Grid.Row="1" Grid.Column="0" Content="Password" FontSize="20" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Password" FontSize="20" Foreground="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold"/>
             <PasswordBox x:Name="txtPassword" Grid.Row="1" Grid.Column="1" FontSize="20" Height="41" Margin="0,5,50,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
             <!-- Loading -->
@@ -37,7 +37,7 @@
             </StackPanel>
 
             <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41" Margin="10,0" FontSize="15" Click="btnExit_Click"/>
+                <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41" Margin="10,0" FontSize="15" Click="btnExit_Click" FontWeight="Bold"/>
                 <Button x:Name="btnCreate" Content="Đăng nhập" Width="170" Height="41" Margin="10,0" FontSize="15"
                     Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="btnLogin_Click"/>
             </StackPanel>

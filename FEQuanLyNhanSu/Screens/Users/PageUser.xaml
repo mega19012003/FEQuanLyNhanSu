@@ -29,7 +29,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="AddUserBtn" Content="Thêm người dùng" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="CreateUser"/>
+        <Button x:Name="AddUserBtn" Content="Thêm người dùng" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="190" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="CreateUser" FontWeight="Bold"/>
         <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

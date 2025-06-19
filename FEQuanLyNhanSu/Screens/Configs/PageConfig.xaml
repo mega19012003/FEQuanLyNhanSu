@@ -33,7 +33,7 @@
                     </DataGrid>
                     <Button x:Name="AddIPBtn" Content="Thêm IP" HorizontalAlignment="Left" Height="35" Margin="10,10,0,0"
                     VerticalAlignment="Top" Width="150" FontSize="16"
-                    Background="#FF66A8D5" Foreground="White"/>
+                    Background="#FF66A8D5" Foreground="White" FontWeight="Bold"/>
                     <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="284" Height="35">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />

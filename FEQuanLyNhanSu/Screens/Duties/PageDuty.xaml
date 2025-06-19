@@ -40,7 +40,7 @@
 
         </DataGrid>
 
-        <Button x:Name="AdDutyBtn" Content="Thêm công việc" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="150" FontSize="20" Background="#FF66A8D5" Foreground="White"/>
+        <Button x:Name="AdDutyBtn" Content="Thêm công việc" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold"/>
     </Grid>
 
 </Page>
