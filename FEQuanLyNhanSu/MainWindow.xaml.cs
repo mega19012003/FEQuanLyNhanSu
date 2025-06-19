@@ -21,10 +21,41 @@ namespace FEQuanLyNhanSu
         public MainWindow()
         {
             InitializeComponent();
+            StartClockTimer(); // Khởi tạo đồng hồ
+            GetName(Application.Current.Properties["Fullname"]?.ToString());
+            ApplyRolePermissions(Application.Current.Properties["UserRole"]?.ToString());
+        }
+
+        private void StartClockTimer()
+        {
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1); // cập nhật mỗi giây
             timer.Tick += Timer_Tick;
             timer.Start();
+        }
+
+        private void GetName(string name)
+        {
+            txtFullName.Text = $"Xin chào, {name}!";
+        }
+
+        private void ApplyRolePermissions(string role)
+        {
+            switch (role)
+            {
+                case "Administrator":
+                    break; 
+
+                case "Manager":
+                    foreach (var control in new[] { btnConfig, btnDepartment})
+                        control.Visibility = Visibility.Collapsed;
+                    break;
+
+                case "Employee":
+                    foreach (var control in new[] { btnDashboard, btnUser, btnConfig, btnDepartment, btnPosition, btnDuty, btnPayroll })
+                        control.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)

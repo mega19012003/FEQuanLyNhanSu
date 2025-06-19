@@ -10,42 +10,37 @@
 
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock Text="Đây là trang công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
-        <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,0" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected">
+        <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,20" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True"  ColumnWidth="*">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id"  Width="*"/>
-                <DataGridTextColumn Header="Name" Width="*"/>
-                <DataGridTextColumn Header="Start date" Width="*"/>
-                <DataGridTextColumn Header="Assign By" Width="*"/>
-                <DataGridTextColumn Header="IsCompleted" Width="*"/>
-                <DataGridTextColumn Header="IsDeleted" Width="*"/>
-
-                <DataGridTemplateColumn Header="Hành động" Width="2*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Sửa" Margin="2" Padding="5,2"/>
-                                <Button Content="Xóa" Margin="2" Padding="5,2"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+   
             </DataGrid.Columns>
+
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid ItemsSource="{Binding DutyDetails}"
-                      AutoGenerateColumns="False"
-                      HeadersVisibility="Column"
-                      Margin="20,5,20,5" >
+                    <DataGrid 
+            ItemsSource="{Binding DutyDetails}"
+            AutoGenerateColumns="False"
+            HeadersVisibility="Column"
+            IsReadOnly="True"
+            Margin="20,5,20,5"
+            CanUserResizeColumns="True"
+            ColumnWidth="*"
+            HorizontalScrollBarVisibility="Visible">
+
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="DetailId"/>
-                            <DataGridTextColumn Header="UserId"/>
-                            <DataGridTextColumn Header="Description"/>
-                            <DataGridTextColumn Header="IsDeleted"/>
+                            <DataGridTextColumn Header="DutyDetailId" Binding="{Binding DutyDetailId}" Width="250"/>
+                            <DataGridTextColumn Header="UserId" Binding="{Binding UserId}" Width="250"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="200"/>
+                            <DataGridCheckBoxColumn Header="IsDeleted" Binding="{Binding IsDeleted}" Width="100"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
+
         </DataGrid>
+
         <Button x:Name="AdDutyBtn" Content="Thêm công việc" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="150" FontSize="20" Background="#FF66A8D5" Foreground="White"/>
     </Grid>
+
 </Page>

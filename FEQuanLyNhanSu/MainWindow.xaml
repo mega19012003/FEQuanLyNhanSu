@@ -20,27 +20,27 @@
         <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Background="#FF006EB9">
             <!-- Các nút đều nhau -->
             <StackPanel Margin="10">
-                <Image Source="/images.png" Width="160" Height="160" Margin="0,10"/>
-                <Button Content="Trang chủ" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="TrangChu_Click"/>
-                <Button Content="Quản lý người dùng" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Dashboard"/>
-                <Button Content="Quản lý phòng ban" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Department"/>
-                <Button Content="Quản lý chức vụ" Height="40" Margin="0,5" FontSize="15" Background="	#99c5e3" Click="Position"/>
-                <Button Content="Quản lý công việc" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Duty"/>
-                <Button Content="Quản lý checkin" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Checkin"/>
-                <Button Content="Quản lý chấm công" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Payroll"/>
-                <Button Content="Quản lý cấu hình" Height="40" Margin="0,5" FontSize="15" Background="	#99c5e3" Click="Config"/>
+                <Image Source="assets/images.png" Width="160" Height="160" Margin="0,10"/>
+                <Button x:Name="btnDashboard" Content="Trang chủ" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="TrangChu_Click"/>
+                <Button x:Name="btnUser" Content="Quản lý người dùng" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Dashboard"/>
+                <Button x:Name="btnDepartment" Content="Quản lý phòng ban" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Department"/>
+                <Button x:Name="btnPosition" Content="Quản lý chức vụ" Height="40" Margin="0,5" FontSize="15" Background="	#99c5e3" Click="Position"/>
+                <Button x:Name="btnDuty" Content="Quản lý công việc" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Duty"/>
+                <Button x:Name="btnCheckin" Content="Quản lý checkin" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Checkin"/>
+                <Button x:Name="btnPayroll" Content="Quản lý chấm công" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Payroll"/>
+                <Button x:Name="btnConfig" Content="Quản lý cấu hình" Height="40" Margin="0,5" FontSize="15" Background="	#99c5e3" Click="Config"/>
             </StackPanel>
             <Button Content="Thoát" Height="40" Margin="10" VerticalAlignment="Bottom" FontSize="15" Background="#FF66A8D5" Click="Exit_Click"/>
         </Grid>
 
         <!-- Header (bên phải, hàng 0, cột 1) -->
         <Grid Grid.Row="0" Grid.Column="1" Background="#FF66A8D5">
-            <TextBlock Text="Xin chào, Admin!" Foreground="White"
+            <TextBlock x:Name="txtFullName" Text="Xin chào, Admin!" Foreground="White"
                    FontSize="20" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0"/>
 
             <StackPanel Orientation="Horizontal" Margin="48,0,0,0" VerticalAlignment="Center">
-                <Image Source="/calendar.png" Width="24" Height="24" Margin="0,0,8,0"/>
+                <Image Source="/Assets/calendar.png" Width="24" Height="24" Margin="0,0,8,0"/>
                 <TextBlock x:Name="DateTimeNow"
                Text="TextBlock"
                FontSize="20"

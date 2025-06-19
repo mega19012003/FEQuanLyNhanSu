@@ -7,10 +7,13 @@
         mc:Ignorable="d"
         Title="Login" Height="450" Width="800">
     <Grid Background="#FFCCE2F1">
+        <!-- Image logo -->
+        <Image Source="assets/images.png" Width="150" Height="150" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,26,0,0"/>
 
         <!-- FORM INPUT -->
         <Grid Margin="40,200,40,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -21,22 +24,24 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" FontSize="20" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy" Content="Username" Foreground="White"/>
+            <Label Grid.Row="0" Grid.Column="0" Content="Username" FontSize="20" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
             <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtUsername" FontSize="20" Height="41" Margin="0,5,50,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <Label Grid.Row="1" Grid.Column="0" FontSize="20" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" Content="Password" Foreground="White" FontWeight="Black"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Password" FontSize="20" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
             <PasswordBox x:Name="txtPassword" Grid.Row="1" Grid.Column="1" FontSize="20" Height="41" Margin="0,5,50,5" Padding="10,0" VerticalContentAlignment="Center"/>
-            
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal"
-                HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
-                Margin="10,0" FontSize="15" Click="btnExit_Click"/>
-                <Button x:Name="btnCreate" Content="Đăng nhập" Width="170" Height="41"
-                Margin="10,0" FontSize="15" Background="#FF66A8D5"
-                Foreground="White" FontWeight="Bold" Click="btnCreate_Click"/>
+
+            <!-- Loading -->
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <ProgressBar x:Name="loadingBar" Width="100" Height="10" IsIndeterminate="True" Visibility="Collapsed"/>
+                <TextBlock x:Name="txtLoading" Text="Đang đăng nhập..." Visibility="Collapsed" Margin="10,0" Foreground="White"/>
             </StackPanel>
-            
+
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41" Margin="10,0" FontSize="15" Click="btnExit_Click"/>
+                <Button x:Name="btnCreate" Content="Đăng nhập" Width="170" Height="41" Margin="10,0" FontSize="15"
+                    Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="btnLogin_Click"/>
+            </StackPanel>
         </Grid>
-        <Image Source="/images.png" Width="150" Height="150" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,26,0,0"/>
     </Grid>
+
 </Window>

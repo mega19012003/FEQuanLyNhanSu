@@ -11,14 +11,10 @@
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock Text="Đây là trang chức vụ" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="PositionDtaGrid" Margin="20,100,20,0" FontSize="15">
+        <DataGrid x:Name="PositionDtaGrid" Margin="20,100,20,50" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Width="*"/>
-                <DataGridTextColumn Header="Name" Width="*"/>
-                <DataGridTextColumn Header="Phòng ban" Width="*"/>
-                <DataGridTextColumn Header="IsDeleted" Width="*"/>
 
-                <DataGridTemplateColumn Header="Hành động" Width="2*">
+                <DataGridTemplateColumn Header="Hành động" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

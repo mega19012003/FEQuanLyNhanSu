@@ -13,18 +13,10 @@
          FontSize="24"
          HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="PayrollDtaGrid" Margin="20,100,20,0" FontSize="15">
+        <DataGrid x:Name="PayrollDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Width="*"/>
-                <DataGridTextColumn Header="UserId" Width="*"/>
-                <DataGridTextColumn Header="Fullname" Width="*"/>
-                <DataGridTextColumn Header="Salary" Width="*"/>
-                <DataGridTextColumn Header="Created Date" Width="*"/>
-                <DataGridTextColumn Header="Note" Width="*"/>
-                <DataGridTextColumn Header="Day Worked" Width="*"/>
-                <DataGridTextColumn Header="IsDeleted" Width="*"/>
 
-                <DataGridTemplateColumn Header="Hành động" Width="2*">
+                <DataGridTemplateColumn Header="Hành động">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

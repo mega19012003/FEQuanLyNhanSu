@@ -6,8 +6,8 @@ namespace FEQuanLyNhanSu.Models.Configs
 {
     public class CheckinStatusConfig
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)] // 👈 Bắt buộc để EF không tự tăng Id
+        /*[Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] */// 👈 Bắt buộc để EF không tự tăng Id
         public int Id { get; set; } 
 
         public string Name { get; set; } = null!; 

@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="calendar.png" />
-    <Resource Include="images.png" />
+    <Resource Include="Assets\calendar.png" />
+    <Resource Include="Assets\images.png" />
   </ItemGroup>
 
 </Project>

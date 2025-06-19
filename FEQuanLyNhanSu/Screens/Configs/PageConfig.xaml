@@ -15,16 +15,11 @@
 
             <TabItem Header="Allowed IP">
                 <Grid Background="White">
-                    <Button x:Name="AddIpBtn" Content="Thêm cấu hình IP"
-                         HorizontalAlignment="Left" Height="35" Margin="10,10,0,0"
-                         VerticalAlignment="Top" Width="150" FontSize="16"
-                         Background="#FF66A8D5" Foreground="White"/>
-
-                    <DataGrid x:Name="IpDtaGrid" Margin="10,60,10,10" FontSize="15" AutoGenerateColumns="False">
+                    <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
+                    <DataGrid x:Name="IPDtaGrid" Margin="10,60,10,10" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Width="*" />
-                            <DataGridTextColumn Header="Ip address" Width="*" />
-                            <DataGridTemplateColumn Header="Hành động" Width="2*">
+
+                            <DataGridTemplateColumn Header="Hành động">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -36,20 +31,32 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+                    <Button x:Name="AddIPBtn" Content="Thêm IP" HorizontalAlignment="Left" Height="35" Margin="10,10,0,0"
+                    VerticalAlignment="Top" Width="150" FontSize="16"
+                    Background="#FF66A8D5" Foreground="White"/>
+                    <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="284" Height="35">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <!-- Cột cho icon -->
+                            <ColumnDefinition Width="*" />
+                            <!-- Cột cho TextBox -->
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
+
+                        <TextBox Text="Search..." FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" />
+                    </Grid>
                 </Grid>
             </TabItem>
 
             <!-- Tab 3: Checkin Status Config -->
             <TabItem Header="Trạng thái Checkin">
                 <Grid Background="White">
-
-                    <DataGrid x:Name="ChknConfigDtaGrid" Margin="10,60,10,10" FontSize="15" AutoGenerateColumns="False">
+                    <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
+                    <DataGrid x:Name="ChknDtaGrid" Margin="10,60,10,10" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Width="*" />
-                            <DataGridTextColumn Header="Name" Width="*" />
-                            <DataGridTextColumn Header="Salary multiplier" Width="*" />
-                            <DataGridTextColumn Header="Note" Width="*" />
-                            <DataGridTemplateColumn Header="Hành động" Width="2*">
+
+                            <DataGridTemplateColumn Header="Hành động">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -67,19 +74,15 @@
             <!-- Tab 4: Ngày nghỉ lễ -->
             <TabItem Header="Ngày nghỉ lễ">
                 <Grid Background="White">
-                    <Button x:Name="AddPositionBtn" Content="Thêm ngày nghỉ lễ"
+                    <Button x:Name="AddHolidayBtn" Content="Thêm ngày nghỉ lễ"
           HorizontalAlignment="Left" Height="35" Margin="10,10,0,0"
           VerticalAlignment="Top" Width="150" FontSize="16"
           Background="#FF66A8D5" Foreground="White"/>
 
-                    <DataGrid x:Name="HolidayDtaGrid" Margin="10,60,10,10" FontSize="15" AutoGenerateColumns="False">
+                    <DataGrid x:Name="HolidayDtaGrid" Margin="10,60,10,10" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Id" Width="*" />
-                            <DataGridTextColumn Header="Name" Width="*" />
-                            <DataGridTextColumn Header="Start date" Width="*" />
-                            <DataGridTextColumn Header="End date" Width="*" />
-                            <DataGridTextColumn Header="Is Deleted" Width="*" />
-                            <DataGridTemplateColumn Header="Hành động" Width="2*">
+
+                            <DataGridTemplateColumn Header="Hành động" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
