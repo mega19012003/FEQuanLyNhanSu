@@ -1,0 +1,46 @@
+﻿<Page x:Class="FEQuanLyNhanSu.PageDepartment"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:FEQuanLyNhanSu"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Page2">
+
+    <Grid Background="White" Margin="0,-3,0,0">
+        <TextBlock Text="Đây là trang phòng ban" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
+        <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
+        <DataGrid x:Name="DprtmtDtaGrid" Margin="20,100,20,0" FontSize="15">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Width="*"/>
+                <DataGridTextColumn Header="Name" Width="*"/>
+                <DataGridTextColumn Header="IsDeleted" Width="*"/>
+
+                <DataGridTemplateColumn Header="Hành động" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="Sửa" Margin="2" Padding="5,2"/>
+                                <Button Content="Xóa" Margin="2" Padding="5,2"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="AddDprtmntBtn" Content="Thêm phòng ban" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="180" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddDepartment"/>
+        <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <!-- Cột cho icon -->
+                <ColumnDefinition Width="*" />
+                <!-- Cột cho TextBox -->
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
+
+            <TextBox Text="Search..." FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" />
+        </Grid>
+    </Grid>
+</Page>
