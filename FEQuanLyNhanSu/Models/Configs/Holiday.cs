@@ -1,8 +1,8 @@
 ﻿namespace FEQuanLyNhanSu.Models.Configs
 {
-    public class Holiday //: BaseEntity
+    public class Holiday 
     {
-        public Guid Id { get; set; }
+        public Guid HolidayId { get; set; }
         public string name { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }

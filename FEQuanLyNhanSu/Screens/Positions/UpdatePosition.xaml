@@ -35,7 +35,7 @@
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
 
             <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtName"
-                 FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
+                 FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
             <!-- Buttons -->
             <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal"
@@ -45,7 +45,7 @@
 
                 <Button x:Name="btnUpdate" Content="Cập nhật chức vụ" Width="150" Height="41"
                     Margin="10,0" FontSize="15" Background="#FF66A8D5"
-                    Foreground="White" FontWeight="Bold"/>
+                    Foreground="White" FontWeight="Bold" Click="btnUpdate_Click"/>
             </StackPanel>
         </Grid>
     </Grid>

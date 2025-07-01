@@ -7,57 +7,55 @@ namespace FEQuanLyNhanSu.Services
 {
     public class Checkins
     {
-        public class CheckinDto 
+        public class CheckinResultDto
         {
             public Guid CheckinId { get; set; }
-            public Guid userId { get; set; }
             public string Name { get; set; }
-            public DateTime CheckinDate { get; set; } = DateTime.Now;
-            public DateTime CheckoutDate { get; set; } = DateTime.Now;
-            public CheckinStatus CheckinStatus { get; set; }
-            public CheckinStatus CheckoutStatus { get; set; }
-            public string Checkin { get; set; }
-            public string Checkout { get; set; }
-            public double SalaryPerDay { get; set; } = 0.0;
-            //public string updateBy { get; set; }
-            //public DateTime UpdateAt { get; set; }
-        }
-        public class CreateCheckin
-        {
-            //public Guid Id { get; set; }
-            public Guid? userId { get; set; }
-            /*[JsonIgnore]
-            public DateTime? CheckinDate { get; set; } = DateTime.Now;
-            [JsonIgnore]
-            public DateTime? CheckoutDate { get; set; } = DateTime.Now;*/
-            public CheckinStatus? CheckinStatus { get; set; }
-            /*[JsonIgnore]
-            public CheckinStatus? CheckoutStatus { get; set; } */
-            //[JsonIgnore]
-            //public string IpAddress { get; set; }
+            public DateTime CheckinMorning { get; set; }
+            public DateTime CheckoutMorning { get; set; }
+            public DateTime CheckinAfternoon { get; set; }
+            public DateTime CheckoutAfternoon { get; set; }
+            public string? CheckinMorningStatus { get; set; }
+            public string? CheckoutMorningStatus { get; set; }
+            public string? CheckinAfternoonStatus { get; set; }
+            public string? CheckoutAfternoonStatus { get; set; }
+            public double SalaryPerDay { get; set; }
         }
 
-        public class CreateCheckout
+        public class CreateCheckinDto
         {
-         
             public Guid? userId { get; set; }
-            //[JsonIgnore]
-            //public DateTime? CheckoutDate { get; set; } 
-            //[JsonIgnore]
-            public CheckinStatus? CheckoutStatus { get; set; } 
-            //[JsonIgnore]
-            //public string IpAddress { get; set; }
+            //public Enums.LogStatus? LogStatus { get; set; }
+            //public DateTime CheckinTime { get; set; } = DateTime.Now;
         }
 
-        public class UpdateCheckin
+        public class CreateCheckoutDto
+        {
+
+            public Guid? userId { get; set; }
+            //public Enums.LogStatus? CheckoutAfternoonStatus { get; set; } 
+            //public DateTime CheckoutTime { get; set; } = DateTime.Now;
+        }
+
+        public class UpdateCheckinDto
         {
             public Guid CheckinId { get; set; }
-            //public Guid userId { get; set; }
-            //public DateTime CheckinDate { get; set; }
-            public CheckinStatus CheckinStatus { get; set; }
-            public CheckinStatus CheckoutStatus { get; set; }
-            //public string Status { get; set; }
+            public Enums.LogStatus CheckinMorningStatus { get; set; }
+            public Enums.LogStatus CheckoutMorningStatus { get; set; }
+            public Enums.LogStatus CheckinAfternoonStatus { get; set; }
+            public Enums.LogStatus CheckoutAfternoonStatus { get; set; }
         }
 
+        public class CheckinDetailDto
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public string CheckinMorningStatus { get; set; }
+            public string CheckoutMorningStatus { get; set; }
+            public string CheckinAfternoonStatus { get; set; }
+            public string CheckoutAfternoonStatus { get; set; }
+            public double SalaryPerDay { get; set; }
+            public DateTime TimeCheckin { get; set; }
+        }
     }
 }

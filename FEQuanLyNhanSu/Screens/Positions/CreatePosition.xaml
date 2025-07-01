@@ -25,10 +25,10 @@
 
             <!-- Labels & Inputs -->
             <TextBox Grid.Row="0" Grid.Column="0" Text="Name" IsReadOnly="True" Background="#FF99C5E3" Foreground="White" FontSize="15" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtName" FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtName" FontSize="15" Height="41" Margin="0,5,0,5" Padding="10,0,10,0" IsTabStop="False" IsUndoEnabled="False" VerticalContentAlignment="Center"/>
 
-            <TextBox Grid.Row="1" Grid.Column="0" Text="Department" IsReadOnly="True" Background="#FF99C5E3" Foreground="White" FontSize="15" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cmbDepartment" FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
+            <TextBox x:Name="txtDepartment" Grid.Row="1" Grid.Column="0" Text="Department" IsReadOnly="True" Background="#FF99C5E3" Foreground="White" FontSize="15" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cmbDepartment" FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
             <!-- Buttons -->
             <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal"
@@ -38,7 +38,7 @@
 
                 <Button x:Name="btnCreate" Content="Thêm chức vụ mới" Width="170" Height="41"
                 Margin="10,0" FontSize="15" Background="#FF66A8D5"
-                Foreground="White" FontWeight="Bold"/>
+                Foreground="White" FontWeight="Bold" Click="btnCreate_Click"/>
             </StackPanel>
         </Grid>
     </Grid>

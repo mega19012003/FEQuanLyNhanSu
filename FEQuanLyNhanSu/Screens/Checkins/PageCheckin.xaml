@@ -39,5 +39,10 @@
 
             <TextBox Text="Search..." FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" />
         </Grid>
+        <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
+            <Button x:Name="btnPrevPage" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPage_Click"/>
+            <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
+            <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+        </Grid>
     </Grid>
 </Page>

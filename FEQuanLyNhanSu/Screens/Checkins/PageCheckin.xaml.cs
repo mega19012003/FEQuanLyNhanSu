@@ -14,9 +14,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Services;
 using Newtonsoft.Json;
+using static FEQuanLyNhanSu.ResponseModels.Duties;
 
 namespace FEQuanLyNhanSu
 {
@@ -25,36 +27,35 @@ namespace FEQuanLyNhanSu
     /// </summary>
     public partial class PageCheckin : Page
     {
+        private PaginationHelper<Checkins.CheckinResultDto> _paginationHelper;
         public PageCheckin()
         {
             InitializeComponent();
-            LoadCheckins();
-        }
-
-        private async void LoadCheckins()
-        {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var role = Application.Current.Properties["UserRole"]?.ToString();
-            var userId = Application.Current.Properties["UserId"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin";
+            int pageSize = 20;
 
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                string url = $"https://demonhanvienapi.duckdns.org/api/Checkin";
+            _paginationHelper = new PaginationHelper<Checkins.CheckinResultDto>(
+                baseUrl,
+                pageSize,
+                token,
+                items => CheckinDtaGrid.ItemsSource = items,
+                txtPage
+            );
 
-                var response = await client.GetAsync(url);
+            _ = _paginationHelper.LoadPageAsync(1);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseStr = await response.Content.ReadAsStringAsync();
-                    var apiReuslt = JsonConvert.DeserializeObject<ApiResponse<PagedResult<Checkins.CheckinDto>>>(responseStr);
-                    CheckinDtaGrid.ItemsSource = apiReuslt.Data.Items;
-                }
-                else
-                {
-                    MessageBox.Show("Không thể tải danh sách checkin. Vui lòng thử lại sau.");
-                }
-            }
         }
+
+        private async void btnNextPage_Click(object sender, RoutedEventArgs e)
+        {
+            await _paginationHelper.NextPageAsync();
+        }
+
+        private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
+        {
+            await _paginationHelper.PrevPageAsync();
+        }
+
     }
 }

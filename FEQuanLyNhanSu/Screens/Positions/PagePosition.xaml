@@ -11,15 +11,15 @@
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock Text="Đây là trang chức vụ" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="PositionDtaGrid" Margin="20,100,20,50" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
+        <DataGrid x:Name="PositionDtaGrid" Margin="20,100,20,50" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
             <DataGrid.Columns>
-
+                
                 <DataGridTemplateColumn Header="Hành động" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Sửa" Margin="2" Padding="5,2"/>
-                                <Button Content="Xóa" Margin="2" Padding="5,2"/>
+                                <Button x:Name="btnUpdate" Content="Sửa" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding Id}" />
+                                <Button x:Name="btnDelete" Content="Xóa" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding Id}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -37,7 +37,12 @@
 
             <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
 
-            <TextBox Text="Search..." FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" />
+            <TextBox x:Name="txtSearch" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChanged"/>
+        </Grid>
+        <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
+            <Button x:Name="btnPrevPage" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPage_Click"/>
+            <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
+            <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
         </Grid>
     </Grid>
 </Page>

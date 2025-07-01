@@ -10,36 +10,33 @@
 
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock Text="Đây là trang công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
-        <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,20" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True"  ColumnWidth="*">
+        <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" ColumnWidth="*">
             <DataGrid.Columns>
    
             </DataGrid.Columns>
 
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid 
-            ItemsSource="{Binding DutyDetails}"
-            AutoGenerateColumns="False"
-            HeadersVisibility="Column"
-            IsReadOnly="True"
-            Margin="20,5,20,5"
-            CanUserResizeColumns="True"
-            ColumnWidth="*"
-            HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding DutyDetails}" AutoGenerateColumns="False" HeadersVisibility="Column" IsReadOnly="True" Margin="20,5,20,5">
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="DutyDetailId" Binding="{Binding DutyDetailId}" Width="250"/>
-                            <DataGridTextColumn Header="UserId" Binding="{Binding UserId}" Width="250"/>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
+                            <DataGridTextColumn Header="DutyDetailId" Binding="{Binding DutyDetailId}" Width="200"/>
+                            <DataGridTextColumn Header="UserId" Binding="{Binding UserId}" Width="200"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
                             <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="200"/>
-                            <DataGridCheckBoxColumn Header="IsDeleted" Binding="{Binding IsDeleted}" Width="100"/>
+                            <DataGridCheckBoxColumn Header="IsDeleted" Binding="{Binding IsDeleted}" Width="200"/>
                         </DataGrid.Columns>
+                        
                     </DataGrid>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
 
         </DataGrid>
-
+        <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
+            <Button x:Name="btnPrevPage" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPage_Click"/>
+            <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
+            <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+        </Grid>
         <Button x:Name="AdDutyBtn" Content="Thêm công việc" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold"/>
     </Grid>
 

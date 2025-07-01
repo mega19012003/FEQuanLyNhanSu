@@ -20,6 +20,8 @@ using FEQuanLyNhanSu.Services.UserService;
 using Newtonsoft.Json;
 using static FEQuanLyNhanSu.Services.UserService.Users;
 using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
+using Newtonsoft.Json.Linq;
 
 namespace FEQuanLyNhanSu
 {
@@ -28,50 +30,41 @@ namespace FEQuanLyNhanSu
     /// </summary>
     public partial class PageUser : Page
     {
-        private ObservableCollection<UserDto> users = new();
+        private ObservableCollection<UserResultDto> users = new();
+        private PaginationHelper<UserResultDto> _paginationHelper;
+
         public PageUser()
         {
             InitializeComponent();
-            LoadUsersAsync();
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            int pageSize = 20;
+
+            _paginationHelper = new PaginationHelper<UserResultDto>(
+                baseUrl,
+                pageSize,
+                token,
+                items => UserDtaGrid.ItemsSource = items,
+                txtPage
+            );
+
+            _ = _paginationHelper.LoadPageAsync(1);
         }
+        
+        private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
+        {
+            await _paginationHelper.PrevPageAsync();
+        }
+
+        private async void btnNextPage_Click(object sender, RoutedEventArgs e)
+        {
+            await _paginationHelper.NextPageAsync();
+        }
+
         private void CreateUser(object sender, RoutedEventArgs e)
         {
-            var window = new CreateUser();  
-            window.Show(); 
+            var window = new CreateUser();
+            window.Show();
         }
-
-        private async Task LoadUsersAsync()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var role = Application.Current.Properties["UserRole"]?.ToString();
-            var userId = Application.Current.Properties["UserId"]?.ToString();
-
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                // Tạo URL API
-                string url = $"https://demonhanvienapi.duckdns.org/api/User";
-                /*if (!string.IsNullOrEmpty(searchName))
-                    url += $"&Name={searchName}";*/
-
-                var response = await client.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseStr = await response.Content.ReadAsStringAsync();
-
-                    var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserDto>>>(responseStr);
-
-                    UserDtaGrid.ItemsSource = apiResult.Data.Items;
-                }
-                else
-                {
-                    MessageBox.Show("Không thể tải danh sách người dùng.");
-                }
-            }
-        }
-
     }
 }

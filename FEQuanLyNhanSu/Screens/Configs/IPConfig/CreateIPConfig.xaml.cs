@@ -13,15 +13,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
-namespace FEQuanLyNhanSu.Screens.Departments
+namespace FEQuanLyNhanSu.Screens.Configs
 {
     /// <summary>
-    /// Interaction logic for CreateDepartment.xaml
+    /// Interaction logic for CreateIPConfig.xaml
     /// </summary>
-    public partial class CreateDepartment : Window
+    public partial class CreateIPConfig : Window
     {
-        public CreateDepartment()
+        public CreateIPConfig()
         {
             InitializeComponent();
         }
@@ -29,27 +30,23 @@ namespace FEQuanLyNhanSu.Screens.Departments
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            {
                 return;
-            }
             this.Close();
         }
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
-            string name = txtName.Text?.Trim();
-            if (string.IsNullOrWhiteSpace(name))
+            string ipAddress = txtIP.Text.Trim();
+            if (string.IsNullOrWhiteSpace(ipAddress))
             {
-                MessageBox.Show("Vui lòng nhập tên phòng ban.");
+                MessageBox.Show("Vui lòng nhập địa chỉ IP.");
                 return;
             }
 
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
-            var query = $"Name={Uri.EscapeDataString(name)}";
-
-            var url = $"{baseUrl}/api/Department?{query}";
+            var query = $"IPAddress={Uri.EscapeDataString(ipAddress)}";
+            var url = $"{baseUrl}/api/AllowedIP?{query}";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
@@ -59,12 +56,12 @@ namespace FEQuanLyNhanSu.Screens.Departments
 
             if (response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Tạo phòng ban thành công.");
+                MessageBox.Show("Tạo cấu hình IP thành công.");
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Tạo phòng ban thất bại.");
+                MessageBox.Show("Tạo cấu hình IP thất bại.");
             }
         }
     }

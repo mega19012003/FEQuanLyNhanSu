@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Payrolls;
 using Newtonsoft.Json;
@@ -25,10 +26,22 @@ namespace FEQuanLyNhanSu
     /// </summary>
     public partial class PagePayroll : Page
     {
+
+        private PaginationHelper<Payrolls.PayrollResultDto> _paginationHelper;
         public PagePayroll()
         {
             InitializeComponent();
-            LoadPayrolls();
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll";
+            int pageSize = 20;
+            _paginationHelper = new PaginationHelper<Payrolls.PayrollResultDto>(
+                baseUrl,
+                pageSize,
+                token,
+                items => PayrollDtaGrid.ItemsSource = items,
+                txtPage
+            );
+            _ = _paginationHelper.LoadPageAsync(1);
         }
 
         private void AddPayroll(object sender, RoutedEventArgs e)
@@ -36,30 +49,15 @@ namespace FEQuanLyNhanSu
             var window = new CreatePayroll();
             window.Show();
         }
-        private async void LoadPayrolls()
+
+        private async void btnNextPage_Click(object sender, RoutedEventArgs e)
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var role = Application.Current.Properties["UserRole"]?.ToString();
-            var userId = Application.Current.Properties["UserId"]?.ToString();
+            await _paginationHelper.NextPageAsync();
+        }
 
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                string url = $"https://demonhanvienapi.duckdns.org/api/Payroll";
-
-                var response = await client.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseStr = await response.Content.ReadAsStringAsync();
-                    var apiReuslt = JsonConvert.DeserializeObject<ApiResponse<PagedResult<Payrolls.PayrollDto>>>(responseStr);
-                    PayrollDtaGrid.ItemsSource = apiReuslt.Data.Items;
-                }
-                else
-                {
-                    MessageBox.Show("Không thể tải danh sách checkin. Vui lòng thử lại sau.");
-                }
-            }
+        private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
+        {
+            await _paginationHelper.PrevPageAsync();
         }
     }
 }

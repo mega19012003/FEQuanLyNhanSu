@@ -4,10 +4,8 @@ using FEQuanLyNhanSu.Enums;
 
 namespace FEQuanLyNhanSu.Models.Configs
 {
-    public class CheckinStatusConfig
+    public class LogStatusConfig
     {
-        /*[Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)] */// 👈 Bắt buộc để EF không tự tăng Id
         public int Id { get; set; } 
 
         public string Name { get; set; } = null!; 
