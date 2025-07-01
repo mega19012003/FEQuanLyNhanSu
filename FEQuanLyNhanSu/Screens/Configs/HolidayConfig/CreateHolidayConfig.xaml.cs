@@ -10,19 +10,30 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FEQuanLyNhanSu.Screens.Configs
+namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
 {
     /// <summary>
-    /// Interaction logic for CreateHolidayConfig.xaml
+    /// Interaction logic for CreateHoliday.xaml
     /// </summary>
-    public partial class CreateHolidayConfig : Page
+    public partial class CreateHolidayConfig : Window
     {
         public CreateHolidayConfig()
         {
             InitializeComponent();
+        }
+
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if(MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                return;
+            this.Close();
+        }
+
+        private void btnCreate_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

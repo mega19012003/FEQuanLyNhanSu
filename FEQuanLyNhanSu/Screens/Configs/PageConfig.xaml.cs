@@ -34,7 +34,6 @@ namespace FEQuanLyNhanSu
     {
         private PaginationHelper<AllowedIPs.IPDto> _ipPaginationHelper;
         private PaginationHelper<Holidays.HolidayResultDto> _holidayPaginationHelper;
-        private PaginationHelper<LogStatusConfig> _logStatusPaginationHelper;
 
         public PageConfig()
         {
@@ -42,6 +41,7 @@ namespace FEQuanLyNhanSu
             LoadLogStatus();
             LoadAllowedIPStatus();
             LoadHolidayConfig();
+            LoadScheduleTime();
         }
 
         // LOAD DATABASE
@@ -99,6 +99,35 @@ namespace FEQuanLyNhanSu
             _ = _holidayPaginationHelper.LoadPageAsync(1);
         }
 
+        public async void LoadScheduleTime()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetAsync(baseUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseStr = await response.Content.ReadAsStringAsync();
+                    var apiResult = JsonConvert.DeserializeObject<ApiResponse<ScheduleTime>>(responseStr);
+                    var data = apiResult.Data;
+
+                    txtStartTimeMorning.Text = data.StartTimeMorning.ToString();
+                    txtEndTimeMorning.Text = data.EndTimeAfternoon.ToString();
+                    txtLateTime.Text = data.LateThresholdMinutes.ToString();
+                    txtAllowTime.Text = data.LogAllowtime.ToString();
+                    txtStartTimeAfternoon.Text = data.StartTimeAfternoon.ToString();
+                    txtEndTimeAfternoon.Text = data.EndTimeAfternoon.ToString();
+                }
+                else
+                {
+                    MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
+                }
+            }
+        }
 
         // IP CONFIG
         /// ///////////////////////////////////////////
@@ -200,7 +229,6 @@ namespace FEQuanLyNhanSu
             }
         }
 
-
         private async void btnNextPageHoliday_Click(object sender, RoutedEventArgs e)
         {
             await _holidayPaginationHelper.NextPageAsync();
@@ -208,6 +236,12 @@ namespace FEQuanLyNhanSu
         private async void btnPrevPageHoliday_Click(object sender, RoutedEventArgs e)
         {
             await _holidayPaginationHelper.PrevPageAsync();
+        }
+
+        private void AddHolidayBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateHolidayConfig();
+            window.ShowDialog();
         }
     }
 }
