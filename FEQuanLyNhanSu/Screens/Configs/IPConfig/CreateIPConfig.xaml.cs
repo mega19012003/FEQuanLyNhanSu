@@ -26,6 +26,7 @@ namespace FEQuanLyNhanSu.Screens.Configs
         public CreateIPConfig(Action onCreated)
         {
             InitializeComponent();
+            _onIPConfigCreated = onCreated;
         }
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)

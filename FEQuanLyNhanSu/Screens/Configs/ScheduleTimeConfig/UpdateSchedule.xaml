@@ -27,41 +27,41 @@
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="230"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="0" Text="Start time morning" IsReadOnly="True" 
+            <TextBox Grid.Row="0" Grid.Column="0" Text="Thời gian bắt đầu ca sáng" IsReadOnly="True" 
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
             <xctk:TimePicker Grid.Row="0" Grid.Column="1" x:Name="txtStatTimeMorning" FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
 
-            <TextBox Grid.Row="1" Grid.Column="0" Text="End time morning" IsReadOnly="True"
+            <TextBox Grid.Row="1" Grid.Column="0" Text="Thời gian kết thúc ca sáng" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
             <xctk:TimePicker Grid.Row="1" Grid.Column="1" x:Name="txtEndTimeMorning" FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
 
-            <TextBox Grid.Row="2" Grid.Column="0" Text="Allow chekin minutes" IsReadOnly="True"
+            <TextBox Grid.Row="2" Grid.Column="0" Text="Thời gian checkin (phút)" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
             <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtAllowTime" FontSize="15" Height="41" Margin="0,5" Padding="10,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
-            <TextBox Grid.Row="3" Grid.Column="0" Text="Late checkin minutes" IsReadOnly="True"
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Thời gian cho phép trễ (phút)" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
             <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtLateMinutes" FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
 
-            <TextBox Grid.Row="4" Grid.Column="0" Text="Start time afternoon" IsReadOnly="True"
+            <TextBox Grid.Row="4" Grid.Column="0" Text="Thời gian bắt đầu ca chiều" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
             <xctk:TimePicker Grid.Row="4" Grid.Column="1" x:Name="txtStartTimeAfternoon" FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
 
-            <TextBox Grid.Row="5" Grid.Column="0" Text="End time afternoon" IsReadOnly="True"
+            <TextBox Grid.Row="5" Grid.Column="0" Text="Thời gian kết thúc ca chiều" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>

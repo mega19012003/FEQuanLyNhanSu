@@ -159,8 +159,14 @@ namespace FEQuanLyNhanSu
 
         // IP CONFIG
         /// ///////////////////////////////////////////
+        // Create
+        private void AddIPBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateIPConfig(LoadAllowedIPStatus);
+            window.ShowDialog();
+        }
 
-
+        // Delete
         private async void btnDeleteIP_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -183,17 +189,12 @@ namespace FEQuanLyNhanSu
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Xóa cấu hình IP thành công.");
-                LoadLogStatus();
+                _ipPaginationHelper.LoadPageAsync(1);
             }
             else
             {
                 MessageBox.Show("Không thể xóa cấu hình IP. Vui lòng thử lại sau.");
             }
-        }
-        private void AddIPBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var window = new CreateIPConfig(LoadAllowedIPStatus);
-            window.ShowDialog();
         }
 
         // Search
