@@ -9,6 +9,7 @@
       Title="PageOption4">
 
     <Grid Background="White" Margin="0,-3,0,0">
+        
         <TextBlock Text="Đây là trang công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" ColumnWidth="*">
             <DataGrid.Columns>
@@ -32,12 +33,25 @@
             </DataGrid.RowDetailsTemplate>
 
         </DataGrid>
+
         <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
             <Button x:Name="btnPrevPage" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPage_Click"/>
             <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
             <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
         </Grid>
         <Button x:Name="AdDutyBtn" Content="Thêm công việc" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold"/>
+        <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <!-- Cột cho icon -->
+                <ColumnDefinition Width="*" />
+                <!-- Cột cho TextBox -->
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
+
+            <TextBox x:Name="txtSearch" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChanged" Height="35" VerticalAlignment="Top"/>
+        </Grid>
     </Grid>
 
 </Page>

@@ -18,8 +18,8 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Sửa" Margin="2" Padding="5,2"/>
-                                <Button Content="Xóa" Margin="2" Padding="5,2"/>
+                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>
+                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -37,7 +37,7 @@
 
             <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
 
-            <TextBox Text="Search..." FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" />
+            <TextBox x:Name="txtSearch" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChanged"/>
         </Grid>
         <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
             <Button x:Name="btnPrevPage" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPage_Click"/>

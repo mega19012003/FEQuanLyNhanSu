@@ -22,16 +22,10 @@ namespace FEQuanLyNhanSu.Screens.Configs
     /// </summary>
     public partial class CreateIPConfig : Window
     {
-        public CreateIPConfig()
+        private Action _onIPConfigCreated;
+        public CreateIPConfig(Action onCreated)
         {
             InitializeComponent();
-        }
-
-        private void btnExit_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                return;
-            this.Close();
         }
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
@@ -57,12 +51,21 @@ namespace FEQuanLyNhanSu.Screens.Configs
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Tạo cấu hình IP thành công.");
+                _onIPConfigCreated?.Invoke(); 
                 this.Close();
             }
             else
             {
                 MessageBox.Show("Tạo cấu hình IP thất bại.");
             }
+        }
+
+
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                return;
+            this.Close();
         }
     }
 }

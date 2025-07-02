@@ -29,11 +29,12 @@ namespace FEQuanLyNhanSu.Screens.Positions
     public partial class UpdatePosition : Window
     {
         private Guid _positionId;
-
-        public UpdatePosition(Guid positionId)
+        private readonly Action _onPositionUpdated;
+        public UpdatePosition(Guid positionId, Action onUpdated)
         {
             InitializeComponent();
             _positionId = positionId;
+            _onPositionUpdated = onUpdated;
             _ = LoadPositionAsync();
         }
 
@@ -43,7 +44,6 @@ namespace FEQuanLyNhanSu.Screens.Positions
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
         }
-
 
         private async Task LoadPositionAsync()
         {
@@ -96,6 +96,7 @@ namespace FEQuanLyNhanSu.Screens.Positions
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Cập nhật chức vụ thành công.");
+                _onPositionUpdated?.Invoke(); 
                 this.Close();
             }
             else

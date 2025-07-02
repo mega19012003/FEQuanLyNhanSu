@@ -37,24 +37,31 @@ namespace FEQuanLyNhanSu
 
         public void LoadPosition()
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
-            int pageSize = 20;
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+                int pageSize = 20;
 
-            _paginationHelper = new PaginationHelper<Positions.PositionDTO>(
-                baseUrl,
-                pageSize,
-                token,
-                items => PositionDtaGrid.ItemsSource = items,
-                txtPage
-            );
+                _paginationHelper = new PaginationHelper<Positions.PositionDTO>(
+                    baseUrl,
+                    pageSize,
+                    token,
+                    items => PositionDtaGrid.ItemsSource = items,
+                    txtPage
+                );
 
-            _ = _paginationHelper.LoadPageAsync(1);
+                _ = _paginationHelper.LoadPageAsync(1);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void AddPosition(object sender, RoutedEventArgs e)
         {
-            var window = new CreatePosition();
+            var window = new CreatePosition(LoadPosition);
             window.Show();
         }
 
@@ -63,7 +70,7 @@ namespace FEQuanLyNhanSu
             var button = sender as Button;
             if (button?.Tag is Guid positionId)
             {
-                var editWindow = new UpdatePosition(positionId);
+                var editWindow = new UpdatePosition(positionId, LoadPosition);
                 editWindow.ShowDialog(); 
             }
         }
@@ -105,11 +112,12 @@ namespace FEQuanLyNhanSu
             string keyword = txtSearch.Text?.Trim();
 
             if (string.IsNullOrWhiteSpace(keyword))
-                return;
-
-            var result = await SearchHelper.SearchAsync<PositionDTO>("api/Position", keyword, token);
-
-            PositionDtaGrid.ItemsSource = result;
+                LoadPosition();
+            else
+            {
+                var result = await SearchHelper.SearchAsync<PositionDTO>("api/Position", keyword, token);
+                PositionDtaGrid.ItemsSource = result;
+            }
         }
 
 
@@ -117,7 +125,6 @@ namespace FEQuanLyNhanSu
         {
             await _paginationHelper.PrevPageAsync();
         }
-
         private async void btnNextPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.NextPageAsync();

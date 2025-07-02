@@ -18,8 +18,8 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button x:Name="btnUpdate" Content="Sửa" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding Id}" />
-                                <Button x:Name="btnDelete" Content="Xóa" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding Id}" />
+                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding Id}" />
+                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding Id}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

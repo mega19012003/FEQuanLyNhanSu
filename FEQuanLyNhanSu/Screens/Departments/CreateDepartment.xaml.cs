@@ -21,19 +21,13 @@ namespace FEQuanLyNhanSu.Screens.Departments
     /// </summary>
     public partial class CreateDepartment : Window
     {
-        public CreateDepartment()
+        private Action _onDepartmentCreated;
+        public CreateDepartment(Action onCreated)
         {
             InitializeComponent();
+            _onDepartmentCreated = onCreated;
         }
 
-        private void btnExit_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            {
-                return;
-            }
-            this.Close();
-        }
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
@@ -60,12 +54,23 @@ namespace FEQuanLyNhanSu.Screens.Departments
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Tạo phòng ban thành công.");
+                _onDepartmentCreated?.Invoke();
                 this.Close();
             }
             else
             {
                 MessageBox.Show("Tạo phòng ban thất bại.");
             }
+        }
+
+        //Exit
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            {
+                return;
+            }
+            this.Close();
         }
     }
 }

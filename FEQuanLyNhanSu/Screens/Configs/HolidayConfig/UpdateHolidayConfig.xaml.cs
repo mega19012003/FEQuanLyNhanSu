@@ -26,10 +26,12 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
     public partial class UpdateHolidayConfig : Window
     {
         private Guid _holidayConfigId;
-        public UpdateHolidayConfig(Guid holidayConfigId)
+        private Action _onHolidayUpdated;
+        public UpdateHolidayConfig(Guid holidayConfigId, Action onUpdated)
         {
             InitializeComponent();
             _holidayConfigId = holidayConfigId;
+            _onHolidayUpdated = onUpdated;
             LoadHolidayConfig();
         }
 
@@ -63,15 +65,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             {
                 MessageBox.Show("Không thể tải thông tin chức vụ.");
             }
-        }
-
-        private void btnExit_Click(object sender, RoutedEventArgs e)
-        {
-            if(MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            {
-                return;
-            }
-            this.Close();
         }
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
@@ -109,12 +102,22 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Cập nhật holdiay thành công.");
+                _onHolidayUpdated?.Invoke();
                 this.Close();
             }
             else
             {
                 MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
             }
+        }
+
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            {
+                return;
+            }
+            this.Close();
         }
     }
 }

@@ -42,8 +42,6 @@
                     Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="btnLogin_Click"/>
             </StackPanel>
         </Grid>
-        <Label Content="Pass và username nằm trong phần note của api 'POST
-/api/Auth/login'" HorizontalAlignment="Left" Margin="217,181,0,0" VerticalAlignment="Top" Width="408"/>
     </Grid>
 
 </Window>

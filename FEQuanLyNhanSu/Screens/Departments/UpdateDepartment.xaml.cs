@@ -26,10 +26,12 @@ namespace FEQuanLyNhanSu.Screens.Departments
     public partial class UpdateDepartment : Window
     {
         private Guid _departmentId;
-        public UpdateDepartment(Guid departmentId)
+        private readonly Action _onDepartmentUpdated;
+        public UpdateDepartment(Guid departmentId, Action onUpdated)
         {
             InitializeComponent();
             _departmentId = departmentId;
+            _onDepartmentUpdated = onUpdated;
             _ = LoadDepartmentAsync();
         }
 
@@ -91,6 +93,7 @@ namespace FEQuanLyNhanSu.Screens.Departments
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Cập nhật phòng ban thành công.");
+                _onDepartmentUpdated?.Invoke();
                 this.Close();
             }
             else

@@ -6,6 +6,7 @@ using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Configs;
 using FEQuanLyNhanSu.Screens.Configs.HolidayConfig;
 using FEQuanLyNhanSu.Screens.Configs.LogStatusConfig;
+using FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig;
 using FEQuanLyNhanSu.Screens.Departments;
 using FEQuanLyNhanSu.Screens.Positions;
 using Newtonsoft.Json;
@@ -48,89 +49,118 @@ namespace FEQuanLyNhanSu
         /// ///////////////////////////////////////////
         private async void LoadLogStatus()
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/LogStatusConfig";
-
-            using (var client = new HttpClient())
+            try
             {
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/LogStatusConfig";
 
-                var response = await client.GetAsync(baseUrl);
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseStr = await response.Content.ReadAsStringAsync();
-                    var apiResult = JsonConvert.DeserializeObject<ApiResponse<List<LogStatusConfig>>>(responseStr);
-                    ChknDtaGrid.ItemsSource = apiResult.Data;
+                    var response = await client.GetAsync(baseUrl);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseStr = await response.Content.ReadAsStringAsync();
+                        var apiResult = JsonConvert.DeserializeObject<ApiResponse<List<LogStatusConfig>>>(responseStr);
+                        ChknDtaGrid.ItemsSource = apiResult.Data;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải cấu hình: {ex.Message}");
             }
         }
         public void LoadAllowedIPStatus()
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/AllowedIP";
-            int pageSize = 20;
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/AllowedIP";
+                int pageSize = 20;
 
-            _ipPaginationHelper = new PaginationHelper<AllowedIPs.IPDto>(
-                baseUrl,
-                pageSize,
-                token,
-                items => IPDtaGrid.ItemsSource = items,
-                txtPageIP
-            );
-            _ = _ipPaginationHelper.LoadPageAsync(1);
+                _ipPaginationHelper = new PaginationHelper<AllowedIPs.IPDto>(
+                    baseUrl,
+                    pageSize,
+                    token,
+                    items => IPDtaGrid.ItemsSource = items,
+                    txtPageIP
+                );
+                _ = _ipPaginationHelper.LoadPageAsync(1);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải cấu hình IP: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         public void LoadHolidayConfig()
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Holiday";
-            int pageSize = 20;
-            _holidayPaginationHelper = new PaginationHelper<Holidays.HolidayResultDto>(
-                baseUrl,
-                pageSize,
-                token,
-                items => HolidayDtaGrid.ItemsSource = items,
-                txtPageHoliday
-            );
-            _ = _holidayPaginationHelper.LoadPageAsync(1);
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Holiday";
+                int pageSize = 20;
+                _holidayPaginationHelper = new PaginationHelper<Holidays.HolidayResultDto>(
+                    baseUrl,
+                    pageSize,
+                    token,
+                    items => HolidayDtaGrid.ItemsSource = items,
+                    txtPageHoliday
+                );
+                _ = _holidayPaginationHelper.LoadPageAsync(1);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải cấu hình ngày nghỉ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
-
         public async void LoadScheduleTime()
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
-            using (var client = new HttpClient())
+            try
             {
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.GetAsync(baseUrl);
-
-                if (response.IsSuccessStatusCode)
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
+                using (var client = new HttpClient())
                 {
-                    var responseStr = await response.Content.ReadAsStringAsync();
-                    var apiResult = JsonConvert.DeserializeObject<ApiResponse<ScheduleTime>>(responseStr);
-                    var data = apiResult.Data;
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                    txtStartTimeMorning.Text = data.StartTimeMorning.ToString();
-                    txtEndTimeMorning.Text = data.EndTimeAfternoon.ToString();
-                    txtLateTime.Text = data.LateThresholdMinutes.ToString();
-                    txtAllowTime.Text = data.LogAllowtime.ToString();
-                    txtStartTimeAfternoon.Text = data.StartTimeAfternoon.ToString();
-                    txtEndTimeAfternoon.Text = data.EndTimeAfternoon.ToString();
+                    var response = await client.GetAsync(baseUrl);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseStr = await response.Content.ReadAsStringAsync();
+                        var apiResult = JsonConvert.DeserializeObject<ApiResponse<ScheduleTime>>(responseStr);
+                        var data = apiResult.Data;
+
+                        txtStartTimeMorning.Text = data.StartTimeMorning.ToString();
+                        txtEndTimeMorning.Text = data.EndTimeMorning.ToString();
+                        txtLateTime.Text = data.LateThresholdMinutes.ToString();
+                        txtAllowTime.Text = data.LogAllowtime.ToString();
+                        txtStartTimeAfternoon.Text = data.StartTimeAfternoon.ToString();
+                        txtEndTimeAfternoon.Text = data.EndTimeAfternoon.ToString();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải cấu hình thời gian: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         // IP CONFIG
         /// ///////////////////////////////////////////
+
+
         private async void btnDeleteIP_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -162,10 +192,26 @@ namespace FEQuanLyNhanSu
         }
         private void AddIPBtn_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CreateIPConfig();
+            var window = new CreateIPConfig(LoadAllowedIPStatus);
             window.ShowDialog();
         }
 
+        // Search
+        private async void txtTextChangedIP(object sender, TextChangedEventArgs e)
+        {
+            var token = Application.Current.Properties["Token"].ToString();
+            string keyword = txtSearchIP.Text?.Trim();
+
+            if (string.IsNullOrWhiteSpace(keyword))
+                LoadAllowedIPStatus();
+            else
+            {
+                var result = await SearchHelper.SearchAsync<AllowedIPs.IPDto>("api/AllowedIP", keyword, token);
+                IPDtaGrid.ItemsSource = result;
+            }
+        }
+
+        // PAGINATION
         private async void btnNextPageIP_Click(object sender, RoutedEventArgs e)
         {
             await _ipPaginationHelper.NextPageAsync();
@@ -183,23 +229,32 @@ namespace FEQuanLyNhanSu
             var button = sender as Button;
             if (button?.Tag is int Id)
             {
-                var editWindow = new UpdateLogStatus(Id);
+                var editWindow = new UpdateLogStatus(Id, LoadLogStatus);
                 editWindow.ShowDialog();
             }
         }
 
         // HOLIDAY CONFIG
         /// ///////////////////////////////////////////
+        // Create
+        private void AddHolidayBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateHolidayConfig(LoadHolidayConfig);
+            window.ShowDialog();
+        }
+
+        // Update
         private void btnUpdateHoliday_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             if (button?.Tag is Guid HolidayId)
             {
-                var editWindow = new UpdateHolidayConfig(HolidayId);
+                var editWindow = new UpdateHolidayConfig(HolidayId, LoadHolidayConfig);
                 editWindow.ShowDialog();
             }
         }
 
+        // Delete
         private void btnDeleteHoliday_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -229,6 +284,22 @@ namespace FEQuanLyNhanSu
             }
         }
 
+        // Search
+        private async void txtTextChangedHoliday(object sender, TextChangedEventArgs e)
+        {
+            var token = Application.Current.Properties["Token"].ToString();
+            string keyword = txtSearchHoliday.Text?.Trim();
+
+            if (string.IsNullOrWhiteSpace(keyword))
+                LoadHolidayConfig();
+            else
+            {
+                var result = await SearchHelper.SearchAsync<Holidays.HolidayResultDto>("api/Holiday", keyword, token);
+                HolidayDtaGrid.ItemsSource = result;
+            }
+        }
+
+        // Pagination
         private async void btnNextPageHoliday_Click(object sender, RoutedEventArgs e)
         {
             await _holidayPaginationHelper.NextPageAsync();
@@ -238,9 +309,9 @@ namespace FEQuanLyNhanSu
             await _holidayPaginationHelper.PrevPageAsync();
         }
 
-        private void AddHolidayBtn_Click(object sender, RoutedEventArgs e)
+        private void btnUpdateWorkTime_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CreateHolidayConfig();
+            var window = new UpdateSchedule(LoadScheduleTime);
             window.ShowDialog();
         }
     }

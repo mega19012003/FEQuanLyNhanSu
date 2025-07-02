@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Services.UserService;
 using System.Net.Http.Headers;
+using FEQuanLyNhanSu.Helpers;
 
 namespace FEQuanLyNhanSu
 {
@@ -57,8 +58,9 @@ namespace FEQuanLyNhanSu
                 // B1: Gửi yêu cầu login
                 var loginJson = JsonConvert.SerializeObject(loginDto);
                 var loginContent = new StringContent(loginJson, Encoding.UTF8, "application/json");
-
-                var loginResponse = await client.PostAsync("https://demonhanvienapi.duckdns.org/api/Auth/login", loginContent);
+                var BaseUrl1 = AppsettingConfigHelper.GetBaseUrl();
+                var apiUrl1 = $"{BaseUrl1}/api/Auth/login";
+                var loginResponse = await client.PostAsync(apiUrl1, loginContent);
 
                 if (!loginResponse.IsSuccessStatusCode)
                 {
@@ -71,7 +73,9 @@ namespace FEQuanLyNhanSu
 
                 // B2: Gọi /current để lấy info
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var userResponse = await client.GetAsync("https://demonhanvienapi.duckdns.org/api/auth/current");
+                var BaseUrl2 = AppsettingConfigHelper.GetBaseUrl();
+                var apiUrl2 = $"{BaseUrl2}/api/auth/current";
+                var userResponse = await client.GetAsync(apiUrl2);
 
                 if (!userResponse.IsSuccessStatusCode)
                 {

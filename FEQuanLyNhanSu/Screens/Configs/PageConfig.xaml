@@ -24,8 +24,8 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <!--<Button Content="Sửa" Margin="2" Padding="5,2"/>-->
-                                            <Button x:Name="btnDeleteIP" Content="Xóa" Margin="2" Padding="5,2" Click="btnDeleteIP_Click" Tag="{Binding AllowedIPId}"/>
+                                            <!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>-->
+                                            <Button x:Name="btnDeleteIP" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteIP_Click" Tag="{Binding AllowedIPId}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -45,7 +45,7 @@
 
                         <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
 
-                        <TextBox x:Name="SearchIP" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" />
+                        <TextBox x:Name="txtSearchIP" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChangedIP"/>
                     </Grid>
                     <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
                         <Button x:Name="btnPrevPageIP" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPageIP_Click"/>
@@ -59,14 +59,14 @@
             <TabItem Header="Trạng thái Checkin">
                 <Grid Background="White">
                     <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-                    <DataGrid x:Name="ChknDtaGrid" Margin="10,60,10,10" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
+                    <DataGrid x:Name="ChknDtaGrid" Margin="10,10,10,10" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
                         <DataGrid.Columns>
 
                             <DataGridTemplateColumn Header="Hành động">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button x:Name="btnUpdateLogStatus" Content="Sửa" Margin="2" Padding="5,2" Click="btnUpdateStatus_Click" Tag="{Binding Id}"/>
+                                            <Button x:Name="btnUpdateLogStatus" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateStatus_Click" Tag="{Binding Id}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -91,8 +91,8 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button Content="Sửa" Margin="2" Padding="5,2" Click="btnUpdateHoliday_Click" Tag="{Binding HolidayId}"/>
-                                            <Button Content="Xóa" Margin="2" Padding="5,2" Click="btnDeleteHoliday_Click" Tag="{Binding HolidayId}"/>
+                                            <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateHoliday_Click" Tag="{Binding HolidayId}"/>
+                                            <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteHoliday_Click" Tag="{Binding HolidayId}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -109,7 +109,7 @@
 
                         <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
 
-                        <TextBox x:Name="SearchHoliday" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" />
+                        <TextBox x:Name="txtSearchHoliday" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChangedHoliday"/>
                     </Grid>
                     <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
                         <Button x:Name="btnPrevPageHoliday" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPageHoliday_Click"/>
@@ -120,8 +120,8 @@
             </TabItem>
             <!--///////////////////////////////////////////////////////////////-->
             <TabItem Header="Thời gian làm việc">
-                <Grid Background="White" Height="363">
-                    <Grid Width="736" HorizontalAlignment="Center">
+                <Grid Background="White" Height="409">
+                    <Grid Width="500" HorizontalAlignment="Center">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -129,44 +129,38 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <!-- khoảng cách giữa Button và TextBox -->
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <!-- Dòng 1 -->
-                        <Button Content="Sửa thời gian bắt đầu ca làm việc sáng" Width="300" Height="40" Grid.Row="0" Grid.Column="0" Margin="0,10,0,10" FontSize="15" Background="#FF66A8D5" Foreground="White"/>
+                        <Label Content="Thời gian bắt đầu ca làm việc sáng" Width="300" Height="40" Grid.Row="0" Grid.Column="0" FontSize="15" Background="#FF66A8D5" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                         <TextBox x:Name="txtStartTimeMorning" Width="200" Height="40" Grid.Row="0" Grid.Column="2" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True" FontSize="15"/>
-                        <xctk:TimePicker x:Name="txtInputStartTime" Width="200" Height="40" Grid.Row="0" Grid.Column="3" Margin="16,10,-216,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="15"/>
 
                         <!-- Dòng 2 -->
-                        <Button Content="Sửa thời gian kết thúc ca làm việc sáng" Width="300" Height="40" Grid.Row="1" Grid.Column="0" Margin="0,10,0,10" FontSize="15" Background="#FF66A8D5" Foreground="White"/>
+                        <Label Content="Thời gian kết thúc ca làm việc sáng" Width="300" Height="40" Grid.Row="1" Grid.Column="0" FontSize="15" Background="#FF66A8D5" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                         <TextBox x:Name="txtEndTimeMorning" Width="200" Height="40" Grid.Row="1" Grid.Column="2" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True" FontSize="15"/>
-                        <xctk:TimePicker x:Name="txtInputStartTimeMorning" Width="200" Height="40" Grid.Row="1" Grid.Column="3" Margin="16,10,-216,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="15"/>
 
                         <!-- Dòng 3 -->
-                        <Button Content="Sửa thời gian cho phép checkin/checkout" Width="300" Height="40" Grid.Row="2" Grid.Column="0" Margin="0,10,0,10" FontSize="15" Background="#FF66A8D5" Foreground="White"/>
+                        <Label Content="Thời gian cho phép checkin/checkout" Width="300" Height="40" Grid.Row="2" Grid.Column="0" FontSize="15" Background="#FF66A8D5" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                         <TextBox x:Name="txtAllowTime" Width="200" Height="40" Grid.Row="2" Grid.Column="2" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True" FontSize="15"/>
-                        <TextBox x:Name="txtInputAllowTime" Width="200" Height="40" Grid.Row="2" Grid.Column="3" Margin="16,10,-216,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="15"/>
 
                         <!-- Dòng 4 -->
-                        <Button Content="Sửa thời gian cho phép trễ" Width="300" Height="40" Grid.Row="3" Grid.Column="0" Margin="0,10,0,10" FontSize="15" Background="#FF66A8D5" Foreground="White"/>
+                        <Label Content="Thời gian cho phép trễ" Width="300" Height="40" Grid.Row="3" Grid.Column="0" FontSize="15" Background="#FF66A8D5" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                         <TextBox x:Name="txtLateTime" Width="200" Height="40" Grid.Row="3" Grid.Column="2" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True" FontSize="15"/>
-                        <TextBox x:Name="txtInputLateTime" Width="200" Height="40" Grid.Row="3" Grid.Column="3" Margin="16,10,-216,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="15"/>
 
                         <!-- Dòng 5 -->
-                        <Button Content="Sửa thời gian bắt đầu ca làm việc" Width="300" Height="40" Grid.Row="4" Grid.Column="0" Margin="0,10,0,10" FontSize="15" Background="#FF66A8D5" Foreground="White"/>
+                        <Label Content="Thời gian bắt đầu ca làm việc" Width="300" Height="40" Grid.Row="4" Grid.Column="0" FontSize="15" Background="#FF66A8D5" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                         <TextBox x:Name="txtStartTimeAfternoon" Width="200" Height="40" Grid.Row="4" Grid.Column="2" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True" FontSize="15"/>
-                        <xctk:TimePicker x:Name="txtInputStartTimeAfternoon" Width="200" Height="40" Grid.Row="4" Grid.Column="3" Margin="16,10,-216,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="15"/>
 
                         <!-- Dòng 6 -->
-                        <Button Content="Sửa thời gian kết thúc ca làm việc" Width="300" Height="40" Grid.Row="5" Grid.Column="0" Margin="0,10,0,10" FontSize="15" Background="#FF66A8D5" Foreground="White"/>
+                        <Label Content="Thời gian kết thúc ca làm việc" Width="300" Height="40" Grid.Row="5" Grid.Column="0" FontSize="15" Background="#FF66A8D5" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                         <TextBox x:Name="txtEndTimeAfternoon" Width="200" Height="40" Grid.Row="5" Grid.Column="2" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True" FontSize="15"/>
-                        <xctk:TimePicker x:Name="txtInputEndTimeAfternoon" Width="200" Height="40" Grid.Row="5" Grid.Column="3" Margin="16,10,-216,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="15"/>
+
+                        <Button x:Name="btnUpdateWorkTime" Content="Cập nhật" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="35"  FontSize="16" Width="150"
+                            Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="btnUpdateWorkTime_Click" Margin="175,10,0,-10"/>
 
                     </Grid>
                 </Grid>

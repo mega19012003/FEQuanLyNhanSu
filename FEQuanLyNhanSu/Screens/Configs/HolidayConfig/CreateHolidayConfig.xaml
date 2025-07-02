@@ -40,14 +40,14 @@
       Background="#FF99C5E3" Foreground="White" FontSize="15"
       VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
       Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <xctk:DateTimePicker Grid.Row="1" Grid.Column="1" x:Name="txtStartDate"
+            <xctk:DateTimePicker Grid.Row="1" Grid.Column="1" x:Name="dpStartDate"
      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
             <TextBox Grid.Row="2" Grid.Column="0" Text="Ngày kết thúc" IsReadOnly="True" 
      Background="#FF99C5E3" Foreground="White" FontSize="15"
      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
      Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <xctk:DateTimePicker Grid.Row="2" Grid.Column="1" x:Name="txtEndDate"
+            <xctk:DateTimePicker Grid.Row="2" Grid.Column="1" x:Name="dpEndDate"
      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
             <!-- Buttons -->

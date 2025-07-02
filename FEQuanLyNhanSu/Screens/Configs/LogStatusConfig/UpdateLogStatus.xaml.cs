@@ -26,11 +26,20 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
     public partial class UpdateLogStatus : Window
     {
         private int _logStatusId;
-        public UpdateLogStatus(int logStatusId)
+        private Action _onLogStatusUpdated;
+        public UpdateLogStatus(int logStatusId, Action onCreated)
         {
             InitializeComponent();
             _logStatusId = logStatusId;
+            _onLogStatusUpdated = onCreated;
             _ = LoadLogStatusAsync();
+        }
+
+        private HttpClient CreateAuthorizedClient(string token)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return client;
         }
 
         private async Task LoadLogStatusAsync()
@@ -55,22 +64,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
             {
                 MessageBox.Show("Không thể tải thông tin chức vụ.");
             }
-        }
-
-        private HttpClient CreateAuthorizedClient(string token)
-        {
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            return client;
-        }
-
-        private void btnExit_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            {
-                return;
-            }
-            this.Close();
         }
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
@@ -113,12 +106,22 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Cập nhật log status thành công.");
+                _onLogStatusUpdated?.Invoke();
                 this.Close();
             }
             else
             {
                 MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
             }
+        }
+
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            {
+                return;
+            }
+            this.Close();
         }
     }
 }

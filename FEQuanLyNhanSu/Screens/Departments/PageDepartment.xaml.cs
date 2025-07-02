@@ -33,49 +33,67 @@ namespace FEQuanLyNhanSu
         public PageDepartment()
         {
             InitializeComponent();
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
-            int pageSize = 20;
-
-            _paginationHelper = new PaginationHelper<Departments.DepartmentResultDto>(
-                baseUrl,
-                pageSize,
-                token,
-                items => DprtmtDtaGrid.ItemsSource = items,
-                txtPage
-            );
-            _ = _paginationHelper.LoadPageAsync(1);
+            LoadDepartment();
         }
 
+        //Load Department List
+        private void LoadDepartment()
+        {
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+                int pageSize = 20;
+
+                _paginationHelper = new PaginationHelper<Departments.DepartmentResultDto>(
+                    baseUrl,
+                    pageSize,
+                    token,
+                    items => DprtmtDtaGrid.ItemsSource = items,
+                    txtPage
+                );
+                _ = _paginationHelper.LoadPageAsync(1);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải dữ liệu phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        //Search
         private async void txtTextChanged(object sender, TextChangedEventArgs e)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
             string keyword = txtSearch.Text?.Trim();
 
             if (keyword == null)
-                return;
-
-            var result = await SearchHelper.SearchAsync<Departments.DepartmentResultDto>("api/Department", keyword, token);
-
-            DprtmtDtaGrid.ItemsSource = result;
+                LoadDepartment();
+            else
+            {
+                var result = await SearchHelper.SearchAsync<Departments.DepartmentResultDto>("api/Department", keyword, token);
+                DprtmtDtaGrid.ItemsSource = result;
+            }
         }
 
+        //Create
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CreateDepartment();
+            var window = new CreateDepartment(LoadDepartment);
             window.Show();
         }
 
+        //Update
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             if (button?.Tag is Guid DepartmentId)
             {
-                var editWindow = new UpdateDepartment(DepartmentId);
+                var editWindow = new UpdateDepartment(DepartmentId, LoadDepartment);
                 editWindow.ShowDialog();
             }
         }
 
+        //Delete
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -87,7 +105,6 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-
         private async Task DeleteDepartmentAsync(Guid departmentId)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -106,11 +123,11 @@ namespace FEQuanLyNhanSu
             }
         }
 
+        //Pagination
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.PrevPageAsync();
         }
-
         private async void btnNextPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.NextPageAsync();

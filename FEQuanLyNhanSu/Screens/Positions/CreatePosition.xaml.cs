@@ -25,12 +25,30 @@ namespace FEQuanLyNhanSu.Screens.Positions
     /// </summary>
     public partial class CreatePosition : Window
     {
-        public CreatePosition()
+        private Action _onPositionCreated;
+        public CreatePosition(Action onCreated)
         {
             InitializeComponent();
+            _onPositionCreated = onCreated;
 
             var role = Application.Current.Properties["UserRole"]?.ToString();
+            Authorize(role);
+            //if (role == "Manager")
+            //{
+            //    cmbDepartment.Visibility = Visibility.Collapsed;
+            //    txtDepartment.Visibility = Visibility.Hidden;
+            //}
+            //else if (role == "Administrator")
+            //{
+            //    // Chỉ Admin mới được gọi API lấy danh sách phòng ban
+            //    _ = LoadDepartmentsAsync();
+            //}
 
+            HandleManagerUI();
+        }
+
+        private void Authorize(string role)
+        {
             if (role == "Manager")
             {
                 cmbDepartment.Visibility = Visibility.Collapsed;
@@ -41,8 +59,6 @@ namespace FEQuanLyNhanSu.Screens.Positions
                 // Chỉ Admin mới được gọi API lấy danh sách phòng ban
                 _ = LoadDepartmentsAsync();
             }
-
-            HandleManagerUI();
         }
 
         private void HandleManagerUI()
@@ -101,6 +117,7 @@ namespace FEQuanLyNhanSu.Screens.Positions
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Tạo chức vụ thành công.");
+                _onPositionCreated?.Invoke();
                 this.Close();
             }
             else
