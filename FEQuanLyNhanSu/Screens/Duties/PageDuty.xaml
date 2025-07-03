@@ -11,24 +11,55 @@
     <Grid Background="White" Margin="0,-3,0,0">
         
         <TextBlock Text="Đây là trang công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
-        <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" ColumnWidth="*">
+        <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
-   
+                <DataGridTemplateColumn Header="Hành động" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" />
+                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Id" Binding="{Binding DutyId}" Width="*" />
+                <DataGridTextColumn Header="Tên công việc" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}" Width="*" />
+                <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}" Width="*" />
+                <DataGridTextColumn Header="Người tạo" Binding="{Binding EmployeeName}" Width="*" />
+                <DataGridTextColumn Header="Đã hoàn thành" Binding="{Binding Description}" Width="*" />
             </DataGrid.Columns>
-
+ 
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid ItemsSource="{Binding DutyDetails}" AutoGenerateColumns="False" HeadersVisibility="Column" IsReadOnly="True" Margin="20,5,20,5">
-
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="DutyDetailId" Binding="{Binding DutyDetailId}" Width="200"/>
-                            <DataGridTextColumn Header="UserId" Binding="{Binding UserId}" Width="200"/>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
-                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="200"/>
-                            <DataGridCheckBoxColumn Header="IsDeleted" Binding="{Binding IsDeleted}" Width="200"/>
-                        </DataGrid.Columns>
-                        
-                    </DataGrid>
+                    <Grid>
+                        <DataGrid ItemsSource="{Binding DutyDetails}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      Margin="20,5,20,5"
+                      ColumnWidth="*"
+                      HeadersVisibility="Column"
+                      HorizontalAlignment="Stretch"
+                      Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Hành động" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" />
+                                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="DutyDetailId" Binding="{Binding DutyDetailId}" Width="*" />
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
+                                <DataGridCheckBoxColumn Header="IsCompleted" Binding="{Binding IsCompleted}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
 
@@ -39,7 +70,7 @@
             <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
             <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
         </Grid>
-        <Button x:Name="AdDutyBtn" Content="Thêm công việc" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold"/>
+        <Button x:Name="AdDutyBtn" Content="Thêm công việc" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="AdDutyBtn_Click"/>
         <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

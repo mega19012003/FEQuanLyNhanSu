@@ -13,11 +13,11 @@
              FontSize="24"
              HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="UserDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center">
+        <DataGrid x:Name="UserDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="True">
             <DataGrid.Columns>
 
 
-                <DataGridTemplateColumn Header="Hành động" Width="150">
+                <DataGridTemplateColumn Header="Hành động" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -27,6 +27,15 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Id" Binding="{Binding UserId}" Width="*" />
+                <DataGridTextColumn Header="Họ tên" Binding="{Binding Fullname}" Width="*" />
+                <DataGridTextColumn Header="Role" Binding="{Binding RoleName}" Width="*" />
+                <DataGridTextColumn Header="Số điện thoại" Binding="{Binding PhoneNumber}" Width="*" />
+                <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="*" />
+                <DataGridTextColumn Header="Phòng ban" Binding="{Binding DepartmentName}" Width="*" />
+                <DataGridTextColumn Header="Vị trí" Binding="{Binding PositionName}" Width="*" />
+                <DataGridTextColumn Header="Lương cơ bản" Binding="{Binding BasicSalary}" Width="*" />
+                <DataGridTextColumn Header="Ảnh" Binding="{Binding ImageUrl}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddUserBtn" Content="Thêm người dùng" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="190" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="CreateUser" FontWeight="Bold"/>

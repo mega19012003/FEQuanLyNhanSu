@@ -11,10 +11,10 @@
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock Text="Đây là trang chức vụ" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="PositionDtaGrid" Margin="20,100,20,50" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
+        <DataGrid x:Name="PositionDtaGrid" Margin="20,100,20,50" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                
-                <DataGridTemplateColumn Header="Hành động" Width="150">
+
+                <DataGridTemplateColumn Header="Hành động" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -24,6 +24,9 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
+                <DataGridTextColumn Header="Tên chức vụ" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Tên phòng ban" Binding="{Binding DepartmentName}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddPositionBtn" Content="Thêm chức vụ" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="150" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPosition" FontWeight="Bold"/>

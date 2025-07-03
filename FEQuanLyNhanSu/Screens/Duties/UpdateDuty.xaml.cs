@@ -23,5 +23,14 @@ namespace FEQuanLyNhanSu.Screens.Duties
         {
             InitializeComponent();
         }
+
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            {
+                return;
+            }
+            this.Close();
+        }
     }
 }

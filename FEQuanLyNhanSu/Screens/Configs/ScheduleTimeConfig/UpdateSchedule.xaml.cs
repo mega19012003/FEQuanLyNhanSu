@@ -1,7 +1,9 @@
 ﻿using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.ApiResonses;
 using FEQuanLyNhanSu.Models.Configs;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,6 +79,18 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
 
+                if(int.Parse(txtAllowTime.Text) >= 60 || int.Parse(txtAllowTime.Text) < 1)
+                {
+                    MessageBox.Show("Thời gian cho phép checkin phải nằm trong khoảng từ 1-60 phút", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                if (int.Parse(txtLateMinutes.Text) >= 60 || int.Parse(txtLateMinutes.Text) < 1)
+                {
+                    MessageBox.Show("Thời gian cho phép trễ phải nằm trong khoảng từ 1-60 phút", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 var updated = new ScheduleTime
                 {
                     StartTimeMorning = TimeOnly.Parse(txtStatTimeMorning.Text),
@@ -102,8 +116,10 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                 }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Lỗi khi cập nhật: {error}");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    var errorObj = JsonConvert.DeserializeObject<ApiResponse>(errorContent);
+
+                    MessageBox.Show($"Lỗi khi cập nhật: {errorObj?.Data}");
                 }
             }
             catch (Exception ex)

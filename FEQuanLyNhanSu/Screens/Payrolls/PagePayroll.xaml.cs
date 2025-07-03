@@ -57,22 +57,6 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private void AddPayroll(object sender, RoutedEventArgs e)
-        {
-            var window = new CreatePayroll();
-            window.Show();
-        }
-
-        private async void btnNextPage_Click(object sender, RoutedEventArgs e)
-        {
-            await _paginationHelper.NextPageAsync();
-        }
-
-        private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
-        {
-            await _paginationHelper.PrevPageAsync();
-        }
-
         private async void txtTextChanged(object sender, TextChangedEventArgs e)
         {
             var token = Application.Current.Properties["Token"].ToString();
@@ -85,6 +69,51 @@ namespace FEQuanLyNhanSu
                 var result = await SearchHelper.SearchAsync<Payrolls.PayrollResultDto>("api/Payroll", keyword, token);
                 PayrollDtaGrid.ItemsSource = result;
             }
+        }
+
+        private void AddPayroll(object sender, RoutedEventArgs e)
+        {
+            var window = new CreatePayroll(LoadPayroll);
+            window.Show();
+        }
+
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid PayrollId)
+            {
+                var result = MessageBox.Show("Bạn có chắc chắn muốn xóa bảng lương này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    _ = DeleteAsync(PayrollId);
+                }
+            }
+        }
+        private async Task DeleteAsync(Guid PayrollId)
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll/" + PayrollId;
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await client.DeleteAsync(baseUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Xóa cấu hình IP thành công.");
+                _paginationHelper.RefreshAsync();
+            }
+            else
+            {
+                MessageBox.Show("Không thể xóa cấu hình IP. Vui lòng thử lại sau.");
+            }
+        }
+
+        private async void btnNextPage_Click(object sender, RoutedEventArgs e)
+        {
+            await _paginationHelper.NextPageAsync();
+        }
+        private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
+        {
+            await _paginationHelper.PrevPageAsync();
         }
     }
 }

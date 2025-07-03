@@ -75,5 +75,15 @@ namespace FEQuanLyNhanSu
                 CheckinDtaGrid.ItemsSource = result;
             }
         }
+
+        private void AddCheckinBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddCheckouBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

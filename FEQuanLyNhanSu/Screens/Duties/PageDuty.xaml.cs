@@ -71,5 +71,11 @@ namespace FEQuanLyNhanSu
             await _paginationHelper.NextPageAsync();
 
         }
+
+        private void AdDutyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateDuty();
+            window.Show();
+        }
     }
 }

@@ -31,33 +31,40 @@ namespace FEQuanLyNhanSu.Screens.Configs
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
-            string ipAddress = txtIP.Text.Trim();
-            if (string.IsNullOrWhiteSpace(ipAddress))
+            try
             {
-                MessageBox.Show("Vui lòng nhập địa chỉ IP.");
-                return;
+                string ipAddress = txtIP.Text.Trim();
+                if (string.IsNullOrWhiteSpace(ipAddress))
+                {
+                    MessageBox.Show("Vui lòng nhập địa chỉ IP.");
+                    return;
+                }
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+                var query = $"IPAddress={Uri.EscapeDataString(ipAddress)}";
+                var url = $"{baseUrl}/api/AllowedIP?{query}";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.PostAsync(url, null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Tạo cấu hình IP thành công.");
+                    _onIPConfigCreated?.Invoke();
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Tạo cấu hình IP thất bại.");
+                }
             }
-
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var query = $"IPAddress={Uri.EscapeDataString(ipAddress)}";
-            var url = $"{baseUrl}/api/AllowedIP?{query}";
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.PostAsync(url, null);
-
-            if (response.IsSuccessStatusCode)
+            catch (Exception ex)
             {
-                MessageBox.Show("Tạo cấu hình IP thành công.");
-                _onIPConfigCreated?.Invoke(); 
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Tạo cấu hình IP thất bại.");
+                MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
             }
         }
 

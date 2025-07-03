@@ -3,10 +3,80 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Duties"
+        xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Duties" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="CreateDuty" Height="450" Width="800">
-    <Grid>
-        
+        Title="CreateDuty" Height="550" Width="530">
+    <Grid Background="#FFCCE2F1" Margin="0,0,0,-6">
+        <Label x:Name="lblCreateUser" 
+               Content="Tạo công việc mới" 
+               FontSize="20" 
+               HorizontalAlignment="Center" 
+               VerticalAlignment="Top" 
+               Margin="0,20,0,10" />
+
+        <Grid Margin="40,80,40,0" VerticalAlignment="Top" Height="452">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="150"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Row="0" Grid.Column="0" Text="Tên công việc" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5"/>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtUsername"
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
+
+            <TextBox Grid.Row="1" Grid.Column="0" Text="Ngày bắt đầu" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5"/>
+            <xctk:DateTimePicker Grid.Row="1" Grid.Column="1" x:Name="dpStartDate"
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" HorizontalContentAlignment="Left"/>
+
+            <TextBox Grid.Row="2" Grid.Column="0" Text="Ngày kết thúc" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5"/>
+            <xctk:DateTimePicker Grid.Row="2" Grid.Column="1" x:Name="dpEndDate"
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" HorizontalContentAlignment="Left"/>
+
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Tên người làm" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbEmployee"
+              FontSize="15" Height="41" Margin="0,5" Padding="10,0"
+              IsEditable="True"
+              StaysOpenOnEdit="True"
+              IsTextSearchEnabled="False"
+              KeyUp="cbEmployee_KeyUp"
+              DisplayMemberPath="Fullname"
+              SelectedValuePath="UserId"/>
+
+            <TextBox Grid.Row="4" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,10"/>
+            <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtDescription"
+                     FontSize="15" Margin="0,5,0,10" Padding="10,0" TextWrapping="Wrap"/>
+
+            <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal"
+                        HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
+                        Margin="10,0" FontSize="15" Click="btnExit_Click"/>
+                <Button x:Name="btnCreate" Content="Thêm" Width="150" Height="41"
+                        Margin="10,0" FontSize="15" Background="#FF66A8D5"
+                        Foreground="White" FontWeight="Bold" Click="btnCreate_Click"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

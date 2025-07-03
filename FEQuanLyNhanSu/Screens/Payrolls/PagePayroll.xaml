@@ -13,19 +13,25 @@
          FontSize="24"
          HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="PayrollDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center">
+        <DataGrid x:Name="PayrollDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
 
                 <DataGridTemplateColumn Header="Hành động">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>
-                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2"/>
+                                <!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>-->
+                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding Id}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
+                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Lương 1 tháng" Binding="{Binding Salary}" Width="*" />
+                <DataGridTextColumn Header="Ngày chấm công" Binding="{Binding CreatedDate}" Width="*" />
+                <DataGridTextColumn Header="Nội dung" Binding="{Binding Note}" Width="*" />
+                <DataGridTextColumn Header="Số ngày đi làm" Binding="{Binding DaysWorked}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddPayrollBtn" Content="Thêm chấm công" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPayroll" FontWeight="Bold"/>

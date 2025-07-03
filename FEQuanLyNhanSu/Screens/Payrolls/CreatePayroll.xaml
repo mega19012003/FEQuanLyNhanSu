@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Payrolls"
         mc:Ignorable="d"
-        Title="CreatePayroll" Height="430" Width="600">
-    <Grid Background="#FFCCE2F1">
-        <Label x:Name="lblCreateUser" Content="Tạo phòng ban mới" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
+        Title="CreatePayroll" Height="550" Width="600">
+    <Grid Background="#FFCCE2F1" Margin="0,0,0,-6">
+        <Label x:Name="lblCreateUser" Content="Thêm chấm công mới" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
 
         <!-- FORM INPUT -->
-        <Grid Margin="40,80,40,0">
+        <Grid Margin="40,80,40,-121">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -21,62 +21,70 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="0" Text="Name" IsReadOnly="True" Background="#FF99C5E3" Foreground="White" FontSize="15" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtName" FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
+            <TextBox Grid.Row="0" Grid.Column="0" Text="Nhân viên" IsReadOnly="True" Background="#FF99C5E3" Foreground="White" FontSize="15" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <StackPanel Grid.Row="0" Grid.Column="1">
+                <TextBox x:Name="txtSearchUser" FontSize="15" Height="30" Margin="0,0,0,5" 
+             TextChanged="txtSearchUser_TextChanged"/>
+                <ListBox x:Name="lstUsers" Height="100" DisplayMemberPath="Name" 
+             SelectionChanged="lstUsers_SelectionChanged" Foreground="Red"/>
+            </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal"
                     HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                     Margin="10,0" FontSize="15" Click="btnExit_Click"/>
-                <Button x:Name="btnCreate" Content="Thêm phòng ban mới" Width="170" Height="41"
+                <Button x:Name="btnCreate" Content="Tính chấm công" Width="170" Height="41"
                     Margin="10,0" FontSize="15" Background="#FF66A8D5"
-                    Foreground="White" FontWeight="Bold"/>
+                    Foreground="White" FontWeight="Bold" Click="btnCreate_Click"/>
             </StackPanel>
         </Grid>
 
         <!-- THÔNG TIN PHỤ: CHIA LƯỚI 2 CỘT -->
-        <Grid Margin="50,220,50,20">
+        <Grid Margin="150,220,50,36">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
 
-            <!-- Cột trái -->
-            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="10,5">
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10,5">
                 <Label Content="Payroll Id:" FontSize="15"/>
-                <Label x:Name="txtId" Content="....." FontSize="15"/>
+                <Label x:Name="lbltId" Content="....." FontSize="15"/>
             </StackPanel>
-            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="10,5">
-                <Label Content="Note:" FontSize="15"/>
-                <Label x:Name="txtNote" Content="....." FontSize="15"/>
+            
+            <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="10,5">
+                <Label Content="Ngày tạo:" FontSize="15"/>
+                <Label x:Name="lblCreatedDate" Content="....." FontSize="15"/>
             </StackPanel>
-            <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="10,5">
-                <Label Content="Salary:" FontSize="15"/>
-                <Label x:Name="txtSalary" Content="....." FontSize="15"/>
+            
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10,5">
+                <Label Content="Lương:" FontSize="15"/>
+                <Label x:Name="lblSalary" Content="....." FontSize="15"/>
             </StackPanel>
-            <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="10,5">
-                <Label Content="Date created:" FontSize="15"/>
-                <Label x:Name="txtCreatedDate" Content="....." FontSize="15"/>
+            
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,5">
+                <Label Content="Nội dung: " FontSize="15"/>
+                <Label x:Name="lblNote" Content="....." FontSize="15"/>
             </StackPanel>
 
-            <!-- Cột phải -->
-            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="10,5">
-                <Label Content="User Id:" FontSize="15"/>
-                <Label x:Name="txtUserId" Content="....." FontSize="15"/>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,5">
+                <Label Content="Họ tên:" FontSize="15"/>
+                <Label x:Name="lblFullname" Content="....." FontSize="15"/>
             </StackPanel>
-            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="10,5">
-                <Label Content="Fullname:" FontSize="15"/>
-                <Label x:Name="txtFullname" Content="....." FontSize="15"/>
+            
+            <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="10,5">
+                <Label Content="Số ngày làm:" FontSize="15"/>
+                <Label x:Name="lblDayWorked" Content="......" FontSize="15"/>
             </StackPanel>
-            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="10,5">
-                <Label Content="Day worked:" FontSize="15"/>
-                <Label x:Name="txtDayWorked" Content="......" FontSize="15"/>
+            
+            <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="10,5">
+                <Label x:Name="lblErrorText" FontSize="15" Foreground="Red"/>
+                <Label x:Name="lblError" FontSize="15" Foreground="Red"/>
             </StackPanel>
         </Grid>
     </Grid>

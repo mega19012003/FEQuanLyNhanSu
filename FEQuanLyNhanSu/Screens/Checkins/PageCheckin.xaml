@@ -11,10 +11,10 @@
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock Text="Đây là trang checkin" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="CheckinDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center">
+        <DataGrid x:Name="CheckinDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
 
-                <DataGridTemplateColumn Header="Hành động">
+                <DataGridTemplateColumn Header="Hành động" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -24,9 +24,20 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Thời gian Checkin sáng" Binding="{Binding CheckinMorning}" Width="*" />
+                <DataGridTextColumn Header="Thời gian Checkout sáng" Binding="{Binding CheckoutMorning}" Width="*" />
+                <DataGridTextColumn Header="Thời gian Checkin chiều" Binding="{Binding CheckinAfternoon}" Width="*" />
+                <DataGridTextColumn Header="Thời gian Checkin chiều" Binding="{Binding CheckoutAfternoon}" Width="*" />
+                <DataGridTextColumn Header="Trạng thái Checkin sáng" Binding="{Binding CheckinMorningStatus}" Width="*" />
+                <DataGridTextColumn Header="Trạng thái Checkout sáng" Binding="{Binding CheckoutMorningStatus}" Width="*" />
+                <DataGridTextColumn Header="Trạng thái Checkin chiều" Binding="{Binding CheckinAfternoonStatus}" Width="*" />
+                <DataGridTextColumn Header="Trạng thái Checkin chiều" Binding="{Binding CheckoutAfternoonStatus}" Width="*" />
+                <DataGridTextColumn Header="Lương 1 ngày" Binding="{Binding SalaryPerDay}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="AddPositionBtn" Content="Thêm checkin" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="150" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold"/>
+        <Button x:Name="AddCheckinBtn" Content="Checkin" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="150" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="AddCheckinBtn_Click"/>
+        <Button x:Name="AddCheckouBtn" Content="Checkout" HorizontalAlignment="Left" Height="35" Margin="175,60,0,0" VerticalAlignment="Top" Width="150" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="AddCheckouBtn_Click"/>
         <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
