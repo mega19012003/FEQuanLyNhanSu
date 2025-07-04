@@ -35,6 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Screens\Duties\CreateDetail.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Screens\Duties\UpdateDetail.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

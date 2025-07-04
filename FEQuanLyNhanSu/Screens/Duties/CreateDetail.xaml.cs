@@ -22,19 +22,19 @@ using static FEQuanLyNhanSu.Services.UserService.Users;
 namespace FEQuanLyNhanSu.Screens.Duties
 {
     /// <summary>
-    /// Interaction logic for UpdateDuty.xaml
+    /// Interaction logic for CreateDuty.xaml
     /// </summary>
-    public partial class UpdateDetail : Window
+    public partial class CreateDetail : Window
     {
-        private Guid _detailId;
-        private readonly Action _onDetailUpdated;
-        public UpdateDetail(Guid detailId, Action onDetailUpdated)
+        private Guid _dutyId;
+        private readonly Action _onDutyUpdated;
+        public CreateDetail(Action onDutyUpdated, Guid dutyId)
         {
             InitializeComponent();
             LoadUsers();
-            _detailId = detailId;
-            _onDetailUpdated = onDetailUpdated;
-            _ = LoadDetailAsync();
+            _onDutyUpdated = onDutyUpdated;
+            _dutyId = dutyId;
+            _ = LoadDutyAsync();
         }
 
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
@@ -66,35 +66,36 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 cbEmployee.ItemsSource = null;
             }
         }
+
         private HttpClient CreateAuthorizedClient(string token)
         {
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             return client;
         }
-        private async Task LoadDetailAsync()
+        private async Task LoadDutyAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var url = $"{baseUrl}/api/Duty/detail/{_detailId}";
-            //MessageBox.Show("Url: " + url);
+            var url = $"{baseUrl}/api/Duty/{_dutyId}";
+
             using var client = CreateAuthorizedClient(token);
 
             var response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<DutyDetailResultDto>>(json);
+                var result = JsonConvert.DeserializeObject<ApiResponse<DutyResultDto>>(json);
 
-                cbEmployee.Text = result.Data.Name;
-                txtDescription.Text = result.Data.Description;
+                txtName.Text = result.Data.Name;
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Không thể tải chi tiết thông tin chức vụ. Lỗi: {errorContent}");
+                MessageBox.Show("Không thể tải thông tin chức vụ.");
             }
         }
+
         private async Task LoadUsers()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -118,51 +119,62 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
         }
 
-        // Update
-        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
+        private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
-            if (cbEmployee.SelectedItem == null)
+            try
             {
-                MessageBox.Show("Vui lòng chọn nhân viên.");
-                return;
+                if (cbEmployee.Text == null || string.IsNullOrWhiteSpace(txtDescription.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập đầy đủ thông tin");
+                    return;
+                }
+                var selectedUser = cbEmployee.SelectedItem as UserResultDto;
+
+                var duty = new
+                {
+                    id = _dutyId,
+                    dutyDetails = new[]
+                    {
+                        new {
+                            userId = selectedUser.UserId,
+                            description = txtDescription.Text?.Trim()
+                        }
+                    }
+                };
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+
+                var json = JsonConvert.SerializeObject(duty);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.PostAsync($"{baseUrl}/api/Duty/DutyDetail", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Tạo thêm chi tiết công việc thành công!");
+                    _onDutyUpdated?.Invoke();
+                    this.Close();
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Tạo thất bại: {error}");
+                }
             }
-            var selectedUser = cbEmployee.SelectedItem as UserResultDto;
-            if (selectedUser == null)
+            catch (Exception ex)
             {
-                MessageBox.Show("Vui lòng chọn nhân viên hợp lệ.");
-                return;
-            }
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty/DutyDetail";
-            var dutyDetail = new DutyDetailResultDto
-            {
-                DutyDetailId = _detailId,
-                UserId = selectedUser.UserId,
-                Description = txtDescription.Text.Trim()
-            };
-            using var client = CreateAuthorizedClient(token);
-            var content = new StringContent(JsonConvert.SerializeObject(dutyDetail), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync(baseUrl, content);
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Cập nhật thông tin chức vụ thành công.");
-                _onDetailUpdated?.Invoke();
-                this.Close();
-            }
-            else
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorContent}");
+                MessageBox.Show($"Lỗi: {ex.Message}");
             }
         }
 
-        // Exit
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            {
                 return;
-            }
             this.Close();
         }
     }

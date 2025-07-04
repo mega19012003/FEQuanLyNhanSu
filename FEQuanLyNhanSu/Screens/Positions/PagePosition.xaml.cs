@@ -87,7 +87,6 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-
         private async Task DeletePositionAsync(Guid positionId)
         {
             var token = Application.Current.Properties["Token"]?.ToString();

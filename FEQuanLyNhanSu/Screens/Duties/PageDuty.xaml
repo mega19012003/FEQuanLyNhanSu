@@ -13,22 +13,23 @@
         <TextBlock Text="Đây là trang công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Hành động" Width="100">
+                <DataGridTemplateColumn Header="Hành động" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" />
-                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" />
+                                <Button x:Name="btnAddDetail" Content="Thêm" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnAddDetail_Click" Tag="{Binding Id}" />
+                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnDutyUpdate_Click" Tag="{Binding Id}" />
+                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDutyDelete_Click" Tag="{Binding Id}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Id" Binding="{Binding DutyId}" Width="*" />
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
                 <DataGridTextColumn Header="Tên công việc" Binding="{Binding Name}" Width="*" />
                 <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}" Width="*" />
                 <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}" Width="*" />
-                <DataGridTextColumn Header="Người tạo" Binding="{Binding EmployeeName}" Width="*" />
-                <DataGridTextColumn Header="Đã hoàn thành" Binding="{Binding Description}" Width="*" />
+                <DataGridTextColumn Header="Người tạo" Binding="{Binding AssignedBy}" Width="*" />
+                <DataGridCheckBoxColumn Header="Đã hoàn thành" Binding="{Binding IsCompleted}" Width="*" />
             </DataGrid.Columns>
  
             <DataGrid.RowDetailsTemplate>
@@ -43,28 +44,27 @@
                       HorizontalAlignment="Stretch"
                       Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Hành động" Width="100">
+                                <DataGridTemplateColumn Header="Hành động" Width="200">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" />
-                                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" />
+                                                <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click" Tag="{Binding DutyDetailId}" />
+                                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" Tag="{Binding DutyDetailId}"/>
+                                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" Tag="{Binding DutyDetailId}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="DutyDetailId" Binding="{Binding DutyDetailId}" Width="*" />
-                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
-                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
-                                <DataGridCheckBoxColumn Header="IsCompleted" Binding="{Binding IsCompleted}" Width="*" />
+                                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
+                                <DataGridTextColumn Header="Mô tả" Binding="{Binding Description}" Width="*" />
+                                <DataGridCheckBoxColumn Header="Đã hoàn thành" Binding="{Binding IsCompleted}" Width="*" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
-
         </DataGrid>
-
         <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
             <Button x:Name="btnPrevPage" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPage_Click"/>
             <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
@@ -74,9 +74,7 @@
         <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <!-- Cột cho icon -->
                 <ColumnDefinition Width="*" />
-                <!-- Cột cho TextBox -->
             </Grid.ColumnDefinitions>
 
             <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />

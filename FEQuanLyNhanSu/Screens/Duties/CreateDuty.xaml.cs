@@ -24,10 +24,12 @@ namespace FEQuanLyNhanSu.Screens.Duties
     /// </summary>
     public partial class CreateDuty : Window
     {
-        public CreateDuty()
+        private readonly Action _onDutyCreated;
+        public CreateDuty(Action onDutyCreated)
         {
             InitializeComponent();
             LoadUsers();
+            _onDutyCreated = onDutyCreated;
         }
 
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
@@ -102,15 +104,15 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 var duty = new
                 {
                     name = txtUsername.Text.Trim(),
-                    startDate = dpStartDate.Value, 
+                    startDate = dpStartDate.Value,
                     endDate = dpEndDate.Value,
                     dutyDetails = new[]
                     {
-                new {
-                    userId = selectedUser.UserId,
-                    description = txtDescription.Text?.Trim()
-                }
-            }
+                        new {
+                            userId = selectedUser.UserId,
+                            description = txtDescription.Text?.Trim()
+                        }
+                    }
                 };
 
                 var token = Application.Current.Properties["Token"]?.ToString();
@@ -141,8 +143,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 MessageBox.Show($"Lỗi: {ex.Message}");
             }
         }
-
-
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {

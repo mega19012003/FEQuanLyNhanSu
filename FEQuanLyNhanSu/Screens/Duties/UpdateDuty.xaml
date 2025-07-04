@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Duties" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="UpdateDuty"  Height="450" Width="750">
+        Title="UpdateDuty"  Height="350" Width="530">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" 
                Content="Cập nhật công việc" 
@@ -14,10 +14,8 @@
                VerticalAlignment="Top" 
                Margin="0,20,0,10" />
 
-        <Grid Margin="40,80,40,20" VerticalAlignment="Top">
+        <Grid Margin="40,80,40,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -34,35 +32,29 @@
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5"/>
             <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtUsername"
-                     FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
             <TextBox Grid.Row="1" Grid.Column="0" Text="Ngày bắt đầu" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5"/>
             <xctk:DateTimePicker Grid.Row="1" Grid.Column="1" x:Name="dpStartDate"
-                     FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" HorizontalContentAlignment="Left"/>
 
             <TextBox Grid.Row="2" Grid.Column="0" Text="Ngày kết thúc" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5"/>
             <xctk:DateTimePicker Grid.Row="2" Grid.Column="1" x:Name="dpEndDate"
-                     FontSize="15" Height="41" Margin="0,5" Padding="10,0"/>
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" HorizontalContentAlignment="Left"/>
 
-            <TextBox Grid.Row="3" Grid.Column="0" Text="Hoàn thành công việc" IsReadOnly="True"
-                     Background="#FF99C5E3" Foreground="White" FontSize="15"
-                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
-                     Height="41" Margin="0,5"/>
-            <RadioButton  Grid.Row="3" Grid.Column="1" Content="RadioButton" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Top"/>
-
-            <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal"
                         HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Click="btnExit_Click"/>
-                <Button x:Name="btnCreate" Content="Thêm công việc mới" Width="150" Height="41"
+                <Button x:Name="btnCreate" Content="Cập nhật" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Background="#FF66A8D5"
-                        Foreground="White" FontWeight="Bold"/>
+                        Foreground="White" FontWeight="Bold" Click="btnUpdate_Click"/>
             </StackPanel>
             
         </Grid>
