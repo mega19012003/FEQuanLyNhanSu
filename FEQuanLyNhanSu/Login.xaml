@@ -16,32 +16,42 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="0" Grid.Column="0" Content="Username" FontSize="20" Foreground="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold"/>
-            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtUsername" FontSize="20" Height="41" Margin="0,5,50,5" Padding="10,0" VerticalContentAlignment="Center"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" x:Name="txtUsername" FontSize="20" Height="41" Margin="0,5,100,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
             <Label Grid.Row="1" Grid.Column="0" Content="Password" FontSize="20" Foreground="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold"/>
-            <PasswordBox x:Name="txtPassword" Grid.Row="1" Grid.Column="1" FontSize="20" Height="41" Margin="0,5,50,5" Padding="10,0" VerticalContentAlignment="Center"/>
-
+            <PasswordBox x:Name="txtPassword" Grid.Row="1" Grid.Column="1" FontSize="20" Height="41" Margin="0,5,0,5" Padding="10,0" VerticalContentAlignment="Center"/>
+            <TextBox x:Name="txtPasswordVisible" Grid.Row="1" Grid.Column="1" FontSize="20" Height="41" Margin="0,5,0,5" Padding="10,0" VerticalContentAlignment="Center" Visibility="Collapsed"/>
+            <Button Content="👁" Click="TogglePasswordVisibility" Grid.Row="1" Grid.Column="2" FontSize="35" HorizontalAlignment="Right" Width="100" HorizontalContentAlignment="Center" >
+                <Button.Background>
+                    <SolidColorBrush Color="#FFDDDDDD" Opacity="0"/>
+                </Button.Background>
+                <Button.BorderBrush>
+                    <SolidColorBrush Color="White" Opacity="0"/>
+                </Button.BorderBrush>
+            </Button>
             <!-- Loading -->
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
                 <ProgressBar x:Name="loadingBar" Width="100" Height="10" IsIndeterminate="True" Visibility="Collapsed"/>
                 <TextBlock x:Name="txtLoading" Text="Đang đăng nhập..." Visibility="Collapsed" Margin="10,0" Foreground="White"/>
             </StackPanel>
 
-            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41" Margin="10,0" FontSize="15" Click="btnExit_Click" FontWeight="Bold"/>
                 <Button x:Name="btnCreate" Content="Đăng nhập" Width="170" Height="41" Margin="10,0" FontSize="15"
                     Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="btnLogin_Click"/>
             </StackPanel>
+
         </Grid>
+
     </Grid>
 
 </Window>

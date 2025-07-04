@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <None Remove="calendar.png" />
+    <None Remove="eye.png" />
+    <None Remove="hidden.png" />
     <None Remove="images.png" />
   </ItemGroup>
 
@@ -28,6 +30,8 @@
   <ItemGroup>
     <Resource Include="Assets\calendar.png" />
     <Resource Include="Assets\images.png" />
+    <Resource Include="Assets\eye.png" />
+    <Resource Include="Assets\hidden.png" />
   </ItemGroup>
 
   <ItemGroup>

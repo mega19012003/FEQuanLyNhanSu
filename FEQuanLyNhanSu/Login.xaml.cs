@@ -112,5 +112,24 @@ namespace FEQuanLyNhanSu
                 txtLoading.Visibility = Visibility.Collapsed;
             }
         }
+
+
+        private bool _isPasswordVisible = false;
+        private void TogglePasswordVisibility(object sender, RoutedEventArgs e)
+        {
+            _isPasswordVisible = !_isPasswordVisible;
+            if (_isPasswordVisible)
+            {
+                txtPasswordVisible.Text = txtPassword.Password;
+                txtPasswordVisible.Visibility = Visibility.Visible;
+                txtPassword.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                txtPassword.Password = txtPasswordVisible.Text;
+                txtPasswordVisible.Visibility = Visibility.Collapsed;
+                txtPassword.Visibility = Visibility.Visible;
+            }
+        }
     }
 }
