@@ -19,10 +19,16 @@ namespace FEQuanLyNhanSu.Screens.Users
     /// </summary>
     public partial class UpdateUser : Window
     {
-        public UpdateUser()
+        private Guid _userId;
+        private Action _reloadAction;
+        public UpdateUser(Guid userId, Action reloadAction)
         {
             InitializeComponent();
+            _userId = userId;
+            _reloadAction = reloadAction;
         }
+
+
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {

@@ -1,5 +1,6 @@
 ﻿using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Screens.Positions;
 using FEQuanLyNhanSu.Screens.Users;
 using FEQuanLyNhanSu.Services.UserService;
 using Newtonsoft.Json;
@@ -78,6 +79,65 @@ namespace FEQuanLyNhanSu
             }
         }
 
+        /// Create
+        private void CreateUser(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateUser();
+            window.Show();
+        }
+
+        /// Update
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid userId)
+            {
+                var editWindow = new UpdateUser(userId, LoadUser);
+                editWindow.ShowDialog();
+            }
+        }
+
+        /// Delete 
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid positionId)
+            {
+                var result = MessageBox.Show("Bạn có chắc chắn muốn xóa chức vụ này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    _ = DeleteUserAsync(positionId);
+                }
+            }
+        }
+        private async Task DeleteUserAsync(Guid userId)
+        {
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/" + userId;
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    var response = await client.DeleteAsync("");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Xóa người dùng thành công.");
+                        LoadUser();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Lỗi khi xóa người dùng: {response.ReasonPhrase}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi xóa người dùng: {ex.Message}");
+            }
+        }
+
 
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {
@@ -89,10 +149,6 @@ namespace FEQuanLyNhanSu
             await _paginationHelper.NextPageAsync();
         }
 
-        private void CreateUser(object sender, RoutedEventArgs e)
-        {
-            var window = new CreateUser();
-            window.Show();
-        }
+
     }
 }

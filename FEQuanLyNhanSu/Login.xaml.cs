@@ -47,10 +47,18 @@ namespace FEQuanLyNhanSu
 
             try
             {
+                string password;
+                if (txtPassword.Visibility == Visibility.Collapsed)
+                {
+                    password = txtPasswordVisible.Text;
+                }
+                else  {
+                    password = txtPassword.Password;
+                }
                 var loginDto = new
                 {
                     Username = txtUsername.Text,
-                    Password = txtPassword.Password
+                    Password = password
                 };
 
                 using var client = new HttpClient();
@@ -123,6 +131,7 @@ namespace FEQuanLyNhanSu
                 txtPasswordVisible.Text = txtPassword.Password;
                 txtPasswordVisible.Visibility = Visibility.Visible;
                 txtPassword.Visibility = Visibility.Collapsed;
+                txtPassword.Password = txtPasswordVisible.Text;
             }
             else
             {
