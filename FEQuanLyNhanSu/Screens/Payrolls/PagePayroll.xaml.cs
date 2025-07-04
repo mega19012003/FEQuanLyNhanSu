@@ -98,12 +98,12 @@ namespace FEQuanLyNhanSu
             var response = await client.DeleteAsync(baseUrl);
             if (response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Xóa cấu hình IP thành công.");
+                MessageBox.Show("Xóa cấu  bảng lương thành công.");
                 _paginationHelper.RefreshAsync();
             }
             else
             {
-                MessageBox.Show("Không thể xóa cấu hình IP. Vui lòng thử lại sau.");
+                MessageBox.Show("Không thể xóa bảng lương. Vui lòng thử lại sau.");
             }
         }
 
