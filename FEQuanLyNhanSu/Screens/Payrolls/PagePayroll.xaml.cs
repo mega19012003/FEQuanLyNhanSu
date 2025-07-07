@@ -32,7 +32,23 @@ namespace FEQuanLyNhanSu
         public PagePayroll()
         {
             InitializeComponent();
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadPayroll();
+        }
+
+        private void HandleUI(string role)
+        {
+            switch (role)
+            {
+                case "Administrator":
+                    break; 
+                case "Manager":
+                    break;
+                case "Employee":
+                    AddPayrollBtn.Visibility = Visibility.Collapsed;
+                    DtaGridAction.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
 
         private void LoadPayroll()

@@ -4,16 +4,20 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:FEQuanLyNhanSu"
+      xmlns:helpers="clr-namespace:FEQuanLyNhanSu.Helpers"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PageOption4">
+    <Page.Resources>
+        <helpers:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter"/>
+    </Page.Resources>
 
     <Grid Background="White" Margin="0,-3,0,0">
         
         <TextBlock Text="Đây là trang công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Hành động" Width="150">
+                <DataGridTemplateColumn x:Name="DtaGridActionDuty" Header="Hành động" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -35,22 +39,20 @@
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <Grid>
-                        <DataGrid ItemsSource="{Binding DutyDetails}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      Margin="20,5,20,5"
-                      ColumnWidth="*"
-                      HeadersVisibility="Column"
-                      HorizontalAlignment="Stretch"
-                      Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
+                        <DataGrid ItemsSource="{Binding DutyDetails}" AutoGenerateColumns="False" IsReadOnly="True" Margin="20,5,20,5" ColumnWidth="*" HeadersVisibility="Column" HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="Hành động" Width="200">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                 <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click" Tag="{Binding DutyDetailId}" />
-                                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" Tag="{Binding DutyDetailId}"/>
-                                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" Tag="{Binding DutyDetailId}"/>
+                                                <Button x:Name="btnUpdateDetail" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" Tag="{Binding DutyDetailId}"
+                                                                Visibility="{Binding Source={x:Static helpers:AppState.CurrentRole}, Converter={StaticResource RoleToVisibilityConverter}}"/>
+
+
+                                                <Button x:Name="btnDeleteDetail" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" Tag="{Binding DutyDetailId}"
+                                                                Visibility="{Binding Source={x:Static helpers:AppState.CurrentRole}, Converter={StaticResource RoleToVisibilityConverter}}"/>
+
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>

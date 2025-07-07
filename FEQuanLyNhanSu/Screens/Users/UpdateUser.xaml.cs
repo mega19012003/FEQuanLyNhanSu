@@ -37,14 +37,31 @@ namespace FEQuanLyNhanSu.Screens.Users
         private string _imagePath;
         public UpdateUser(Guid userId, Action reloadAction)
         {
-    
+            var role = Application.Current.Properties["UserRole"]?.ToString();
             InitializeComponent();
+            HandleUI(role);
             LoadDepartments();
             LoadPositions();
             LoadRoles();
             _userId = userId;
             _reloadAction = reloadAction;
             _ = LoadUserAsync();
+        }
+
+        private void HandleUI(string role)
+        {
+            switch(role)
+            {
+                case "Administrator":
+                    break;
+                case "Manager":
+                    cmbRole.Visibility = Visibility.Collapsed;
+                    txtboxRole.Visibility = Visibility.Collapsed;
+                    cbDepartment.Visibility = Visibility.Collapsed;
+                    txtboxDepartment.Visibility = Visibility.Collapsed;
+                    break;
+
+            }
         }
 
         private HttpClient CreateAuthorizedClient(string token)

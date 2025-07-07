@@ -48,12 +48,11 @@ namespace FEQuanLyNhanSu
                     break; 
 
                 case "Manager":
-                    foreach (var control in new[] { btnConfig, btnDepartment})
-                        control.Visibility = Visibility.Collapsed;
+                    btnDepartment.Visibility = Visibility.Collapsed;
                     break;
 
                 case "Employee":
-                    foreach (var control in new[] { btnDashboard, btnUser, btnConfig, btnDepartment, btnPosition, btnDuty, btnPayroll })
+                    foreach (var control in new[] { /*btnDashboard,*/ btnUser, btnDepartment, btnPosition})
                         control.Visibility = Visibility.Collapsed;
                     break;
             }

@@ -14,8 +14,8 @@
 
         <TabControl Margin="10,70,10,0" VerticalAlignment="Top" Height="466">
             <!--///////////////////////////////////////////////////////////////-->
-            <TabItem Header="Allowed IP">
-                <Grid Background="White">
+            <TabItem x:Name="TabIP" Header="Allowed IP">
+                <Grid x:Name="IPGrid" Background="White">
                     <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
                     <DataGrid x:Name="IPDtaGrid" Margin="10,60,10,55" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
@@ -64,7 +64,7 @@
                     <DataGrid x:Name="ChknDtaGrid" Margin="10,10,10,10" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
                         <DataGrid.Columns>
 
-                            <DataGridTemplateColumn Header="Hành động">
+                            <DataGridTemplateColumn x:Name="DtaGridActionStatus" Header="Hành động">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -89,7 +89,7 @@
                     <DataGrid x:Name="HolidayDtaGrid" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
 
-                            <DataGridTemplateColumn Header="Hành động" Width="150">
+                            <DataGridTemplateColumn x:Name="DtaGridActionHoliday" Header="Hành động" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

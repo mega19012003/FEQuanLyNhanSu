@@ -16,7 +16,7 @@
         <DataGrid x:Name="PayrollDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
 
-                <DataGridTemplateColumn Header="Hành động">
+                <DataGridTemplateColumn x:Name="DtaGridAction" Header="Hành động">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

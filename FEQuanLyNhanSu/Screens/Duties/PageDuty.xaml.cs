@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.Services.UserService.Users;
 
@@ -19,7 +21,24 @@ namespace FEQuanLyNhanSu
         public PageDuty()
         {
             InitializeComponent();
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadDuty();
+        }
+
+        private void HandleUI(string role)
+        {
+            switch (role)
+            {
+                case "Administrator":
+                    break;
+                case "Manager":
+                    break;
+                case "Employee":
+                    AdDutyBtn.Visibility = Visibility.Collapsed;
+                    DtaGridActionDuty.Visibility = Visibility.Collapsed;
+                    //btnDeleteDetail.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
 
         /// Load duty

@@ -39,14 +39,48 @@ namespace FEQuanLyNhanSu
         public PageConfig()
         {
             InitializeComponent();
-            LoadLogStatus();
-            LoadAllowedIPStatus();
-            LoadHolidayConfig();
-            LoadScheduleTime();
+            //MessageBox.Show($"Chào mừng bạn đến với trang cấu hình, vai trò của bạn là: {Application.Current.Properties["UserRole"]?.ToString()}");
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+        }
+
+        private void HandleUI(string role)
+        {
+            switch(role)
+            {
+                case "Administrator":
+                    LoadLogStatus();
+                    LoadAllowedIPStatus();
+                    LoadHolidayConfig();
+                    LoadScheduleTime();
+                    break;
+                case "Manager":
+                    TabIP.Visibility = Visibility.Collapsed;
+                    IPGrid.Visibility = Visibility.Collapsed;
+                    AddHolidayBtn.Visibility = Visibility.Collapsed;
+                    btnUpdateWorkTime.Visibility = Visibility.Collapsed;
+                    DtaGridActionHoliday.Visibility = Visibility.Collapsed;
+                    DtaGridActionStatus.Visibility = Visibility.Collapsed;
+                    LoadLogStatus();
+                    LoadHolidayConfig();
+                    LoadScheduleTime();
+                    break;
+                case "Employee":
+                    TabIP.Visibility = Visibility.Collapsed;
+                    IPGrid.Visibility = Visibility.Collapsed;
+                    AddHolidayBtn.Visibility = Visibility.Collapsed;
+                    btnUpdateWorkTime.Visibility = Visibility.Collapsed;
+                    DtaGridActionHoliday.Visibility = Visibility.Collapsed;
+                    DtaGridActionStatus.Visibility = Visibility.Collapsed;
+                    LoadLogStatus();
+                    LoadHolidayConfig();
+                    LoadScheduleTime();
+                    break;
+            }
         }
 
         // LOAD DATABASE
         /// ///////////////////////////////////////////
+
         private async void LoadLogStatus()
         {
             try
