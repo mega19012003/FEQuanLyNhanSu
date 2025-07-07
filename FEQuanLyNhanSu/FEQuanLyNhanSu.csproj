@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\user.png" />
     <None Remove="calendar.png" />
     <None Remove="eye.png" />
     <None Remove="hidden.png" />
@@ -32,6 +33,7 @@
     <Resource Include="Assets\images.png" />
     <Resource Include="Assets\eye.png" />
     <Resource Include="Assets\hidden.png" />
+    <Resource Include="Assets\user.png" />
   </ItemGroup>
 
   <ItemGroup>

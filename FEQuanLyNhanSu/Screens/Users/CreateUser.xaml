@@ -79,7 +79,7 @@
 
                 <Button x:Name="btnCreate" Content="Thêm User mới" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Background="#FF66A8D5"
-                        Foreground="White" FontWeight="Bold"/>
+                        Foreground="White" FontWeight="Bold" Click="btnCreate_Click"/>
             </StackPanel>
         </Grid>
     </Grid>

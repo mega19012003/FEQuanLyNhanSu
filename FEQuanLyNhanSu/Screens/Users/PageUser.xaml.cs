@@ -139,6 +139,7 @@ namespace FEQuanLyNhanSu
         }
 
 
+        /// Pagination
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.PrevPageAsync();
@@ -148,7 +149,5 @@ namespace FEQuanLyNhanSu
         {
             await _paginationHelper.NextPageAsync();
         }
-
-
     }
 }
