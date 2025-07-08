@@ -121,12 +121,12 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
                     _onHolidayUpdated?.Invoke(apiResponse.Data);
                 }
 
-                MessageBox.Show("Tạo phòng ban thành công.");
+                MessageBox.Show("Cập nhật ngày lễ thành công.");
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Tạo phòng ban thất bại.");
+                MessageBox.Show("Cập nhật ngày lễ thất bại.");
             }
         }
 

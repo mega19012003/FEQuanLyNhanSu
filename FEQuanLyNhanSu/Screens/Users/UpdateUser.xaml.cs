@@ -286,7 +286,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi khi tìm kiếm người dùng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private async void cbPosition_KeyUp(object sender, KeyEventArgs e)

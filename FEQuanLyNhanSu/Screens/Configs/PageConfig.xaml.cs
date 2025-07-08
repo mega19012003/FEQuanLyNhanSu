@@ -391,7 +391,7 @@ namespace FEQuanLyNhanSu
             }
             else
             {
-                MessageBox.Show("Không thể xóa phòng ban. Vui lòng thử lại sau.");
+                MessageBox.Show("Không thể xóa ngày lễ. Vui lòng thử lại sau.");
             }
         }
 

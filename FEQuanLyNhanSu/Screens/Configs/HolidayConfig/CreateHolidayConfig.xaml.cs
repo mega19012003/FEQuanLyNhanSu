@@ -96,12 +96,12 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
                     _onHolidayCreated?.Invoke(apiResponse.Data);
                 }
 
-                MessageBox.Show("Tạo phòng ban thành công.");
+                MessageBox.Show("Tạo ngày lễ thành công.");
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Tạo phòng ban thất bại.");
+                MessageBox.Show("Tạo ngày lễ thất bại.");
             }
         }
     }
