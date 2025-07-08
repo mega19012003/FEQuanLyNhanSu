@@ -2,12 +2,14 @@
 using FEQuanLyNhanSu.Helpers;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Positions;
+using FEQuanLyNhanSu.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,7 +20,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.Positions;
+using static FEQuanLyNhanSu.Services.Checkins;
 using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu
@@ -28,11 +32,180 @@ namespace FEQuanLyNhanSu
     /// </summary>
     public partial class PagePosition : Page
     {
-        private PaginationHelper<Positions.PositionResultDto> _paginationHelper;
+        private PaginationHelper<PositionResultDto> _paginationHelper;
+
         public PagePosition()
         {
             InitializeComponent();
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadPosition();
+        }
+
+        private void HandleUI(string Role)
+        {
+            switch(Role)
+            {
+                case "Admin":
+                    _ = LoadDepartments();
+                    break;
+                case "Manager":
+                    cbDepartment.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        } 
+        private void LoadPosition()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+            int pageSize = 20;
+
+            _paginationHelper = new PaginationHelper<PositionResultDto>(
+                baseUrl,
+                pageSize,
+                token,
+                items => PositionDtaGrid.ItemsSource = items,
+                txtPage
+            );
+
+            _ = _paginationHelper.LoadPageAsync(1);
+        }
+
+        private async Task FilterAsync()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+
+            string keyword = txtSearch.Text?.Trim();
+
+            Guid? departmentId = null;
+            string departmentText = cbDepartment.Text?.Trim();
+
+            if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
+            {
+                departmentId = selectedDept.DepartmentId;
+            }
+            else if (!string.IsNullOrEmpty(departmentText))
+            {
+                var found = (cbDepartment.ItemsSource as IEnumerable<DepartmentResultDto>)
+                    ?.FirstOrDefault(d => d.Name.Equals(departmentText, StringComparison.OrdinalIgnoreCase));
+                if (found != null)
+                {
+                    departmentId = found.DepartmentId;
+                }
+            }
+
+            // MessageBox.Show($"keyword={keyword}\ndepartmentId={departmentId}");
+
+            var items = await SearchAndFilterPositionsAsync(
+                baseUrl,
+                token,
+                keyword,
+                departmentId
+            );
+
+            PositionDtaGrid.ItemsSource = null;
+            PositionDtaGrid.ItemsSource = items;
+        }
+
+        public static async Task<List<PositionResultDto>> SearchAndFilterPositionsAsync(
+            string baseUrl,
+            string token,
+            string searchKeyword,
+            Guid? departmentId,
+            int pageIndex = 1,
+            int pageSize = 20)
+        {
+            try
+            {
+                var parameters = new List<string>();
+                if (!string.IsNullOrWhiteSpace(searchKeyword))
+                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
+                if (departmentId.HasValue)
+                    parameters.Add($"departmentId={departmentId}");
+                parameters.Add($"pageIndex={pageIndex}");
+                parameters.Add($"pageSize={pageSize}");
+
+                var url = baseUrl + "/api/Position";
+                if (parameters.Any())
+                    url += "?" + string.Join("&", parameters);
+
+                using var client = new HttpClient();
+                if (!string.IsNullOrWhiteSpace(token))
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetAsync(url);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show($"API Error: {response.StatusCode}");
+                    return new List<PositionResultDto>();
+                }
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<PositionResultDto>>>(json,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return result?.Data?.Items?.ToList() ?? new List<PositionResultDto>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+                return new List<PositionResultDto>();
+            }
+        }
+
+        private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
+        private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
+
+        private async Task LoadDepartments()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = client.GetAsync(baseUrl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var json = response.Content.ReadAsStringAsync().Result;
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                cbDepartment.ItemsSource = result.Data.Items;
+            }
+        }
+        private async void cbDepartment_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                var comboBox = sender as ComboBox;
+                if (comboBox?.Text == null) return; // nếu Text là null thì thoát luôn, tránh crash
+
+                var keyword = comboBox.Text.Trim();
+                if (keyword == "") return; // trống thì không gọi API
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                    cbDepartment.ItemsSource = result.Data.Items;
+                    cbDepartment.IsDropDownOpen = true;
+                }
+                else
+                {
+                    cbDepartment.ItemsSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void OnPositionCreated(Positions.PositionResultDto newDept)
@@ -87,30 +260,44 @@ namespace FEQuanLyNhanSu
             }
         }
 
+        //private async void txtTextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    var token = Application.Current.Properties["Token"].ToString();
+        //    string keyword = txtSearch.Text?.Trim();
 
-        public void LoadPosition()
-        {
-            try
-            {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
-                int pageSize = 20;
+        //    if (string.IsNullOrWhiteSpace(keyword))
+        //        LoadPosition();
+        //    else
+        //    {
+        //        var result = await SearchHelper.SearchAsync<PositionResultDto>("api/Position", keyword, token);
+        //        PositionDtaGrid.ItemsSource = result;
+        //    }
+        //}
 
-                _paginationHelper = new PaginationHelper<Positions.PositionResultDto>(
-                    baseUrl,
-                    pageSize,
-                    token,
-                    items => PositionDtaGrid.ItemsSource = items,
-                    txtPage
-                );
+        //public void LoadPosition()
+        //{
+        //    try
+        //    {
+        //        var token = Application.Current.Properties["Token"]?.ToString();
+        //        var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+        //        int pageSize = 20;
 
-                _ = _paginationHelper.LoadPageAsync(1);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải dữ liệu chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        //        _paginationHelper = new PaginationHelper<Positions.PositionResultDto>(
+        //            baseUrl,
+        //            pageSize,
+        //            token,
+        //            items => PositionDtaGrid.ItemsSource = items,
+        //            txtPage
+        //        );
+
+        //        _ = _paginationHelper.LoadPageAsync(1);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Lỗi khi tải dữ liệu chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
+
 
 
 
@@ -144,19 +331,6 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private async void txtTextChanged(object sender, TextChangedEventArgs e)
-        {
-            var token = Application.Current.Properties["Token"].ToString();
-            string keyword = txtSearch.Text?.Trim();
-
-            if (string.IsNullOrWhiteSpace(keyword))
-                LoadPosition();
-            else
-            {
-                var result = await SearchHelper.SearchAsync<PositionResultDto>("api/Position", keyword, token);
-                PositionDtaGrid.ItemsSource = result;
-            }
-        }
 
 
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)

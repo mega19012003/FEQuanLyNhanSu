@@ -86,6 +86,11 @@
 
             <TextBox x:Name="txtSearch" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChanged" Height="35" VerticalAlignment="Top"/>
         </Grid>
+        <Grid HorizontalAlignment="Center" Width="200">
+            <ComboBox x:Name="cbDay" HorizontalAlignment="Left" Margin="0,60,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbDay_SelectionChanged"/>
+            <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="60,60,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
+            <ComboBox x:Name="cbYear" HorizontalAlignment="Left" Margin="120,60,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbYear_SelectionChanged"/>
+        </Grid>
     </Grid>
 
 </Page>

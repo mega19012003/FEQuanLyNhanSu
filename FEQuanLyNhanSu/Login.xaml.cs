@@ -1,8 +1,16 @@
-﻿using System;
+﻿using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.ResponseModels;
+using FEQuanLyNhanSu.Services.UserService;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,12 +20,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using FEQuanLyNhanSu.ResponseModels;
-using FEQuanLyNhanSu.Services.UserService;
-using System.Net.Http.Headers;
-using FEQuanLyNhanSu.Helpers;
+using static FEQuanLyNhanSu.ResponseModels.Auths;
 
 namespace FEQuanLyNhanSu
 {
@@ -79,7 +82,6 @@ namespace FEQuanLyNhanSu
                 var loginResult = JsonConvert.DeserializeObject<dynamic>(await loginResponse.Content.ReadAsStringAsync());
                 string accessToken = loginResult.data.accessToken;
 
-                // B2: Gọi /current để lấy info
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var BaseUrl2 = AppsettingConfigHelper.GetBaseUrl();
                 var apiUrl2 = $"{BaseUrl2}/api/auth/current";
@@ -96,14 +98,14 @@ namespace FEQuanLyNhanSu
                 string fullname = userData.data.fullname;
                 string role = userData.data.role;
                 string userId = userData.data.userId;
+                string refreshToken = userData.data.refreshToken;
 
-                // Lưu vào Application để xài toàn app
                 Application.Current.Properties["Token"] = accessToken;
+                Application.Current.Properties["RefreshToken"] = refreshToken;
                 Application.Current.Properties["Fullname"] = fullname;
                 Application.Current.Properties["UserRole"] = role;
                 Application.Current.Properties["UserId"] = userId;
 
-                // Mở MainWindow
                 var mainWindow = new MainWindow();
                 mainWindow.Show();
                 this.Close();
@@ -121,6 +123,66 @@ namespace FEQuanLyNhanSu
             }
         }
 
+        public static async Task<HttpResponseMessage> SendAuthorizedRequestAsync(HttpRequestMessage request)
+        {
+            var token = Application.Current.Properties["AccessToken"]?.ToString();
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            using var client = new HttpClient();
+            var response = await client.SendAsync(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                // Thử refresh token
+                bool refreshOk = await RefreshTokenAsync();
+                if (refreshOk)
+                {
+                    // Gửi lại request cũ với token mới
+                    var newToken = Application.Current.Properties["AccessToken"]?.ToString();
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newToken);
+                    response = await client.SendAsync(request);
+                }
+                else
+                {
+                    MessageBox.Show("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại!");
+                    // TODO: Redirect về màn hình đăng nhập
+                }
+            }
+
+            return response;
+        }
+
+        public static async Task<bool> RefreshTokenAsync()
+        {
+            var refreshToken = Application.Current.Properties["RefreshToken"]?.ToString();
+            if (string.IsNullOrWhiteSpace(refreshToken)) return false;
+
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var url = $"{baseUrl}/api/Auth/refresh-token";
+
+            var payload = new { refreshToken = refreshToken };
+            var jsonPayload = System.Text.Json.JsonSerializer.Serialize(payload);
+            using var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            using var client = new HttpClient();
+            var response = await client.PostAsync(url, content);
+            if (!response.IsSuccessStatusCode) return false;
+
+            var json = await response.Content.ReadAsStringAsync();
+            var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<LoginResult>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (result?.Data?.AccessToken != null)
+            {
+                Application.Current.Properties["AccessToken"] = result.Data.AccessToken;
+                Application.Current.Properties["RefreshToken"] = result.Data.RefreshToken;
+                return true;
+            }
+
+            return false;
+        }
 
         private bool _isPasswordVisible = false;
         private void TogglePasswordVisibility(object sender, RoutedEventArgs e)

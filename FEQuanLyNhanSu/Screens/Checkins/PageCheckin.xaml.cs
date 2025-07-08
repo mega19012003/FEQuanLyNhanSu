@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.ResponseModels.Positions;
+using static FEQuanLyNhanSu.Services.Checkins;
 
 namespace FEQuanLyNhanSu
 {
@@ -85,11 +87,7 @@ namespace FEQuanLyNhanSu
             }
             catch (Exception ex)
             {
-                // Hiển thị thông báo lỗi chi tiết
                 MessageBox.Show($"Đã xảy ra lỗi:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                // Hoặc nếu muốn xem cả stacktrace để debug
-                // MessageBox.Show($"Đã xảy ra lỗi:\n{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -152,49 +150,82 @@ namespace FEQuanLyNhanSu
 
         private async Task FilterAsync()
         {
-            var token = Application.Current.Properties["Token"].ToString();
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+
             string keyword = txtSearch.Text?.Trim();
-            int? day = cbDay.SelectedItem as int?;
-            int? month = cbMonth.SelectedItem as int?;
-            int? year = cbYear.SelectedItem as int?;
+            int? day = cbDay.SelectedIndex > 0 ? int.Parse(cbDay.SelectedItem.ToString()) : (int?)null;
+            int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
+            int? year = cbYear.SelectedIndex > 0 ? int.Parse(cbYear.SelectedItem.ToString()) : (int?)null;
 
-            var queryParams = new List<string>();
-            if (!string.IsNullOrWhiteSpace(keyword))
-                queryParams.Add($"Search={Uri.EscapeDataString(keyword)}");
-            if (day.HasValue && day > 0)
-                queryParams.Add($"Day={day.Value}");
-            if (month.HasValue && month > 0)
-                queryParams.Add($"Month={month.Value}");
-            if (year.HasValue && year > 0)
-                queryParams.Add($"Year={year.Value}");
+            var items = await SearchAndFilterCheckinsAsync(
+                baseUrl,
+                token,
+                keyword,
+                day,
+                month,
+                year
+            );
 
-            string url = "api/Checkin";
-            if (queryParams.Any())
-                url += "?" + string.Join("&", queryParams);
-
-            var result = await SearchHelper.Search2Async<Checkins.CheckinResultDto>(url, token);
-            CheckinDtaGrid.ItemsSource = result;
+            CheckinDtaGrid.ItemsSource = items;
         }
 
-        private async void txtTextChanged(object sender, TextChangedEventArgs e)
+        public static async Task<List<CheckinResultDto>> SearchAndFilterCheckinsAsync(
+            string baseUrl,
+            string token,
+            string searchKeyword,
+            int? day,
+            int? month,
+            int? year,
+            int pageIndex = 1,
+            int pageSize = 20)
         {
-            await FilterAsync();
+            try
+            {
+                var parameters = new List<string>();
+                if (!string.IsNullOrWhiteSpace(searchKeyword))
+                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
+                if (day.HasValue) parameters.Add($"Day={day}");
+                if (month.HasValue) parameters.Add($"Month={month}");
+                if (year.HasValue) parameters.Add($"Year={year}");
+                parameters.Add($"pageIndex={pageIndex}");
+                parameters.Add($"pageSize={pageSize}");
+
+                var url = baseUrl + "/api/Checkin";
+                if (parameters.Any()) url += "?" + string.Join("&", parameters);
+
+                using var client = new HttpClient();
+                if (!string.IsNullOrWhiteSpace(token))
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetAsync(url);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show($"API Error: {response.StatusCode}");
+                    return new List<CheckinResultDto>();
+                }
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<CheckinResultDto>>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return result?.Data?.Items?.ToList() ?? new List<CheckinResultDto>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+                return new List<CheckinResultDto>();
+            }
         }
 
-        private async void cbDay_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //await FilterAsync();
-        }
 
-        private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //await FilterAsync();
-        }
-
-        private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //await FilterAsync();
-        }
+        private async void cbDay_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
+        private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
+        private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
+        private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
 
         //private async void txtTextChanged(object sender, TextChangedEventArgs e)
         //{
@@ -203,7 +234,8 @@ namespace FEQuanLyNhanSu
 
         //    if (string.IsNullOrWhiteSpace(keyword))
         //        LoadCheckin();
-        //    else { 
+        //    else
+        //    {
         //        var result = await SearchHelper.SearchAsync<Checkins.CheckinResultDto>("api/Checkin", keyword, token);
         //        CheckinDtaGrid.ItemsSource = result;
         //    }

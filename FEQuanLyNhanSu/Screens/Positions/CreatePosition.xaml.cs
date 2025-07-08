@@ -57,7 +57,6 @@ namespace FEQuanLyNhanSu.Screens.Positions
 
             var query = $"Name={Uri.EscapeDataString(name)}";
 
-            // Chỉ Admin cần truyền thêm DepartmentId
             if (role == "Administrator")
             {
                 var selectedDepartment = cbDepartment.SelectedItem as DepartmentResultDto;
