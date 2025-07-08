@@ -57,22 +57,22 @@
             <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
         </Grid>
         <ComboBox x:Name="cbPosition"          
-              FontSize="15" Height="41" Width="200" Margin="50,56,330,356" Padding="10,0"
+              FontSize="15" Height="41" Width="200" Margin="450,56,330,356" Padding="10,0"
               IsEditable="True"
               StaysOpenOnEdit="True"
               IsTextSearchEnabled="False"
               KeyUp="cbPosition_KeyUp"
               DisplayMemberPath="Name"
-              SelectedValuePath="positionId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbPosition_SelectionChanged" />
+              SelectedValuePath="positionId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbPosition_SelectionChanged" Text="Nhập tên chức vụ"/>
 
         <ComboBox x:Name="cbDepartment"          
-              FontSize="15" Height="41" Width="200" Margin="450,56,330,356" Padding="10,0"
+              FontSize="15" Height="41" Width="200" Margin="50,56,330,356" Padding="10,0"
               IsEditable="True"
               StaysOpenOnEdit="True"
               IsTextSearchEnabled="False"
               KeyUp="cbDepartment_KeyUp"
               DisplayMemberPath="Name"
-              SelectedValuePath="departmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" />
+              SelectedValuePath="departmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban"/>
 
     </Grid>
 </Page>

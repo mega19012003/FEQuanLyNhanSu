@@ -52,7 +52,7 @@
           IsTextSearchEnabled="False"
           KeyUp="cbDepartment_KeyUp"
           DisplayMemberPath="Name"
-          SelectedValuePath="DepartmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" />
+          SelectedValuePath="DepartmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban" />
     
     </Grid>
 </Page>

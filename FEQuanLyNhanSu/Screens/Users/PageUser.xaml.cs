@@ -43,8 +43,9 @@ namespace FEQuanLyNhanSu
             InitializeComponent();
             LoadUser();
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            
-            _ = LoadPosition();
+            _ = LoadDepartments();
+            _ = LoadPositionsByDepartmentAsync();
+            _ = FilterAsync();
         }
 
         private void HandleUI(string role)
@@ -55,7 +56,6 @@ namespace FEQuanLyNhanSu
                     cbDepartment.Visibility = Visibility.Collapsed;
                     break;
                 case "Admin":
-                    _ = LoadDepartments();
                     break;
             }
         }
@@ -69,36 +69,79 @@ namespace FEQuanLyNhanSu
 
             Guid? departmentId = null;
             if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
-            {
                 departmentId = selectedDept.DepartmentId;
-            }
 
             Guid? positionId = null;
             if (cbPosition.SelectedItem is PositionResultDto selectedPos)
-            {
                 positionId = selectedPos.Id;
+
+            List<UserResultDto> items;
+
+            if (string.IsNullOrWhiteSpace(keyword) && !departmentId.HasValue && !positionId.HasValue)
+            {
+                items = await LoadAllUsersAsync(baseUrl, token);
+            }
+            else
+            {
+                items = await SearchAndFilterUsersAsync(
+                    baseUrl,
+                    token,
+                    keyword,
+                    departmentId,
+                    positionId
+                );
             }
 
-            // Gọi API filter
-            var items = await SearchAndFilterUsersAsync(
-                baseUrl,
-                token,
-                keyword,
-                departmentId,
-                positionId
-            );
-
-            UserDtaGrid.ItemsSource = null; // clear cũ
+            UserDtaGrid.ItemsSource = null;
             UserDtaGrid.ItemsSource = items;
         }
-        public static async Task<List<UserResultDto>> SearchAndFilterUsersAsync(
+
+        public static async Task<List<UserResultDto>> LoadAllUsersAsync(
     string baseUrl,
     string token,
-    string searchKeyword,
-    Guid? departmentId,
-    Guid? positionId,
     int pageIndex = 1,
     int pageSize = 20)
+        {
+            try
+            {
+                var url = $"{baseUrl}/api/User?pageIndex={pageIndex}&pageSize={pageSize}";
+
+                using var client = new HttpClient();
+                if (!string.IsNullOrWhiteSpace(token))
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetAsync(url);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show($"API Error: {response.StatusCode}");
+                    return new List<UserResultDto>();
+                }
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<UserResultDto>>>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return result?.Data?.Items?.ToList() ?? new List<UserResultDto>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+                return new List<UserResultDto>();
+            }
+        }
+
+
+        public static async Task<List<UserResultDto>> SearchAndFilterUsersAsync(
+            string baseUrl,
+            string token,
+            string searchKeyword,
+            Guid? departmentId,
+            Guid? positionId,
+            int pageIndex = 1,
+            int pageSize = 20)
         {
             try
             {
@@ -133,7 +176,6 @@ namespace FEQuanLyNhanSu
                 {
                     PropertyNameCaseInsensitive = true
                 });
-
                 return result?.Data?.Items?.ToList() ?? new List<UserResultDto>();
             }
             catch (Exception ex)
@@ -152,31 +194,29 @@ namespace FEQuanLyNhanSu
         private async Task LoadPositionsByDepartmentAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            Guid? departmentId = null;
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
 
+            Guid? departmentId = null;
             if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
                 departmentId = selectedDept.DepartmentId;
 
+            string url = baseUrl;
             if (departmentId.HasValue)
             {
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+                url += $"?departmentId={departmentId.Value}";
+            }
 
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var url = $"{baseUrl}?departmentId={departmentId.Value}";
-
-                var response = await client.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                    cbPosition.ItemsSource = result?.Data?.Items;
-                }
-                else
-                {
-                    cbPosition.ItemsSource = null;
-                }
+            var response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                cbPosition.ItemsSource = result?.Data?.Items;
+                cbPosition.SelectedItem = null; 
             }
             else
             {
@@ -206,10 +246,18 @@ namespace FEQuanLyNhanSu
             try
             {
                 var comboBox = sender as ComboBox;
-                if (comboBox?.Text == null) return;
+                if (comboBox?.Text == null)
+                {
+                    cbDepartment.ItemsSource = null;
+                    return;
+                }
 
                 var keyword = comboBox.Text.Trim();
-                if (keyword == "") return; 
+                if (keyword == "")
+                {   
+                    cbDepartment.ItemsSource = null;
+                    return;
+                }
 
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
@@ -223,7 +271,8 @@ namespace FEQuanLyNhanSu
                 {
                     var json = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                    cbDepartment.ItemsSource = result.Data.Items;
+                    cbDepartment.ItemsSource = result?.Data?.Items;
+                    cbDepartment.SelectedIndex = 0;                
                     cbDepartment.IsDropDownOpen = true;
                 }
                 else
@@ -237,56 +286,58 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private async Task LoadPosition()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Possition";
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            var response = client.GetAsync(baseUrl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                var json = response.Content.ReadAsStringAsync().Result;
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                cbPosition.ItemsSource = result.Data.Items;
-            }
-        }
         private async void cbPosition_KeyUp(object sender, KeyEventArgs e)
         {
             try
             {
                 var comboBox = sender as ComboBox;
-                if (comboBox?.Text == null) return; 
+                if (comboBox?.Text == null)
+                {
+                    cbPosition.ItemsSource = null;
+                    return;
+                }
 
                 var keyword = comboBox.Text.Trim();
-                if (keyword == "") return; 
+                if (keyword == "")
+                {
+                    cbPosition.ItemsSource = null;
+                    return;
+                }
 
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+
+                Guid? departmentId = null;
+                if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
+                    departmentId = selectedDept.DepartmentId;
+
+                var url = $"{baseUrl}?Search={Uri.EscapeDataString(keyword)}";
+                if (departmentId.HasValue)
+                    url += $"&departmentId={departmentId.Value}";
 
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                var response = await client.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                    cbPosition.ItemsSource = result.Data.Items;
+                    cbPosition.ItemsSource = result?.Data?.Items;
                     cbPosition.IsDropDownOpen = true;
                 }
                 else
                 {
-                    cbDepartment.ItemsSource = null;
+                    cbPosition.ItemsSource = null;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi khi tìm kiếm chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private void OnUserCreated(Users.UserResultDto newDept)
         {
@@ -375,11 +426,12 @@ namespace FEQuanLyNhanSu
                 LoadUser();
             else
             {
+                cbDepartment.Text = string.Empty;
+                cbPosition.Text = string.Empty;
                 var result = await SearchHelper.SearchAsync<UserResultDto>("api/User", keyword, token);
                 UserDtaGrid.ItemsSource = result;
             }
         }
-
 
 
         /// Delete 
