@@ -21,7 +21,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="0" Text="Nhân viên" IsReadOnly="True"
+            <TextBox x:Name="lblName" Grid.Row="0" Grid.Column="0" Text="Nhân viên" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5"/>

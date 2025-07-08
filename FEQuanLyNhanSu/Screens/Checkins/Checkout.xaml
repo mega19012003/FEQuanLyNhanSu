@@ -21,7 +21,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="0" Text="Nhân viên" IsReadOnly="True"
+            <TextBox x:Name="lblName" Grid.Row="0" Grid.Column="0" Text="Nhân viên" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5"/>
@@ -36,7 +36,7 @@
 
             <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal"
                 HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button x:Name="btnCreate" Content="Checkin" Width="170" Height="41"
+                <Button x:Name="btnCreate" Content="Checkout" Width="170" Height="41"
                 Margin="10,0" FontSize="15" Background="#FF66A8D5"
                 Foreground="White" FontWeight="Bold" Click="btnCreate_Click"/>
             </StackPanel>

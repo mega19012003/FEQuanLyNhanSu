@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.Services.UserService.Users;
 
@@ -27,8 +29,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
     public partial class UpdateDetail : Window
     {
         private Guid _detailId;
-        private readonly Action _onDetailUpdated;
-        public UpdateDetail(Guid detailId, Action onDetailUpdated)
+        private Action<DutyDetailResultDto> _onDetailUpdated;
+        public UpdateDetail(Guid detailId, Action<DutyDetailResultDto> onDetailUpdated)
         {
             InitializeComponent();
             LoadUsers();
@@ -143,16 +145,33 @@ namespace FEQuanLyNhanSu.Screens.Duties
             using var client = CreateAuthorizedClient(token);
             var content = new StringContent(JsonConvert.SerializeObject(dutyDetail), Encoding.UTF8, "application/json");
             var response = await client.PutAsync(baseUrl, content);
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    MessageBox.Show("Cập nhật thông tin chức vụ thành công.");
+            //    _onDetailUpdated?.Invoke();
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    var errorContent = await response.Content.ReadAsStringAsync();
+            //    MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorContent}");
+            //}
             if (response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Cập nhật thông tin chức vụ thành công.");
-                _onDetailUpdated?.Invoke();
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DetailResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onDetailUpdated?.Invoke(apiResponse.Data);
+                }
+
+                MessageBox.Show("Cập nhật chi tiết thành công.");
                 this.Close();
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorContent}");
+                MessageBox.Show("Cập nhật chi tiết thất bại.");
             }
         }
 

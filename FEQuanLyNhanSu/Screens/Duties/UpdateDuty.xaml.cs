@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.ResponseModels.Positions;
 
@@ -28,8 +30,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
     public partial class UpdateDuty : Window
     {
         private Guid _dutyId;
-        private readonly Action _onDutyUpdated;
-        public UpdateDuty(Guid dutyId, Action onDutyUpdated)
+        private Action<DutyResultDto> _onDutyUpdated;
+        public UpdateDuty(Guid dutyId, Action<DutyResultDto> onDutyUpdated)
         {
             InitializeComponent();
             _dutyId = dutyId;
@@ -56,7 +58,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse< DutyResultDto>>(json);
+                var result = JsonConvert.DeserializeObject<ApiResponse<DutyResultDto>>(json);
 
                 txtUsername.Text = result.Data.Name;
                 dpStartDate.Value = result.Data.StartDate;
@@ -66,6 +68,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             {
                 MessageBox.Show("Không thể tải thông tin chức vụ.");
             }
+
         }
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
@@ -99,15 +102,32 @@ namespace FEQuanLyNhanSu.Screens.Duties
             var response = await client.PutAsync(url, content);
             var responseBody = await response.Content.ReadAsStringAsync();
 
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    MessageBox.Show("Cập nhật công việc thành công.");
+            //    _onDutyUpdated?.Invoke();
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
+            //}
             if (response.IsSuccessStatusCode)
             {
+                var jsonResult = await response.Content.ReadAsStringAsync();
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DutyResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onDutyUpdated?.Invoke(apiResponse.Data);
+                }
+
                 MessageBox.Show("Cập nhật công việc thành công.");
-                _onDutyUpdated?.Invoke();
                 this.Close();
             }
             else
             {
-                MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
+                MessageBox.Show("Cập nhật công việc thất bại.");
             }
         }
 

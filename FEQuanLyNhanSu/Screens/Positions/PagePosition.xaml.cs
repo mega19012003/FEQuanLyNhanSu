@@ -28,12 +28,65 @@ namespace FEQuanLyNhanSu
     /// </summary>
     public partial class PagePosition : Page
     {
-        private PaginationHelper<Positions.PositionDTO> _paginationHelper;
+        private PaginationHelper<Positions.PositionResultDto> _paginationHelper;
         public PagePosition()
         {
             InitializeComponent();
             LoadPosition();
         }
+
+        private void OnPositionCreated(Positions.PositionResultDto newDept)
+        {
+            if (newDept != null)
+            {
+                var list = PositionDtaGrid.ItemsSource as List<Positions.PositionResultDto> ?? new List<Positions.PositionResultDto>();
+                list.Insert(0, newDept);
+                PositionDtaGrid.ItemsSource = null;
+                PositionDtaGrid.ItemsSource = list;
+
+                PositionDtaGrid.SelectedItem = newDept;
+                PositionDtaGrid.ScrollIntoView(newDept);
+            }
+        }
+
+        private void OnPositionUpdated(Positions.PositionResultDto updatedDept)
+        {
+            if (updatedDept != null)
+            {
+                var list = PositionDtaGrid.ItemsSource as List<Positions.PositionResultDto> ?? new List<Positions.PositionResultDto>();
+
+                var existing = list.FirstOrDefault(d => d.Id == updatedDept.Id);
+                if (existing != null)
+                {
+                    list.Remove(existing);
+                }
+
+                list.Insert(0, updatedDept);
+
+                PositionDtaGrid.ItemsSource = null;
+                PositionDtaGrid.ItemsSource = list;
+
+                PositionDtaGrid.SelectedItem = updatedDept;
+                PositionDtaGrid.ScrollIntoView(updatedDept);
+            }
+        }
+
+        private void AddPosition(object sender, RoutedEventArgs e)
+        {
+            var window = new CreatePosition(OnPositionCreated);
+            window.Show();
+        }
+
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid positionId)
+            {
+                var editWindow = new UpdatePosition(positionId, OnPositionUpdated);
+                editWindow.ShowDialog();
+            }
+        }
+
 
         public void LoadPosition()
         {
@@ -43,7 +96,7 @@ namespace FEQuanLyNhanSu
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
                 int pageSize = 20;
 
-                _paginationHelper = new PaginationHelper<Positions.PositionDTO>(
+                _paginationHelper = new PaginationHelper<Positions.PositionResultDto>(
                     baseUrl,
                     pageSize,
                     token,
@@ -59,21 +112,7 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private void AddPosition(object sender, RoutedEventArgs e)
-        {
-            var window = new CreatePosition(LoadPosition);
-            window.Show();
-        }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            if (button?.Tag is Guid positionId)
-            {
-                var editWindow = new UpdatePosition(positionId, LoadPosition);
-                editWindow.ShowDialog(); 
-            }
-        }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
@@ -114,7 +153,7 @@ namespace FEQuanLyNhanSu
                 LoadPosition();
             else
             {
-                var result = await SearchHelper.SearchAsync<PositionDTO>("api/Position", keyword, token);
+                var result = await SearchHelper.SearchAsync<PositionResultDto>("api/Position", keyword, token);
                 PositionDtaGrid.ItemsSource = result;
             }
         }

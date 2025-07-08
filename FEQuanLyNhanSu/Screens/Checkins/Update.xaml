@@ -5,8 +5,92 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Checkins"
         mc:Ignorable="d"
-        Title="Update" Height="450" Width="800">
-    <Grid>
-        
+        Title="Update" Height="470" Width="800">
+    <Grid Background="#FFCCE2F1">
+        <Label x:Name="lblCreateUser"
+           Content="Cập nhật người dùng"
+           FontSize="20"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Top"
+           Margin="0,20,0,10" />
+
+        <Grid Margin="40,80,40,20" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <!-- Labels -->
+                <ColumnDefinition Width="*"/>
+                <!-- Input -->
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Row="0" Grid.Column="0" Text="Fullname" IsReadOnly="True" 
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtFullname"
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
+
+            <TextBox x:Name="txtboxRole" Grid.Row="1" Grid.Column="0" Text="Checkin sáng" IsReadOnly="True"
+                 Background="#FF99C5E3" Foreground="White" FontSize="15"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbChkinMor" FontSize="15" Height="41" Margin="0,5" Padding="10,0"
+                  VerticalContentAlignment="Center"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Id"
+                  IsEditable="False"/>
+
+            <TextBox x:Name="txtboxDepartment" Grid.Row="2" Grid.Column="0" Text="Checkout sáng" IsReadOnly="True"
+                 Background="#FF99C5E3" Foreground="White" FontSize="15"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="cbChkoutMor"          
+                  FontSize="15" Height="41" Margin="0,5" Padding="10,0"
+                  VerticalContentAlignment="Center"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Id"
+                  IsEditable="False"/>
+
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Checkin chiều" IsReadOnly="True"
+                 Background="#FF99C5E3" Foreground="White" FontSize="15"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbChkinAft"          
+                  FontSize="15" Height="41" Margin="0,5" Padding="10,0"
+                  VerticalContentAlignment="Center"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Id"
+                  IsEditable="False"/>
+
+            <TextBox Grid.Row="4" Grid.Column="0" Text="Checkout chiều" IsReadOnly="True"
+                 Background="#FF99C5E3" Foreground="White" FontSize="15"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbChkoutAft"          
+                 FontSize="15" Height="41" Margin="0,5" Padding="10,0"
+                  VerticalContentAlignment="Center"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Id"
+                  IsEditable="False"/>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal"
+                    HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
+                    Margin="10,0" FontSize="15" Click="btnExit_Click"/>
+
+                <Button x:Name="btnUpdate" Content="Cập nhật user" Width="150" Height="41"
+                    Margin="10,0" FontSize="15" Background="#FF66A8D5"
+                    Foreground="White" FontWeight="Bold" Click="btnUpdate_Click"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

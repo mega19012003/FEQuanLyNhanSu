@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static FEQuanLyNhanSu.ResponseModels.Departments;
+using static FEQuanLyNhanSu.ResponseModels.Holidays;
 
 namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
 {
@@ -23,8 +25,8 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
     /// </summary>
     public partial class CreateHolidayConfig : Window
     {
-        private Action _onHolidayCreated;
-        public CreateHolidayConfig(Action onCreated)
+        private Action<HolidayResultDto> _onHolidayCreated;
+        public CreateHolidayConfig(Action<HolidayResultDto> onCreated)
         {
             InitializeComponent();
             _onHolidayCreated = onCreated;
@@ -73,16 +75,33 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
 
             var response = await client.PostAsync($"{baseUrl}/api/Holiday", content);
 
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    MessageBox.Show("Tạo thêm ngày lễ thành công.");
+            //    _onHolidayCreated?.Invoke();
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    var error = await response.Content.ReadAsStringAsync();
+            //    MessageBox.Show($"Tạo ngày lễ thất bại: {error}");
+            //}
             if (response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Tạo thêm ngày lễ thành công.");
-                _onHolidayCreated?.Invoke();
+                var jsonResult = await response.Content.ReadAsStringAsync();
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onHolidayCreated?.Invoke(apiResponse.Data);
+                }
+
+                MessageBox.Show("Tạo phòng ban thành công.");
                 this.Close();
             }
             else
             {
-                var error = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Tạo ngày lễ thất bại: {error}");
+                MessageBox.Show("Tạo phòng ban thất bại.");
             }
         }
     }

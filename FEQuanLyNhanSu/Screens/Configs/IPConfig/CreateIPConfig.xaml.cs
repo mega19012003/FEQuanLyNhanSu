@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
 
 namespace FEQuanLyNhanSu.Screens.Configs
 {
@@ -22,8 +25,8 @@ namespace FEQuanLyNhanSu.Screens.Configs
     /// </summary>
     public partial class CreateIPConfig : Window
     {
-        private Action _onIPConfigCreated;
-        public CreateIPConfig(Action onCreated)
+        private Action<IPResultDto> _onIPConfigCreated;
+        public CreateIPConfig(Action<IPResultDto> onCreated)
         {
             InitializeComponent();
             _onIPConfigCreated = onCreated;
@@ -51,10 +54,27 @@ namespace FEQuanLyNhanSu.Screens.Configs
 
                 var response = await client.PostAsync(url, null);
 
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    MessageBox.Show("Tạo cấu hình IP thành công.");
+                //    _onIPConfigCreated?.Invoke();
+                //    this.Close();
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Tạo cấu hình IP thất bại.");
+                //}
                 if (response.IsSuccessStatusCode)
                 {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonSerializer.Deserialize<IPResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onIPConfigCreated?.Invoke(apiResponse.Data);
+                    }
+
                     MessageBox.Show("Tạo cấu hình IP thành công.");
-                    _onIPConfigCreated?.Invoke();
                     this.Close();
                 }
                 else

@@ -11,8 +11,7 @@ namespace FEQuanLyNhanSu.Helpers
         {
             if (value is string role)
             {
-                // Example logic: Adjust based on your application's roles  
-                return role == "Admin" ? Visibility.Visible : Visibility.Collapsed;
+                return role == "Employee" ? Visibility.Collapsed : Visibility.Visible;
             }
             return Visibility.Collapsed;
         }

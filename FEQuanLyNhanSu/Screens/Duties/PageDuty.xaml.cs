@@ -1,4 +1,5 @@
 ﻿using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Duties;
 using Newtonsoft.Json;
 using System.Net.Http;
@@ -30,8 +31,12 @@ namespace FEQuanLyNhanSu
             switch (role)
             {
                 case "Administrator":
+                    AdDutyBtn.Visibility = Visibility.Visible;
+                    DtaGridActionDuty.Visibility = Visibility.Visible;
                     break;
                 case "Manager":
+                    AdDutyBtn.Visibility = Visibility.Visible;
+                    DtaGridActionDuty.Visibility = Visibility.Visible;
                     break;
                 case "Employee":
                     AdDutyBtn.Visibility = Visibility.Collapsed;
@@ -93,10 +98,47 @@ namespace FEQuanLyNhanSu
 
         /// ///////////////////////////////////////
         /// /////////////////////////////////////// Duty 
+
+        private void OnDutyCreated(Duties.DutyResultDto newDept)
+        {
+            if (newDept != null)
+            {
+                var list = DutyDtaGrid.ItemsSource as List<Duties.DutyResultDto> ?? new List<Duties.DutyResultDto>();
+                list.Insert(0, newDept);
+                DutyDtaGrid.ItemsSource = null;
+                DutyDtaGrid.ItemsSource = list;
+
+                DutyDtaGrid.SelectedItem = newDept;
+                DutyDtaGrid.ScrollIntoView(newDept);
+            }
+        }
+
+        private void OnDutyUpdated(Duties.DutyResultDto updatedDept)
+        {
+            if (updatedDept != null)
+            {
+                var list = DutyDtaGrid.ItemsSource as List<Duties.DutyResultDto> ?? new List<Duties.DutyResultDto>();
+
+                var existing = list.FirstOrDefault(d => d.Id == updatedDept.Id);
+                if (existing != null)
+                {
+                    list.Remove(existing);
+                }
+
+                list.Insert(0, updatedDept);
+
+                DutyDtaGrid.ItemsSource = null;
+                DutyDtaGrid.ItemsSource = list;
+
+                DutyDtaGrid.SelectedItem = updatedDept;
+                DutyDtaGrid.ScrollIntoView(updatedDept);
+            }
+        }
+
         /// Create
         private void AdDutyBtn_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CreateDuty(LoadDuty);
+            var window = new CreateDuty(OnDutyCreated);
             window.Show();
         }
 
@@ -105,7 +147,7 @@ namespace FEQuanLyNhanSu
         {
             if (DutyDtaGrid.SelectedItem is DutyResultDto selectedDuty)
             {
-                var window = new UpdateDuty(selectedDuty.Id, LoadDuty);
+                var window = new UpdateDuty(selectedDuty.Id, OnDutyUpdated);
                 window.Show();
             }
         }
@@ -164,12 +206,48 @@ namespace FEQuanLyNhanSu
         /// ///////////////////////////////////////
         /// /////////////////////////////////////// Duty Detail 
 
+        private void OnDetailCreated(Duties.DutyDetailResultDto newDept)
+        {
+            if (newDept != null)
+            {
+                var list = DutyDtaGrid.ItemsSource as List<Duties.DutyDetailResultDto> ?? new List<Duties.DutyDetailResultDto>();
+                list.Insert(0, newDept);
+                DutyDtaGrid.ItemsSource = null;
+                DutyDtaGrid.ItemsSource = list;
+
+                DutyDtaGrid.SelectedItem = newDept;
+                DutyDtaGrid.ScrollIntoView(newDept);
+            }
+        }
+
+        private void OnDetailUpdated(Duties.DutyDetailResultDto updatedDept)
+        {
+            if (updatedDept != null)
+            {
+                var list = DutyDtaGrid.ItemsSource as List<Duties.DutyDetailResultDto> ?? new List<Duties.DutyDetailResultDto>();
+
+                var existing = list.FirstOrDefault(d => d.DutyDetailId == updatedDept.DutyDetailId);
+                if (existing != null)
+                {
+                    list.Remove(existing);
+                }
+
+                list.Insert(0, updatedDept);
+
+                DutyDtaGrid.ItemsSource = null;
+                DutyDtaGrid.ItemsSource = list;
+
+                DutyDtaGrid.SelectedItem = updatedDept;
+                DutyDtaGrid.ScrollIntoView(updatedDept);
+            }
+        }
+
         /// Create Detail
         private void btnAddDetail_Click(object sender, RoutedEventArgs e)
         {
             if (DutyDtaGrid.SelectedItem is DutyResultDto selectedDuty)
             {
-                var window = new CreateDetail(LoadDuty, selectedDuty.Id);
+                var window = new CreateDetail(OnDetailCreated, selectedDuty.Id);
                 window.Show();
             }
             else
@@ -187,7 +265,7 @@ namespace FEQuanLyNhanSu
 
             if (!string.IsNullOrWhiteSpace(tagValue) && Guid.TryParse(tagValue, out Guid detailId))
             {
-                var window = new UpdateDetail(detailId, LoadDuty);
+                var window = new UpdateDetail(detailId, OnDetailUpdated);
                 window.Show();
             }
             else

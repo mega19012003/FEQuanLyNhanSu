@@ -1,6 +1,7 @@
 ﻿using FEQuanLyNhanSu.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
 
 namespace FEQuanLyNhanSu.Services.UserService
 {
@@ -18,36 +19,12 @@ namespace FEQuanLyNhanSu.Services.UserService
             public double? BasicSalary { get; set; }
             public string ImageUrl { get; set; }
         }
-        public class AdminUpdateDto
+
+        public class UserResponse
         {
-
-            public Guid UserId { get; set; }
-            public string? Fullname { get; set; }
-            public RoleType? Role { get; set; }
-            public string? PhoneNumber { get; set; }
-            public string? Address { get; set; }
-            public Guid? DepartmentId { get; set; }
-            public Guid? PositionId { get; set; }
-            //[Required]
-            public double? BasicSalary { get; set; }
-            //public IFormFile? ImageUrl { get; set; }
-
-            public bool IsActive { get; set; }
-        }
-
-        public class ManagerUpdateDto
-        {
-
-            public Guid UserId { get; set; }
-            public string? Fullname { get; set; }
-            public string? PhoneNumber { get; set; }
-            public string? Address { get; set; }
-            public Guid? PositionId { get; set; }
-            //[Required]
-            public double? BasicSalary { get; set; }
-            //public IFormFile? ImageUrl { get; set; }
-
-            public bool IsActive { get; set; } = true;
+            public string Message { get; set; }
+            public UserResultDto Data { get; set; }
+            public int StatusCode { get; set; }
         }
     }
 }

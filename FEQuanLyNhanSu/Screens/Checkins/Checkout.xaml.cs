@@ -25,12 +25,29 @@ namespace FEQuanLyNhanSu.Screens.Checkins
     /// </summary>
     public partial class Checkout : Window
     {
-        public Checkout()
+        private Action<CheckinResultDto> _onCheckoutCreated;
+        public Checkout(Action<CheckinResultDto> onCheckoutCreated)
         {
             InitializeComponent();
-            _ = LoadUsers();
+            _onCheckoutCreated = onCheckoutCreated;
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
         }
 
+
+        private void HandleUI(string userRole)
+        {
+            if (userRole == "Admin" || userRole == "Manager")
+            {
+                cbEmployee.Visibility = Visibility.Visible;
+                lblName.Visibility = Visibility.Visible;
+                _ = LoadUsers();
+            }
+            else
+            {
+                cbEmployee.Visibility = Visibility.Collapsed;
+                lblName.Visibility = Visibility.Collapsed;
+            }
+        }
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
         {
             string keyword = cbEmployee.Text.Trim();
@@ -87,40 +104,79 @@ namespace FEQuanLyNhanSu.Screens.Checkins
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var selectedUser = cbEmployee.SelectedItem as UserResultDto;
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Chekout";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Chekout"; 
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var content = new MultipartFormDataContent();
-            content.Add(new StringContent(selectedUser.UserId.ToString()), "userId");
+            HttpContent content = null;
+
+            var selectedUser = cbEmployee.SelectedItem as UserResultDto;
+            if (selectedUser != null)
+            {
+                var form = new MultipartFormDataContent();
+                form.Add(new StringContent(selectedUser.UserId.ToString()), "userId");
+                content = form;
+            }
 
             var response = await client.PutAsync(baseUrl, content);
+            var json = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
-                lblCheckinMor.Content = result.Data.CheckinMorning;
-                lblCheckoutMor.Content = result.Data.CheckoutMorning;
-                lblCheckinAft.Content = result.Data.CheckinAfternoon;
-                lblCheckoutAft.Content = result.Data.CheckoutAfternoon;
-                lblCheckinMorStatus.Content = result.Data.CheckinMorningStatus;
-                lblCheckoutMorStatus.Content = result.Data.CheckoutMorningStatus;
-                lblCheckinAftStatus.Content = result.Data.CheckinAfternoonStatus;
-                lblCheckoutAftStatus.Content = result.Data.CheckoutAfternoonStatus;
-                lblSalaryPerDay.Content = result.Data.SalaryPerDay.ToString("N0");
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
+                if (apiResponse?.Data != null)
+                {
+                    lblCheckinMor.Content = apiResponse.Data.CheckinMorning;
+                    lblCheckoutMor.Content = apiResponse.Data.CheckoutMorning;
+                    lblCheckinAft.Content = apiResponse.Data.CheckinAfternoon;
+                    lblCheckoutAft.Content = apiResponse.Data.CheckoutAfternoon;
+                    lblCheckinMorStatus.Content = apiResponse.Data.CheckinMorningStatus;
+                    lblCheckoutMorStatus.Content = apiResponse.Data.CheckoutMorningStatus;
+                    lblCheckinAftStatus.Content = apiResponse.Data.CheckinAfternoonStatus;
+                    lblCheckoutAftStatus.Content = apiResponse.Data.CheckoutAfternoonStatus;
+                    lblSalaryPerDay.Content = apiResponse.Data.SalaryPerDay.ToString("N0");
+
+                    _onCheckoutCreated?.Invoke(apiResponse.Data);
+                    MessageBox.Show("Checkin thành công.");
+                }
+                else
+                {
+                    MessageBox.Show("Checkin thành công nhưng không nhận được dữ liệu.");
+                }
             }
             else
             {
-                var error = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Check-out thất bại: {error}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                try
+                {
+                    var errorResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    if (!string.IsNullOrEmpty(errorResponse?.Data))
+                    {
+                        MessageBox.Show($"Checkin thất bại: {errorResponse.Data}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (!string.IsNullOrEmpty(errorResponse?.Message))
+                    {
+                        MessageBox.Show($"Checkin thất bại: {errorResponse.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Checkin thất bại: {json}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show($"Checkin thất bại: {json}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
+        
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
-
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            {
+                return;
+            }
+            this.Close();
         }
     }
 }

@@ -9,7 +9,7 @@
       Title="PagePayroll">
 
     <Grid Background="White" Margin="0,-3,0,0">
-        <TextBlock Text="Đây là trang chấm công"
+        <TextBlock Text="Trang quản lý chấm công"
          FontSize="24"
          HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>

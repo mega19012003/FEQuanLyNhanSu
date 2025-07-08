@@ -10,6 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using FEQuanLyNhanSu.Screens.Dashboard;
+using FEQuanLyNhanSu.Screens.Users;
 
 namespace FEQuanLyNhanSu
 {
@@ -119,5 +120,12 @@ namespace FEQuanLyNhanSu
             }
             Application.Current.Shutdown(); 
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new UserInfo();
+            window.Show();
+        }
+
     }
 }

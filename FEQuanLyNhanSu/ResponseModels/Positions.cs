@@ -1,37 +1,20 @@
-﻿namespace FEQuanLyNhanSu.ResponseModels
+﻿using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
+
+namespace FEQuanLyNhanSu.ResponseModels
 {
     public class Positions
     {
-        public class PositionDTO 
+        public class PositionResultDto 
         {
             public Guid Id { get; set; }
             public string Name { get; set; }
             public string DepartmentName { get; set; }
         }
-        public class CreatePositionDto
+        public class PositionResponse
         {
-            //public Guid PositionId { get; set; }
-            public Guid? DepartmentId { get; set; }
-            public string Name { get; set; }
-        }
-        public class UpdatePositionDto 
-        {
-            public Guid PositionId { get; set; }
-            public string Name { get; set; }
-        }
-        public class DeletePositionDto
-        {
-            public Guid Id { get; set; }
-            public bool IsDeleted { get; set; }
-        }
-
-        public class UserFilterDto 
-        {
-            public Guid UserId { get; set; }
-            public string Name { get; set; }
-            public string Position {  get; set; }
-            public double BasicSalary { get; set; }
-            public string ImageUrl { get; set; }
+            public string Message { get; set; }
+            public PositionResultDto Data { get; set; }
+            public int StatusCode { get; set; }
         }
     }
 }

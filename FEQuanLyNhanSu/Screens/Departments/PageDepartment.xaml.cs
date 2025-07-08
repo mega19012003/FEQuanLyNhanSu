@@ -36,6 +36,63 @@ namespace FEQuanLyNhanSu
             LoadDepartment();
         }
 
+        // Sửa btnAdd_Click
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateDepartment(OnDepartmentCreated);
+            window.Show();
+        }
+
+        private void OnDepartmentCreated(Departments.DepartmentResultDto newDept)
+        {
+            if (newDept != null)
+            {
+                var list = DprtmtDtaGrid.ItemsSource as List<Departments.DepartmentResultDto> ?? new List<Departments.DepartmentResultDto>();
+                list.Insert(0, newDept); 
+                DprtmtDtaGrid.ItemsSource = null;
+                DprtmtDtaGrid.ItemsSource = list;
+
+                DprtmtDtaGrid.SelectedItem = newDept;
+                DprtmtDtaGrid.ScrollIntoView(newDept);
+            }
+        }
+
+        private void OnDepartmentUpdated(Departments.DepartmentResultDto updatedDept)
+        {
+            if (updatedDept != null)
+            {
+                var list = DprtmtDtaGrid.ItemsSource as List<Departments.DepartmentResultDto> ?? new List<Departments.DepartmentResultDto>();
+
+                // Xoá phòng ban cũ có cùng Id
+                var existing = list.FirstOrDefault(d => d.DepartmentId == updatedDept.DepartmentId);
+                if (existing != null)
+                {
+                    list.Remove(existing);
+                }
+
+                // Thêm mới lên đầu
+                list.Insert(0, updatedDept);
+
+                // Cập nhật lại ItemsSource
+                DprtmtDtaGrid.ItemsSource = null;
+                DprtmtDtaGrid.ItemsSource = list;
+
+                // Highlight dòng vừa update
+                DprtmtDtaGrid.SelectedItem = updatedDept;
+                DprtmtDtaGrid.ScrollIntoView(updatedDept);
+            }
+        }
+        //Update
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid DepartmentId)
+            {
+                var editWindow = new UpdateDepartment(DepartmentId, OnDepartmentUpdated);
+                editWindow.ShowDialog();
+            }
+        }
+
         //Load Department List
         private void LoadDepartment()
         {
@@ -75,23 +132,7 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        //Create
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
-        {
-            var window = new CreateDepartment(LoadDepartment);
-            window.Show();
-        }
 
-        //Update
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            if (button?.Tag is Guid DepartmentId)
-            {
-                var editWindow = new UpdateDepartment(DepartmentId, LoadDepartment);
-                editWindow.ShowDialog();
-            }
-        }
 
         //Delete
         private void btnDelete_Click(object sender, RoutedEventArgs e)

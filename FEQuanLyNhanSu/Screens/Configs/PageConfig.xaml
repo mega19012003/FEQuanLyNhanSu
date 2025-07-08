@@ -10,53 +10,10 @@
       Title="PageConfig">
 
     <Grid Background="White" Margin="0,-3,0,-164">
-        <TextBlock Text="Đây là trang cấu hình" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
+        <TextBlock Text="Trang cấu hình" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
 
         <TabControl Margin="10,70,10,0" VerticalAlignment="Top" Height="466">
-            <!--///////////////////////////////////////////////////////////////-->
-            <TabItem x:Name="TabIP" Header="Allowed IP">
-                <Grid x:Name="IPGrid" Background="White">
-                    <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-                    <DataGrid x:Name="IPDtaGrid" Margin="10,60,10,55" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
-                        <DataGrid.Columns>
-
-                            <DataGridTemplateColumn Header="Hành động">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>-->
-                                            <Button x:Name="btnDeleteIP" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteIP_Click" Tag="{Binding AllowedIPId}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Id" Binding="{Binding AllowedIPId}" Width="*" />
-                            <DataGridTextColumn Header="Địa chỉ IP" Binding="{Binding IPAddress}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <Button x:Name="AddIPBtn" Content="Thêm IP" HorizontalAlignment="Left" Height="35" Margin="10,10,0,0"
-                    VerticalAlignment="Top" Width="150" FontSize="16"
-                    Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="AddIPBtn_Click"/>
-                    <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="284" Height="35">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <!-- Cột cho icon -->
-                            <ColumnDefinition Width="*" />
-                            <!-- Cột cho TextBox -->
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
-
-                        <TextBox x:Name="txtSearchIP" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChangedIP"/>
-                    </Grid>
-                    <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
-                        <Button x:Name="btnPrevPageIP" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPageIP_Click"/>
-                        <Button x:Name="btnNextPageIP" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPageIP_Click"/>
-                        <Label x:Name="txtPageIP" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
-                    </Grid>
-                </Grid>
-            </TabItem>
-            <!--///////////////////////////////////////////////////////////////-->
+           
             <!-- Tab 2: Checkin Status Config -->
             <TabItem Header="Trạng thái Checkin">
                 <Grid Background="White">
@@ -171,6 +128,51 @@
                     </Grid>
                 </Grid>
             </TabItem>
+
+            <!--///////////////////////////////////////////////////////////////-->
+            <TabItem x:Name="TabIP" Header="Allowed IP">
+                <Grid x:Name="IPGrid" Background="White">
+                    <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
+                    <DataGrid x:Name="IPDtaGrid" Margin="10,60,10,55" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+
+                            <DataGridTemplateColumn Header="Hành động">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>-->
+                                            <Button x:Name="btnDeleteIP" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteIP_Click" Tag="{Binding AllowedIPId}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Id" Binding="{Binding AllowedIPId}" Width="*" />
+                            <DataGridTextColumn Header="Địa chỉ IP" Binding="{Binding IPAddress}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button x:Name="AddIPBtn" Content="Thêm IP" HorizontalAlignment="Left" Height="35" Margin="10,10,0,0"
+         VerticalAlignment="Top" Width="150" FontSize="16"
+         Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="AddIPBtn_Click"/>
+                    <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="284" Height="35">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <!-- Cột cho icon -->
+                            <ColumnDefinition Width="*" />
+                            <!-- Cột cho TextBox -->
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
+
+                        <TextBox x:Name="txtSearchIP" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChangedIP"/>
+                    </Grid>
+                    <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
+                        <Button x:Name="btnPrevPageIP" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPageIP_Click"/>
+                        <Button x:Name="btnNextPageIP" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPageIP_Click"/>
+                        <Label x:Name="txtPageIP" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <!--///////////////////////////////////////////////////////////////-->
         </TabControl>
 
     </Grid>

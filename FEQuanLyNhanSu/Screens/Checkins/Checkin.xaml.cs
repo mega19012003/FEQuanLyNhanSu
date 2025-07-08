@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit.Panels;
 using static FEQuanLyNhanSu.Services.Checkins;
 using static FEQuanLyNhanSu.Services.UserService.Users;
 
@@ -26,10 +27,104 @@ namespace FEQuanLyNhanSu.Screens.Checkins
     /// </summary>
     public partial class Checkin : Window
     {
-        public Checkin()
+        private Action<CheckinResultDto> _onCheckinCreated;
+        public Checkin(Action<CheckinResultDto> onCheckinCreated)
         {
             InitializeComponent();
-            _ = LoadUsers();
+
+            _onCheckinCreated = onCheckinCreated;
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+        }
+
+
+        private void HandleUI(string userRole)
+        {
+            switch(userRole)
+            {
+                    case "Admin":
+                    cbEmployee.Visibility = Visibility.Visible;
+                    lblName.Visibility = Visibility.Visible;
+                    _ = LoadUsers();
+                    break;
+                    case "Manager":
+                    cbEmployee.Visibility = Visibility.Visible;
+                    lblName.Visibility = Visibility.Visible;
+                    _ = LoadUsers();
+                    break;
+                    case "Employee":
+                    cbEmployee.Visibility = Visibility.Collapsed;
+                    lblName.Visibility = Visibility.Collapsed;
+                    break;
+                }
+        }
+
+        private async void btnCreate_Click(object sender, RoutedEventArgs e)
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Checkin";
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            HttpContent content = null;
+
+            var selectedUser = cbEmployee.SelectedItem as UserResultDto;
+            if (selectedUser != null)
+            {
+                var form = new MultipartFormDataContent();
+                form.Add(new StringContent(selectedUser.UserId.ToString()), "userId");
+                content = form;
+            }
+       
+
+            var response = await client.PostAsync(baseUrl, content);
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
+                if (apiResponse?.Data != null)
+                {
+                    lblCheckinMor.Content = apiResponse.Data.CheckinMorning;
+                    lblCheckoutMor.Content = apiResponse.Data.CheckoutMorning;
+                    lblCheckinAft.Content = apiResponse.Data.CheckinAfternoon;
+                    lblCheckoutAft.Content = apiResponse.Data.CheckoutAfternoon;
+                    lblCheckinMorStatus.Content = apiResponse.Data.CheckinMorningStatus;
+                    lblCheckoutMorStatus.Content = apiResponse.Data.CheckoutMorningStatus;
+                    lblCheckinAftStatus.Content = apiResponse.Data.CheckinAfternoonStatus;
+                    lblCheckoutAftStatus.Content = apiResponse.Data.CheckoutAfternoonStatus;
+                    lblSalaryPerDay.Content = apiResponse.Data.SalaryPerDay.ToString("N0");
+
+                    _onCheckinCreated?.Invoke(apiResponse.Data);
+                    MessageBox.Show("Checkin thành công.");
+                }
+                else
+                {
+                    MessageBox.Show("Checkin thành công nhưng không nhận được dữ liệu.");
+                }
+            }
+            else
+            {
+                try
+                {
+                    var errorResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    if (!string.IsNullOrEmpty(errorResponse?.Data))
+                    {
+                        MessageBox.Show($"Checkin thất bại: {errorResponse.Data}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else if (!string.IsNullOrEmpty(errorResponse?.Message))
+                    {
+                        MessageBox.Show($"Checkin thất bại: {errorResponse.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Checkin thất bại: {json}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show($"Checkin thất bại: {json}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
@@ -85,39 +180,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             }
         }
 
-        private async void btnCreate_Click(object sender, RoutedEventArgs e)
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var selectedUser = cbEmployee.SelectedItem as UserResultDto;
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Checkin";
 
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var content = new MultipartFormDataContent();
-            content.Add(new StringContent(selectedUser.UserId.ToString()), "userId");
-
-            var response = await client.PostAsync(baseUrl, content);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
-                lblCheckinMor.Content = result.Data.CheckinMorning;
-                lblCheckoutMor.Content = result.Data.CheckoutMorning;
-                lblCheckinAft.Content = result.Data.CheckinAfternoon;
-                lblCheckoutAft.Content = result.Data.CheckoutAfternoon;
-                lblCheckinMorStatus.Content = result.Data.CheckinMorningStatus;
-                lblCheckoutMorStatus.Content = result.Data.CheckoutMorningStatus;
-                lblCheckinAftStatus.Content = result.Data.CheckinAfternoonStatus;
-                lblCheckoutAftStatus.Content = result.Data.CheckoutAfternoonStatus;
-                lblSalaryPerDay.Content = result.Data.SalaryPerDay.ToString("N0");
-            }
-            else
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Checkin thất bại: {error}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {

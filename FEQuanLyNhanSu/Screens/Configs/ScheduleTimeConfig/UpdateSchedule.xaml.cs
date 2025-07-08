@@ -27,7 +27,7 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
     /// </summary>
     public partial class UpdateSchedule : Window
     {
-        Action _onUpdated;
+        public Action _onUpdated;
         public UpdateSchedule(Action onUpdated)
         {
             InitializeComponent();

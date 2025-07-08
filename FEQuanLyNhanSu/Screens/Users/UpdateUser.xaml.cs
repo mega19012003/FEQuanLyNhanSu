@@ -33,9 +33,9 @@ namespace FEQuanLyNhanSu.Screens.Users
     public partial class UpdateUser : Window
     {
         private Guid _userId;
-        private Action _reloadAction;
+        private Action<UserResultDto> _onUpdated;
         private string _imagePath;
-        public UpdateUser(Guid userId, Action reloadAction)
+        public UpdateUser(Guid userId, Action<UserResultDto> onUpdated)
         {
             var role = Application.Current.Properties["UserRole"]?.ToString();
             InitializeComponent();
@@ -44,9 +44,157 @@ namespace FEQuanLyNhanSu.Screens.Users
             LoadPositions();
             LoadRoles();
             _userId = userId;
-            _reloadAction = reloadAction;
+            _onUpdated = onUpdated;
             _ = LoadUserAsync();
         }
+
+        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                btnUpdate.IsEnabled = false;
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+
+                var selectedeDepartment = cbDepartment.SelectedItem as DepartmentResultDto;
+                var selectedPosition = cbPosition.SelectedItem as PositionResultDto;
+                var selectedRole = cmbRole.SelectedItem as string;
+
+                if (!Enum.TryParse(selectedRole, out RoleType roleType))
+                {
+                    MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
+                    return;
+                }
+
+                var formData = new MultipartFormDataContent
+                {
+                    { new StringContent(_userId.ToString()), "UserId" },
+                    { new StringContent(txtFullname.Text), "Fullname" },
+                    { new StringContent(txtPhoneNo.Text), "PhoneNumber" },
+                    { new StringContent(txtAddress.Text), "Address" },
+                    { new StringContent(roleType.ToString()), "Role" },
+                    { new StringContent(txtSalary.Text), "BasicSalary" },
+                    { new StringContent(txtImage.Text), "ImageUrl" },
+                };
+
+                if (!string.IsNullOrEmpty(_imagePath) && System.IO.File.Exists(_imagePath))
+                {
+                    var filestream = File.OpenRead(_imagePath);
+                    var fileContent = new StreamContent(filestream);
+                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+                    formData.Add(fileContent, "ImageUrl", System.IO.Path.GetFileName(_imagePath));
+                }
+
+                if (selectedeDepartment?.DepartmentId != null)
+                    formData.Add(new StringContent(selectedeDepartment.DepartmentId.ToString()), "DepartmentId");
+
+                if (selectedPosition?.Id != null)
+                    formData.Add(new StringContent(selectedPosition.Id.ToString()), "PositionId");
+
+                using var client = CreateAuthorizedClient(token);
+                var response = await client.PutAsync($"{baseUrl}", formData);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<UserResultDto>>(json);
+
+                    if (apiResponse?.Data != null)
+                    {
+                        MessageBox.Show("Cập nhật thông tin người dùng thành công.");
+                        _onUpdated?.Invoke(apiResponse.Data);  // Gửi user mới ra ngoài
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Cập nhật thành công nhưng không nhận được dữ liệu người dùng.");
+                    }
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Không thể cập nhật thông tin người dùng. Lỗi: {errorContent}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi cập nhật thông tin người dùng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                btnUpdate.IsEnabled = true;
+            }
+        }
+
+
+
+        //private async void btnUpdate_Click(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        btnUpdate.IsEnabled = false;
+
+        //        var token = Application.Current.Properties["Token"]?.ToString();
+        //        var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+
+        //        var selectedeDepartment = cbDepartment.SelectedItem as DepartmentResultDto;
+        //        var selectedPosition = cbPosition.SelectedItem as PositionResultDto;
+        //        var selectedRole = cmbRole.SelectedItem as string;
+
+        //        if (!Enum.TryParse(selectedRole, out RoleType roleType))
+        //        {
+        //            MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
+        //            return;
+        //        }
+
+
+        //        var formData = new MultipartFormDataContent
+        //        {
+        //            {new StringContent(_userId.ToString()), "UserId" },
+        //            {new StringContent(txtFullname.Text), "Fullname" },
+        //            {new StringContent(txtPhoneNo.Text), "PhoneNumber" },
+        //            {new StringContent(txtAddress.Text), "Address" },
+        //            {new StringContent(roleType.ToString()), "Role" },
+        //            {new StringContent(txtSalary.Text), "BasicSalary" },
+        //            {new StringContent(txtImage.Text), "ImageUrl" },
+        //        };
+
+        //        if (!string.IsNullOrEmpty(_imagePath) && System.IO.File.Exists(_imagePath))
+        //        {
+        //            var filestream = File.OpenRead(_imagePath);
+        //            var fileContent = new StreamContent(filestream);
+        //            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+        //            formData.Add(fileContent, "ImageUrl", System.IO.Path.GetFileName(_imagePath));
+        //        }
+
+
+        //        if (selectedeDepartment?.DepartmentId != null)
+        //            formData.Add(new StringContent(selectedeDepartment.DepartmentId.ToString()), "DepartmentId");
+
+        //        if (selectedPosition?.Id != null)
+        //            formData.Add(new StringContent(selectedPosition.Id.ToString()), "PositionId");
+        //        using var client = CreateAuthorizedClient(token);
+        //        var response = await client.PutAsync($"{baseUrl}", formData);
+
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            MessageBox.Show("Cập nhật thông tin người dùng thành công.");
+        //            _reloadAction?.Invoke();
+        //            this.Close();
+        //        }
+        //        else
+        //        {
+        //            var errorContent = await response.Content.ReadAsStringAsync();
+        //            MessageBox.Show($"Không thể cập nhật thông tin người dùng. Lỗi: {errorContent}");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Lỗi khi cập nhật thông tin người dùng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
+
 
         private void HandleUI(string role)
         {
@@ -102,7 +250,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             if (response.IsSuccessStatusCode)
             {
                 var json = response.Content.ReadAsStringAsync().Result;
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionDTO>>>(json);
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
                 cbPosition.ItemsSource = result.Data.Items;
             }
         }
@@ -162,7 +310,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionDTO>>>(json);
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
                     cbPosition.ItemsSource = result.Data.Items;
                     cbPosition.IsDropDownOpen = true;
                 }
@@ -251,71 +399,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
         }
 
-        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                btnUpdate.IsEnabled = false;
-
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
-
-                var selectedeDepartment = cbDepartment.SelectedItem as DepartmentResultDto;
-                var selectedPosition = cbPosition.SelectedItem as PositionDTO;
-                var selectedRole = cmbRole.SelectedItem as string;
-
-                if (!Enum.TryParse(selectedRole, out RoleType roleType))
-                {
-                    MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
-                    return;
-                }
-
-
-                var formData = new MultipartFormDataContent
-                {
-                    {new StringContent(_userId.ToString()), "UserId" },
-                    {new StringContent(txtFullname.Text), "Fullname" },
-                    {new StringContent(txtPhoneNo.Text), "PhoneNumber" },
-                    {new StringContent(txtAddress.Text), "Address" },
-                    {new StringContent(roleType.ToString()), "Role" },
-                    {new StringContent(txtSalary.Text), "BasicSalary" },
-                    {new StringContent(txtImage.Text), "ImageUrl" },
-                };
-
-                if (!string.IsNullOrEmpty(_imagePath) && System.IO.File.Exists(_imagePath))
-                {
-                    var filestream = File.OpenRead(_imagePath);
-                    var fileContent = new StreamContent(filestream);
-                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
-                    formData.Add(fileContent, "ImageUrl", System.IO.Path.GetFileName(_imagePath));
-                }
-
-
-                if (selectedeDepartment?.DepartmentId != null)
-                    formData.Add(new StringContent(selectedeDepartment.DepartmentId.ToString()), "DepartmentId");
-
-                if (selectedPosition?.Id != null)
-                    formData.Add(new StringContent(selectedPosition.Id.ToString()), "PositionId");
-                using var client = CreateAuthorizedClient(token);
-                var response = await client.PutAsync($"{baseUrl}", formData);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show("Cập nhật thông tin người dùng thành công.");
-                    _reloadAction?.Invoke();
-                    this.Close();
-                }
-                else
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Không thể cập nhật thông tin người dùng. Lỗi: {errorContent}");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi cập nhật thông tin người dùng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+       
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {

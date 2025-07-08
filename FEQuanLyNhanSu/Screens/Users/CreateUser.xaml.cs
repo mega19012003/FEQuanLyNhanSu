@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
+using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu.Screens.Users
 {
@@ -22,9 +25,11 @@ namespace FEQuanLyNhanSu.Screens.Users
     /// </summary>
     public partial class CreateUser : Window
     {
-        public CreateUser()
+        private Action<UserResultDto> _onCreated;
+        public CreateUser(Action<UserResultDto> onCreated)
         {
             InitializeComponent();
+            _onCreated = onCreated;
             LoadRoles();
         }
 
@@ -35,7 +40,7 @@ namespace FEQuanLyNhanSu.Screens.Users
         }
 
 
-        private void btnCreate_Click(object sender, RoutedEventArgs e)
+        private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
             var selectedRole = cmbRole.SelectedItem as string;
@@ -64,15 +69,32 @@ namespace FEQuanLyNhanSu.Screens.Users
             var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
             
             var response = client.PostAsync(baseUrl, content).Result;
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    MessageBox.Show("Tạo người dùng thành công!");
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    var errorContent = response.Content.ReadAsStringAsync().Result;
+            //    MessageBox.Show($"Không thể tạo người dùng. Lỗi: {errorContent}");
+            //}
             if (response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Tạo người dùng thành công!");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<UserResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onCreated?.Invoke(apiResponse.Data);
+                }
+
+                MessageBox.Show("Tạo người dùng thành công.");
                 this.Close();
             }
             else
             {
-                var errorContent = response.Content.ReadAsStringAsync().Result;
-                MessageBox.Show($"Không thể tạo người dùng. Lỗi: {errorContent}");
+                MessageBox.Show("Tạo người dùng thất bại.");
             }
         }
 

@@ -18,12 +18,13 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>
-                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2"/>
+                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding CheckinId}"/>
+                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding CheckinId}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Id" Binding="{Binding CheckinId}" Width="*" />
                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
                 <DataGridTextColumn Header="Thời gian Checkin sáng" Binding="{Binding CheckinMorning}" Width="*" />
                 <DataGridTextColumn Header="Thời gian Checkout sáng" Binding="{Binding CheckoutMorning}" Width="*" />

@@ -7,7 +7,6 @@ using FEQuanLyNhanSu.Screens.Configs;
 using FEQuanLyNhanSu.Screens.Configs.HolidayConfig;
 using FEQuanLyNhanSu.Screens.Configs.LogStatusConfig;
 using FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig;
-using FEQuanLyNhanSu.Screens.Departments;
 using FEQuanLyNhanSu.Screens.Positions;
 using Newtonsoft.Json;
 using System;
@@ -25,6 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
 
 namespace FEQuanLyNhanSu
 {
@@ -33,8 +33,9 @@ namespace FEQuanLyNhanSu
     /// </summary>
     public partial class PageConfig : Page
     {
-        private PaginationHelper<AllowedIPs.IPDto> _ipPaginationHelper;
+        private PaginationHelper<AllowedIPs.IPResultDto> _ipPaginationHelper;
         private PaginationHelper<Holidays.HolidayResultDto> _holidayPaginationHelper;
+
 
         public PageConfig()
         {
@@ -119,7 +120,7 @@ namespace FEQuanLyNhanSu
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/AllowedIP";
                 int pageSize = 20;
 
-                _ipPaginationHelper = new PaginationHelper<AllowedIPs.IPDto>(
+                _ipPaginationHelper = new PaginationHelper<AllowedIPs.IPResultDto>(
                     baseUrl,
                     pageSize,
                     token,
@@ -193,10 +194,48 @@ namespace FEQuanLyNhanSu
 
         // IP CONFIG
         /// ///////////////////////////////////////////
+
+        private void OnIPCreated(IPResultDto newDept)
+        {
+            if (newDept != null)
+            {
+                var list = IPDtaGrid.ItemsSource as List<IPResultDto> ?? new List<IPResultDto>();
+                list.Insert(0, newDept);
+                IPDtaGrid.ItemsSource = null;
+                IPDtaGrid.ItemsSource = list;
+
+                IPDtaGrid.SelectedItem = newDept;
+                IPDtaGrid.ScrollIntoView(newDept);
+            }
+        }
+
+        //private void OnDepartmentUpdated(IPResultDto updatedDept)
+        //{
+        //    if (updatedDept != null)
+        //    {
+        //        var list = IPDtaGrid.ItemsSource as List<IPResultDto> ?? new List<IPResultDto>();
+
+        //        var existing = list.FirstOrDefault(d => d.AllowedIPId == updatedDept.AllowedIPId);
+        //        if (existing != null)
+        //        {
+        //            list.Remove(existing);
+        //        }
+
+        //        list.Insert(0, updatedDept);
+
+        //        IPDtaGrid.ItemsSource = null;
+        //        IPDtaGrid.ItemsSource = list;
+
+        //        IPDtaGrid.SelectedItem = updatedDept;
+        //        IPDtaGrid.ScrollIntoView(updatedDept);
+        //    }
+        //}
+
+
         // Create
         private void AddIPBtn_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CreateIPConfig(LoadAllowedIPStatus);
+            var window = new CreateIPConfig(OnIPCreated);
             window.ShowDialog();
         }
 
@@ -241,7 +280,7 @@ namespace FEQuanLyNhanSu
                 LoadAllowedIPStatus();
             else
             {
-                var result = await SearchHelper.SearchAsync<AllowedIPs.IPDto>("api/AllowedIP", keyword, token);
+                var result = await SearchHelper.SearchAsync<AllowedIPs.IPResultDto>("api/AllowedIP", keyword, token);
                 IPDtaGrid.ItemsSource = result;
             }
         }
@@ -271,10 +310,47 @@ namespace FEQuanLyNhanSu
 
         // HOLIDAY CONFIG
         /// ///////////////////////////////////////////
+
+        private void OnHolidayCreated(Holidays.HolidayResultDto newDept)
+        {
+            if (newDept != null)
+            {
+                var list = HolidayDtaGrid.ItemsSource as List<Holidays.HolidayResultDto> ?? new List<Holidays.HolidayResultDto>();
+                list.Insert(0, newDept);
+                HolidayDtaGrid.ItemsSource = null;
+                HolidayDtaGrid.ItemsSource = list;
+
+                HolidayDtaGrid.SelectedItem = newDept;
+                HolidayDtaGrid.ScrollIntoView(newDept);
+            }
+        }
+
+        private void OnHolidayUpdated(Holidays.HolidayResultDto updatedDept)
+        {
+            if (updatedDept != null)
+            {
+                var list = HolidayDtaGrid.ItemsSource as List<Holidays.HolidayResultDto> ?? new List<Holidays.HolidayResultDto>();
+
+                var existing = list.FirstOrDefault(d => d.HolidayId == updatedDept.HolidayId);
+                if (existing != null)
+                {
+                    list.Remove(existing);
+                }
+
+                list.Insert(0, updatedDept);
+
+                HolidayDtaGrid.ItemsSource = null;
+                HolidayDtaGrid.ItemsSource = list;
+
+                HolidayDtaGrid.SelectedItem = updatedDept;
+                HolidayDtaGrid.ScrollIntoView(updatedDept);
+            }
+        }
+
         // Create
         private void AddHolidayBtn_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CreateHolidayConfig(LoadHolidayConfig);
+            var window = new CreateHolidayConfig(OnHolidayCreated);
             window.ShowDialog();
         }
 
@@ -284,7 +360,7 @@ namespace FEQuanLyNhanSu
             var button = sender as Button;
             if (button?.Tag is Guid HolidayId)
             {
-                var editWindow = new UpdateHolidayConfig(HolidayId, LoadHolidayConfig);
+                var editWindow = new UpdateHolidayConfig(HolidayId, OnHolidayUpdated);
                 editWindow.ShowDialog();
             }
         }
@@ -293,18 +369,18 @@ namespace FEQuanLyNhanSu
         private void btnDeleteHoliday_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            if (button?.Tag is Guid DepartmentId)
+            if (button?.Tag is Guid HolidayId)
             {
                 if (MessageBox.Show("Bạn có chắc chắn muốn xóa ngày nghỉ này?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    _ = DeleteDepartmentAsync(DepartmentId);
+                    _ = DeleteHolidayAsync(HolidayId);
                 }
             }
         }
-        private async Task DeleteDepartmentAsync(Guid departmentId)
+        private async Task DeleteHolidayAsync(Guid HolidayId)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Holiday/" + departmentId;
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Holiday/" + HolidayId;
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var response = await client.DeleteAsync(baseUrl);

@@ -9,7 +9,7 @@
       Title="Page1">
 
     <Grid Background="White" Margin="0,-3,0,0">
-        <TextBlock Text="Đây là trang người dùng"
+        <TextBlock Text="Trang quản lý người dùng"
              FontSize="24"
              HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>

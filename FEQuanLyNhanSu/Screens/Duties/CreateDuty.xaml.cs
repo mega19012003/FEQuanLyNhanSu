@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
+using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu.Screens.Duties
@@ -24,8 +27,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
     /// </summary>
     public partial class CreateDuty : Window
     {
-        private readonly Action _onDutyCreated;
-        public CreateDuty(Action onDutyCreated)
+        private Action<DutyResultDto> _onDutyCreated;
+        public CreateDuty(Action<DutyResultDto> onDutyCreated)
         {
             InitializeComponent();
             LoadUsers();
@@ -49,16 +52,33 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    var json = await response.Content.ReadAsStringAsync();
+            //    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
+            //    cbEmployee.ItemsSource = result.Data.Items;
+            //    cbEmployee.IsDropDownOpen = true;
+            //}
+            //else
+            //{
+            //    cbEmployee.ItemsSource = null;
+            //}
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
-                cbEmployee.ItemsSource = result.Data.Items;
-                cbEmployee.IsDropDownOpen = true;
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DutyResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onDutyCreated?.Invoke(apiResponse.Data);
+                }
+
+                MessageBox.Show("Tạo công việc thành công.");
+                this.Close();
             }
             else
             {
-                cbEmployee.ItemsSource = null;
+                MessageBox.Show("Tạo công việc thất bại.");
             }
         }
 

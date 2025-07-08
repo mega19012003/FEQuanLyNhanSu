@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,12 +28,12 @@ namespace FEQuanLyNhanSu.Screens.Duties
     public partial class CreateDetail : Window
     {
         private Guid _dutyId;
-        private readonly Action _onDutyUpdated;
-        public CreateDetail(Action onDutyUpdated, Guid dutyId)
+        private readonly Action<DutyDetailResultDto> _onDetailUpdated;
+        public CreateDetail(Action<DutyDetailResultDto> onDetailUpdated, Guid dutyId)
         {
             InitializeComponent();
             LoadUsers();
-            _onDutyUpdated = onDutyUpdated;
+            _onDetailUpdated = onDetailUpdated;
             _dutyId = dutyId;
             _ = LoadDutyAsync();
         }
@@ -94,6 +95,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             {
                 MessageBox.Show("Không thể tải thông tin chức vụ.");
             }
+
         }
 
         private async Task LoadUsers()
@@ -153,16 +155,33 @@ namespace FEQuanLyNhanSu.Screens.Duties
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                 var response = await client.PostAsync($"{baseUrl}/api/Duty/DutyDetail", content);
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    MessageBox.Show("Tạo thêm chi tiết công việc thành công!");
+                //    _onDetailUpdated?.Invoke();
+                //    this.Close();
+                //}
+                //else
+                //{
+                //    var error = await response.Content.ReadAsStringAsync();
+                //    MessageBox.Show($"Tạo thất bại: {error}");
+                //}
                 if (response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show("Tạo thêm chi tiết công việc thành công!");
-                    _onDutyUpdated?.Invoke();
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DetailResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onDetailUpdated?.Invoke(apiResponse.Data);
+                    }
+
+                    MessageBox.Show("Tạo công việc thành công.");
                     this.Close();
                 }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Tạo thất bại: {error}");
+                    MessageBox.Show("Tạo công việc thất bại.");
                 }
             }
             catch (Exception ex)

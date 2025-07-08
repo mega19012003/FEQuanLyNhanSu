@@ -40,6 +40,65 @@ namespace FEQuanLyNhanSu
             LoadDateComboboxes();
         }
 
+        private void OnCheckinCreated(Checkins.CheckinResultDto newDept)
+        {
+            if (newDept != null)
+            {
+                var list = CheckinDtaGrid.ItemsSource as List<Checkins.CheckinResultDto> ?? new List<Checkins.CheckinResultDto>();
+                list.Insert(0, newDept);
+                CheckinDtaGrid.ItemsSource = null;
+                CheckinDtaGrid.ItemsSource = list;
+
+                CheckinDtaGrid.SelectedItem = newDept;
+                CheckinDtaGrid.ScrollIntoView(newDept);
+            }
+        }
+
+        private void OnCheckinUpdated(Checkins.CheckinResultDto updatedDept)
+        {
+            if (updatedDept != null)
+            {
+                var list = CheckinDtaGrid.ItemsSource as List<Checkins.CheckinResultDto> ?? new List<Checkins.CheckinResultDto>();
+
+                var existing = list.FirstOrDefault(d => d.CheckinId == updatedDept.CheckinId);
+                if (existing != null)
+                {
+                    list.Remove(existing);
+                }
+
+                list.Insert(0, updatedDept);
+
+                CheckinDtaGrid.ItemsSource = null;
+                CheckinDtaGrid.ItemsSource = list;
+
+                CheckinDtaGrid.SelectedItem = updatedDept;
+                CheckinDtaGrid.ScrollIntoView(updatedDept);
+            }
+        }
+
+        private void AddCheckinBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var window = new Checkin(OnCheckinCreated);
+                window.Show();
+            }
+            catch (Exception ex)
+            {
+                // Hiển thị thông báo lỗi chi tiết
+                MessageBox.Show($"Đã xảy ra lỗi:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                // Hoặc nếu muốn xem cả stacktrace để debug
+                // MessageBox.Show($"Đã xảy ra lỗi:\n{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void AddCheckouBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new Checkout(OnCheckinUpdated);
+            window.Show();
+        }
+
         private void HandleUI(string role)
         {
             switch (role)
@@ -150,27 +209,46 @@ namespace FEQuanLyNhanSu
         //    }
         //}
 
-        private void AddCheckinBtn_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var window = new Checkin();
-                window.Show();
-            }
-            catch (Exception ex)
-            {
-                // Hiển thị thông báo lỗi chi tiết
-                MessageBox.Show($"Đã xảy ra lỗi:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                // Hoặc nếu muốn xem cả stacktrace để debug
-                // MessageBox.Show($"Đã xảy ra lỗi:\n{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid checkinId)
+            {
+                var editWindow = new Update(OnCheckinUpdated, checkinId);
+                editWindow.ShowDialog();
             }
         }
 
-        private void AddCheckouBtn_Click(object sender, RoutedEventArgs e)
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Checkout();
-            window.Show();
+            var button = sender as Button;
+            if (button?.Tag is Guid checkinId)
+            {
+                var result = MessageBox.Show("Bạn có chắc chắn muốn xóa checkin này?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    _ = DeleteCheckinAsync(checkinId);
+                }
+            }
+        }
+        private async Task DeleteCheckinAsync(Guid checkinId)
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/Checkin/{checkinId}";
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await client.DeleteAsync(baseUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Xóa checkin thành công.");
+                LoadCheckin();
+            }
+            else
+            {
+                MessageBox.Show("Xóa checkin thất bại.");
+            }
         }
 
         private async void btnNextPage_Click(object sender, RoutedEventArgs e)

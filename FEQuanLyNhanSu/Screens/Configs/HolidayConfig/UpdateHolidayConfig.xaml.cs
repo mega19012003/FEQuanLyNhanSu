@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.Holidays;
 
 namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
 {
@@ -26,8 +28,8 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
     public partial class UpdateHolidayConfig : Window
     {
         private Guid _holidayConfigId;
-        private Action _onHolidayUpdated;
-        public UpdateHolidayConfig(Guid holidayConfigId, Action onUpdated)
+        private Action<HolidayResultDto> _onHolidayUpdated;
+        public UpdateHolidayConfig(Guid holidayConfigId, Action<HolidayResultDto> onUpdated)
         {
             InitializeComponent();
             _holidayConfigId = holidayConfigId;
@@ -99,15 +101,32 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             var response = await client.PutAsync(url, content);
             var responseBody = await response.Content.ReadAsStringAsync();
 
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    MessageBox.Show("Cập nhật holdiay thành công.");
+            //    _onHolidayUpdated?.Invoke();
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
+            //}
             if (response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Cập nhật holdiay thành công.");
-                _onHolidayUpdated?.Invoke();
+                var jsonResult = await response.Content.ReadAsStringAsync();
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onHolidayUpdated?.Invoke(apiResponse.Data);
+                }
+
+                MessageBox.Show("Tạo phòng ban thành công.");
                 this.Close();
             }
             else
             {
-                MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
+                MessageBox.Show("Tạo phòng ban thất bại.");
             }
         }
 

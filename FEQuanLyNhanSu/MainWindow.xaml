@@ -35,7 +35,7 @@
 
         <!-- Header (bên phải, hàng 0, cột 1) -->
         <Grid Grid.Row="0" Grid.Column="1" Background="#FF66A8D5">
-            <TextBlock x:Name="txtFullName" Text="Xin chào, Admin!" Foreground="White"
+            <TextBlock x:Name="txtFullName" Text="Xin chào, ai đó!" Foreground="White"
                    FontSize="20" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,50,0"/>
 
@@ -47,6 +47,11 @@
                Foreground="White"
                VerticalAlignment="Center"/>
             </StackPanel>
+            <Button Content="" HorizontalAlignment="Right" Margin="0,0,250,0" VerticalAlignment="Center" RenderTransformOrigin="2.776,2.281" Height="50" Width="50" Click="Button_Click" HorizontalContentAlignment="Center">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Assets/user.png"/>
+                </Button.Background>
+            </Button>
         </Grid>
 
         <!-- Main content (bên phải, hàng 1, cột 1) -->
@@ -58,8 +63,5 @@
             <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Visibility="Collapsed"/>
             <Grid HorizontalAlignment="Center" Height="505" Margin="0,82,0,0" VerticalAlignment="Top" Width="998"/>
         </Grid>
-
     </Grid>
-
-
 </Window>

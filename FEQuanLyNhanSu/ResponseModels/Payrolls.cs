@@ -1,4 +1,6 @@
-﻿namespace FEQuanLyNhanSu.ResponseModels
+﻿using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
+
+namespace FEQuanLyNhanSu.ResponseModels
 {
     public class Payrolls
     {
@@ -11,18 +13,11 @@
             public string Note { get; set; }
             public int DaysWorked { get; set; }
         }
-        public class CreatePayrollDto
+        public class PayrollResponse
         {
-            public Guid UserId { get; set; }
-            public string Note { get; set; }
-            public DateTime CreatedDate { get; set; }
-        }
-
-        public class UpdatePayrollDto
-        {
-            public Guid Id { get; set; }
-            public Guid UserId { get; set; }
-            public string Note { get; set; }
+            public string Message { get; set; }
+            public PayrollResultDto Data { get; set; }
+            public int StatusCode { get; set; }
         }
     }
 }

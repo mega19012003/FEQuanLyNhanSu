@@ -1,13 +1,10 @@
 ﻿using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
-using FEQuanLyNhanSu.ResponseModels;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
 
 namespace FEQuanLyNhanSu.Screens.Departments
 {
@@ -26,13 +24,58 @@ namespace FEQuanLyNhanSu.Screens.Departments
     public partial class UpdateDepartment : Window
     {
         private Guid _departmentId;
-        private readonly Action _onDepartmentUpdated;
-        public UpdateDepartment(Guid departmentId, Action onUpdated)
+        private Action<DepartmentResultDto> _onDepartmentUpdated;
+        public UpdateDepartment(Guid departmentId, Action<DepartmentResultDto> onUpdated)
         {
             InitializeComponent();
             _departmentId = departmentId;
             _onDepartmentUpdated = onUpdated;
             _ = LoadDepartmentAsync();
+        }
+
+        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var name = txtName.Text?.Trim();
+            if (string.IsNullOrEmpty(name))
+            {
+                MessageBox.Show("Tên phòng ban không được để trống.");
+                return;
+            }
+
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var query = $"newName={Uri.EscapeDataString(name)}";
+            var url = $"{baseUrl}/api/Department?id={_departmentId}&{query}";
+
+            using var client = CreateAuthorizedClient(token);
+            var response = await client.PutAsync(url, null);
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    MessageBox.Show("Cập nhật phòng ban thành công.");
+            //    _onDepartmentUpdated?.Invoke();
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Cập nhật phòng ban thất bại. Vui lòng thử lại sau.");
+            //}
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DepartmentResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onDepartmentUpdated?.Invoke(apiResponse.Data);
+                }
+
+                MessageBox.Show("Cập nhật phòng ban thành công.");
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Cập nhật phòng ban thất bại.");
+            }
         }
 
         private async Task LoadDepartmentAsync()
@@ -56,6 +99,7 @@ namespace FEQuanLyNhanSu.Screens.Departments
             {
                 MessageBox.Show("Không thể tải thông tin chức vụ.");
             }
+
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -72,34 +116,6 @@ namespace FEQuanLyNhanSu.Screens.Departments
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
-        }
-
-        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            var name = txtName.Text?.Trim();
-            if (string.IsNullOrEmpty(name))
-            {
-                MessageBox.Show("Tên phòng ban không được để trống.");
-                return;
-            }
-
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var query = $"newName={Uri.EscapeDataString(name)}";
-            var url = $"{baseUrl}/api/Department?id={_departmentId}&{query}";
-
-            using var client = CreateAuthorizedClient(token);
-            var response = await client.PutAsync(url, null);
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Cập nhật phòng ban thành công.");
-                _onDepartmentUpdated?.Invoke();
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Cập nhật phòng ban thất bại. Vui lòng thử lại sau.");
-            }
         }
     }
 }

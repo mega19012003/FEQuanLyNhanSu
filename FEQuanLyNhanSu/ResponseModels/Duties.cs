@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FEQuanLyNhanSu.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using FEQuanLyNhanSu.Models;
+using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
 
 namespace FEQuanLyNhanSu.ResponseModels
 {
@@ -24,36 +25,17 @@ namespace FEQuanLyNhanSu.ResponseModels
             public bool IsCompleted { get; set; }
             public string Description { get; set; }
         }
-        public class CreateDutyDto
+        public class DutyResponse
         {
-            public string Name { get; set; }
-            public DateTime StartDate { get; set; }
-            public List<CreateDutyDetailDto> DutyDetails { get; set; } = new List<CreateDutyDetailDto>();
+            public string Message { get; set; }
+            public DutyResultDto Data { get; set; }
+            public int StatusCode { get; set; }
         }
-
-        public class GetDutyDto
+        public class DetailResponse
         {
-            public Guid Id { get; set; }
-            public List<CreateDutyDetailDto> DutyDetails { get; set; } = new List<CreateDutyDetailDto>();
-        }
-        public class UpdateDutyDto
-        {
-            public Guid Id { get; set; }
-
-            public string Name { get; set; }
-            //public bool IsCompleted { get; set; }
-        }
-
-        public class CreateDutyDetailDto
-        {
-            public Guid userId { get; set; }
-            public string Description { get; set; }
-        }
-        public class UpdateDutyDetailDto
-        {
-            public Guid DutyDetailId { get; set; }
-            public Guid userId { get; set; }
-            public string Description { get; set; }
+            public string Message { get; set; }
+            public DutyDetailResultDto Data { get; set; }
+            public int StatusCode { get; set; }
         }
     }
 }

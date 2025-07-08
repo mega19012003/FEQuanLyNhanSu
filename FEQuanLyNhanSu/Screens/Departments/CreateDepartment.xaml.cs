@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
 
 namespace FEQuanLyNhanSu.Screens.Departments
 {
@@ -21,8 +23,8 @@ namespace FEQuanLyNhanSu.Screens.Departments
     /// </summary>
     public partial class CreateDepartment : Window
     {
-        private Action _onDepartmentCreated;
-        public CreateDepartment(Action onCreated)
+        private Action<DepartmentResultDto> _onDepartmentCreated; // Updated Action to accept DepartmentResultDto
+        public CreateDepartment(Action<DepartmentResultDto> onCreated) // Updated constructor to match the updated Action type
         {
             InitializeComponent();
             _onDepartmentCreated = onCreated;
@@ -51,10 +53,27 @@ namespace FEQuanLyNhanSu.Screens.Departments
 
             var response = await client.PostAsync(url, null);
 
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    MessageBox.Show("Tạo phòng ban thành công.");
+            //    _onDepartmentCreated?.Invoke();
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Tạo phòng ban thất bại.");
+            //}
             if (response.IsSuccessStatusCode)
             {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<DepartmentResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onDepartmentCreated?.Invoke(apiResponse.Data); 
+                }
+
                 MessageBox.Show("Tạo phòng ban thành công.");
-                _onDepartmentCreated?.Invoke();
                 this.Close();
             }
             else

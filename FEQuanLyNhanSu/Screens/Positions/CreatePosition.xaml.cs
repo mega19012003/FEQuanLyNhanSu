@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.Departments;
+using FEQuanLyNhanSu.ResponseModels;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using FEQuanLyNhanSu.Base;
-using FEQuanLyNhanSu.Helpers;
-using FEQuanLyNhanSu.ResponseModels;
-using Newtonsoft.Json;
 using static FEQuanLyNhanSu.ResponseModels.Departments;
+using static FEQuanLyNhanSu.ResponseModels.Positions;
 
 namespace FEQuanLyNhanSu.Screens.Positions
 {
@@ -25,14 +21,13 @@ namespace FEQuanLyNhanSu.Screens.Positions
     /// </summary>
     public partial class CreatePosition : Window
     {
-        private Action _onPositionCreated;
-        public CreatePosition(Action onCreated)
+        private Action<PositionResultDto> _onPositionCreated;
+        public CreatePosition(Action<PositionResultDto> onCreated)
         {
             InitializeComponent();
             _onPositionCreated = onCreated;
 
-            var role = Application.Current.Properties["UserRole"]?.ToString();
-            Authorize(role);
+            Authorize(Application.Current.Properties["UserRole"]?.ToString());
             //if (role == "Manager")
             //{
             //    cmbDepartment.Visibility = Visibility.Collapsed;
@@ -45,37 +40,6 @@ namespace FEQuanLyNhanSu.Screens.Positions
             //}
 
             HandleManagerUI();
-        }
-
-        private void Authorize(string role)
-        {
-            if (role == "Manager")
-            {
-                cmbDepartment.Visibility = Visibility.Collapsed;
-                txtDepartment.Visibility = Visibility.Hidden;
-            }
-            else if (role == "Administrator")
-            {
-                // Chỉ Admin mới được gọi API lấy danh sách phòng ban
-                _ = LoadDepartmentsAsync();
-            }
-        }
-
-        private void HandleManagerUI()
-        {
-            var role = Application.Current.Properties["UserRole"]?.ToString();
-            if (role == "Manager")
-            {
-                cmbDepartment.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void btnExit_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-                return;
-
-            this.Close();
         }
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
@@ -96,7 +60,7 @@ namespace FEQuanLyNhanSu.Screens.Positions
             // Chỉ Admin cần truyền thêm DepartmentId
             if (role == "Administrator")
             {
-                var selectedDepartment = cmbDepartment.SelectedItem as DepartmentResultDto;
+                var selectedDepartment = cbDepartment.SelectedItem as DepartmentResultDto;
                 if (selectedDepartment == null)
                 {
                     MessageBox.Show("Vui lòng chọn phòng ban.");
@@ -114,15 +78,99 @@ namespace FEQuanLyNhanSu.Screens.Positions
 
             var response = await client.PostAsync(url, null);
 
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    MessageBox.Show("Tạo chức vụ thành công.");
+            //    _onPositionCreated?.Invoke();
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Tạo chức vụ thất bại.");
+            //}
             if (response.IsSuccessStatusCode)
             {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<PositionResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (apiResponse?.Data != null)
+                {
+                    _onPositionCreated?.Invoke(apiResponse.Data);
+                }
+
                 MessageBox.Show("Tạo chức vụ thành công.");
-                _onPositionCreated?.Invoke();
                 this.Close();
             }
             else
             {
                 MessageBox.Show("Tạo chức vụ thất bại.");
+            }
+        }
+
+        private void Authorize(string role)
+        {
+            if (role == "Manager")
+            {
+                cbDepartment.Visibility = Visibility.Collapsed;
+                txtDepartment.Visibility = Visibility.Hidden;
+            }
+            else if (role == "Administrator")
+            {
+                // Chỉ Admin mới được gọi API lấy danh sách phòng ban
+                _ = LoadDepartmentsAsync();
+            }
+        }
+
+        private void HandleManagerUI()
+        {
+            var role = Application.Current.Properties["UserRole"]?.ToString();
+            if (role == "Manager")
+            {
+                cbDepartment.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                return;
+
+            this.Close();
+        }
+
+        private async void cbDepartment_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                var comboBox = sender as ComboBox;
+                if (comboBox?.Text == null) return;
+
+                var keyword = comboBox.Text.Trim();
+                if (keyword == "") return;
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                    cbDepartment.ItemsSource = result.Data.Items;
+                    cbDepartment.IsDropDownOpen = true;
+                }
+                else
+                {
+                    cbDepartment.ItemsSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -143,9 +191,9 @@ namespace FEQuanLyNhanSu.Screens.Positions
                     var json = await response.Content.ReadAsStringAsync();
                     var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
 
-                    cmbDepartment.ItemsSource = apiResult.Data.Items;
-                    cmbDepartment.DisplayMemberPath = "Name";
-                    cmbDepartment.SelectedValuePath = "DepartmentId";
+                    cbDepartment.ItemsSource = apiResult.Data.Items;
+                    cbDepartment.DisplayMemberPath = "Name";
+                    cbDepartment.SelectedValuePath = "DepartmentId";
                 }
                 else
                 {

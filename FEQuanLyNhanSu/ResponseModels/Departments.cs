@@ -7,7 +7,12 @@
             public Guid DepartmentId { get; set; }
             public string Name { get; set; }
         }
-
+        public class DepartmentResponse
+        {
+            public string Message { get; set; }
+            public DepartmentResultDto Data { get; set; }
+            public int StatusCode { get; set; }
+        }
         public class PositionByDepartmentDto
         {
             public Guid PositionId { get; set; }

@@ -1,5 +1,6 @@
 ﻿using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Positions;
 using FEQuanLyNhanSu.Screens.Users;
 using FEQuanLyNhanSu.Services.UserService;
@@ -41,6 +42,60 @@ namespace FEQuanLyNhanSu
             LoadUser();
         }
 
+        private void OnUserCreated(Users.UserResultDto newDept)
+        {
+            if (newDept != null)
+            {
+                var list = UserDtaGrid.ItemsSource as List<Users.UserResultDto> ?? new List<Users.UserResultDto>();
+                list.Insert(0, newDept);
+                UserDtaGrid.ItemsSource = null;
+                UserDtaGrid.ItemsSource = list;
+
+                UserDtaGrid.SelectedItem = newDept;
+                UserDtaGrid.ScrollIntoView(newDept);
+            }
+        }
+
+        private void OnUserUpdated(Users.UserResultDto updatedUser)
+        {
+            if (updatedUser != null)
+            {
+                var list = UserDtaGrid.ItemsSource as List<Users.UserResultDto> ?? new List<Users.UserResultDto>();
+
+                var existing = list.FirstOrDefault(d => d.UserId == updatedUser.UserId);
+                if (existing != null)
+                {
+                    list.Remove(existing);
+                }
+
+                list.Insert(0, updatedUser);
+
+                UserDtaGrid.ItemsSource = null;
+                UserDtaGrid.ItemsSource = list;
+
+                UserDtaGrid.SelectedItem = updatedUser;
+                UserDtaGrid.ScrollIntoView(updatedUser);
+            }
+        }
+
+        /// Create
+        private void CreateUser(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateUser(OnUserCreated);
+            window.Show();
+        }
+
+        /// Update
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid userId)
+            {
+                var editWindow = new UpdateUser(userId, OnUserUpdated);
+                editWindow.ShowDialog();
+            }
+        }
+
         private void LoadUser()
         {
             try
@@ -79,23 +134,7 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        /// Create
-        private void CreateUser(object sender, RoutedEventArgs e)
-        {
-            var window = new CreateUser();
-            window.Show();
-        }
 
-        /// Update
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            if (button?.Tag is Guid userId)
-            {
-                var editWindow = new UpdateUser(userId, LoadUser);
-                editWindow.ShowDialog();
-            }
-        }
 
         /// Delete 
         private void btnDelete_Click(object sender, RoutedEventArgs e)

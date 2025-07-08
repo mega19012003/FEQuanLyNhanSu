@@ -14,4 +14,5 @@ namespace FEQuanLyNhanSu.Models.Configs
 
         public string? Note { get; set; } 
     }
+
 }
