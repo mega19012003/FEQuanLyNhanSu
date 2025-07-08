@@ -77,7 +77,7 @@
                       IsTextSearchEnabled="False"
                       KeyUp="cbDepartment_KeyUp"
                       DisplayMemberPath="Name"
-                      SelectedValuePath="Id" VerticalContentAlignment="Center"/>
+                      SelectedValuePath="DepartmentId" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged"/>
 
             <TextBox Grid.Row="5" Grid.Column="0" Text="Position" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"

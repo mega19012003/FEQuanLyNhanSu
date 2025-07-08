@@ -62,45 +62,52 @@ namespace FEQuanLyNhanSu
 
         private async Task FilterAsync()
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
-            string keyword = txtSearch.Text?.Trim();
-
-            Guid? departmentId = null;
-            if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
-                departmentId = selectedDept.DepartmentId;
-
-            Guid? positionId = null;
-            if (cbPosition.SelectedItem is PositionResultDto selectedPos)
-                positionId = selectedPos.Id;
-
-            List<UserResultDto> items;
-
-            if (string.IsNullOrWhiteSpace(keyword) && !departmentId.HasValue && !positionId.HasValue)
+            try
             {
-                items = await LoadAllUsersAsync(baseUrl, token);
-            }
-            else
-            {
-                items = await SearchAndFilterUsersAsync(
-                    baseUrl,
-                    token,
-                    keyword,
-                    departmentId,
-                    positionId
-                );
-            }
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
 
-            UserDtaGrid.ItemsSource = null;
-            UserDtaGrid.ItemsSource = items;
+                string keyword = txtSearch.Text?.Trim();
+
+                Guid? departmentId = null;
+                if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
+                    departmentId = selectedDept.DepartmentId;
+
+                Guid? positionId = null;
+                if (cbPosition.SelectedItem is PositionResultDto selectedPos)
+                    positionId = selectedPos.Id;
+
+                List<UserResultDto> items;
+
+                if (string.IsNullOrWhiteSpace(keyword) && !departmentId.HasValue && !positionId.HasValue)
+                {
+                    items = await LoadAllUsersAsync(baseUrl, token);
+                }
+                else
+                {
+                    items = await SearchAndFilterUsersAsync(
+                        baseUrl,
+                        token,
+                        keyword,
+                        departmentId,
+                        positionId
+                    );
+                }
+
+                UserDtaGrid.ItemsSource = null;
+                UserDtaGrid.ItemsSource = items;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi lọc dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public static async Task<List<UserResultDto>> LoadAllUsersAsync(
-    string baseUrl,
-    string token,
-    int pageIndex = 1,
-    int pageSize = 20)
+            string baseUrl,
+            string token,
+            int pageIndex = 1,
+            int pageSize = 20)
         {
             try
             {
@@ -185,12 +192,21 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private async void txtSearch_TextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
+        private async void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            await FilterAsync();
+        }
         private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await LoadPositionsByDepartmentAsync();
             await FilterAsync();
         }
+
+        private async void cbPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await FilterAsync();
+        }
+
         private async Task LoadPositionsByDepartmentAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -223,9 +239,6 @@ namespace FEQuanLyNhanSu
                 cbPosition.ItemsSource = null;
             }
         }
-
-        private async void cbPosition_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
-
         private async Task LoadDepartments()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -417,21 +430,21 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private async void txtTextChanged(object sender, TextChangedEventArgs e)
-        {
-            var token = Application.Current.Properties["Token"].ToString();
-            string keyword = txtSearch.Text?.Trim();
+        //private async void txtTextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    var token = Application.Current.Properties["Token"].ToString();
+        //    string keyword = txtSearch.Text?.Trim();
 
-            if (string.IsNullOrWhiteSpace(keyword))
-                LoadUser();
-            else
-            {
-                cbDepartment.Text = string.Empty;
-                cbPosition.Text = string.Empty;
-                var result = await SearchHelper.SearchAsync<UserResultDto>("api/User", keyword, token);
-                UserDtaGrid.ItemsSource = result;
-            }
-        }
+        //    if (string.IsNullOrWhiteSpace(keyword))
+        //        LoadUser();
+        //    else
+        //    {
+        //        //cbDepartment.Text = string.Empty;
+        //        //cbPosition.Text = string.Empty;
+        //        var result = await SearchHelper.SearchAsync<UserResultDto>("api/User", keyword, token);
+        //        UserDtaGrid.ItemsSource = result;
+        //    }
+        //}
 
 
         /// Delete 
