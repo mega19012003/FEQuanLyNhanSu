@@ -114,10 +114,13 @@ namespace FEQuanLyNhanSu.Screens.Users
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
 
-                if (txtPhoneNo.Text.Length < 10 || txtPhoneNo.Text.Length > 11 || !txtPhoneNo.Text.All(char.IsDigit))
+                if (!string.IsNullOrWhiteSpace(txtPhoneNo.Text))
                 {
-                    MessageBox.Show("Số điện thoại phải có độ dài từ 10 đến 11 ký tự và chỉ chứa số.");
-                    return;
+                    if (txtPhoneNo.Text.Length < 10 || txtPhoneNo.Text.Length > 11 || !txtPhoneNo.Text.All(char.IsDigit))
+                    {
+                        MessageBox.Show("Số điện thoại phải có độ dài từ 10 đến 11 ký tự và chỉ chứa số.");
+                        return;
+                    }
                 }
 
                 var formData = new MultipartFormDataContent

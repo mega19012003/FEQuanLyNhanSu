@@ -271,15 +271,22 @@ namespace FEQuanLyNhanSu.Screens.Users
                     MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
                     return;
                 }
-                if(int.Parse(txtSalary.Text) > 0)
+                if (!string.IsNullOrWhiteSpace(txtSalary.Text))
                 {
-                    MessageBox.Show("Vui lòng nhập lương cơ bản hợp lệ.");
-                    return;
+                    if (!int.TryParse(txtSalary.Text, out var salary) || salary < 0)
+                    {
+                        MessageBox.Show("Vui lòng nhập lương cơ bản hợp lệ.");
+                        return;
+                    }
                 }
-                if (txtPhoneNo.Text.Length < 10 || txtPhoneNo.Text.Length > 11 || !txtPhoneNo.Text.All(char.IsDigit))
+
+                if (!string.IsNullOrWhiteSpace(txtPhoneNo.Text))
                 {
-                    MessageBox.Show("Số điện thoại phải có độ dài từ 10 đến 11 ký tự và chỉ chứa số.");
-                    return;
+                    if (txtPhoneNo.Text.Length < 10 || txtPhoneNo.Text.Length > 11 || !txtPhoneNo.Text.All(char.IsDigit))
+                    {
+                        MessageBox.Show("Số điện thoại phải có độ dài từ 10 đến 11 ký tự và chỉ chứa số.");
+                        return;
+                    }
                 }
 
 
