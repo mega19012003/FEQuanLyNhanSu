@@ -134,5 +134,11 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
             this.Close();
         }
+
+        private void btnChangePass_Click(object sender, RoutedEventArgs e)
+        {
+            var changePassWindow = new ChangePass();
+            changePassWindow.Show();
+        }
     }
 }

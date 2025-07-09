@@ -452,7 +452,51 @@ namespace FEQuanLyNhanSu
         //        UserDtaGrid.ItemsSource = result;
         //    }
         //}
+        /// Reset password
+        private void btnResetPass_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid userId)
+            {
+                var result = MessageBox.Show("Bạn có chắc chắn muốn đặt lại mật khẩu cho người dùng này không?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    _ = ResetPasswordAsync(userId);
+                }
+            }
+        }
+        private async Task ResetPasswordAsync(Guid userId)
+        {
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Auth/reset-password";
 
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                    using var form = new MultipartFormDataContent();
+                    form.Add(new StringContent(userId.ToString()), "id");
+
+                    var response = await client.PutAsync(baseUrl, form);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Đặt lại mật khẩu thành công. Pass là username");
+                    }
+                    else
+                    {
+                        var error = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show($"Lỗi khi đặt lại mật khẩu: {response.ReasonPhrase}\nChi tiết: {error}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi đặt lại mật khẩu: {ex.Message}");
+            }
+        }
 
         /// Delete 
         private void btnDelete_Click(object sender, RoutedEventArgs e)

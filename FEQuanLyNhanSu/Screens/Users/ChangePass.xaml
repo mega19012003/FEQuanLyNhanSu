@@ -1,0 +1,49 @@
+﻿<Window x:Class="FEQuanLyNhanSu.Screens.Users.ChangePass"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Users"
+        mc:Ignorable="d"
+        Title="ChangePass" Height="350" Width="560">
+    <Grid Background="#FFCCE2F1">
+        <!-- Tiêu đề -->
+        <Label x:Name="lblCreateUser" Content="Thay đổi password" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,10" />
+
+        <!-- Form -->
+        <Grid Margin="40,80,40,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Labels & Inputs -->
+            <TextBox Grid.Row="0" Grid.Column="0" Text="Password cũ" IsReadOnly="True" Background="#FF99C5E3" Foreground="White" FontSize="15" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtOldPass" FontSize="15" Height="41" Margin="0,5,0,5" Padding="10,0,10,0" IsTabStop="False" IsUndoEnabled="False" VerticalContentAlignment="Center"/>
+
+            <TextBox Grid.Row="1" Grid.Column="0" Text="Password mới" IsReadOnly="True" Background="#FF99C5E3" Foreground="White" FontSize="15" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <TextBox Grid.Row="1" Grid.Column="2" x:Name="txtNewPass" FontSize="15" Height="41" Margin="0,5,0,5" Padding="10,0,10,0" IsTabStop="False" IsUndoEnabled="False" VerticalContentAlignment="Center"/>
+
+            <TextBox Grid.Row="2" Grid.Column="0" Text="Xác nhận Password mới" IsReadOnly="True" Background="#FF99C5E3" Foreground="White" FontSize="15" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <TextBox Grid.Row="2" Grid.Column="2" x:Name="txtConfirmNewPass" FontSize="15" Height="41" Margin="0,5,0,5" Padding="10,0,10,0" IsTabStop="False" IsUndoEnabled="False" VerticalContentAlignment="Center"/>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal"
+                HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
+                Margin="10,0" FontSize="15" Click="btnExit_Click"/>
+
+                <Button x:Name="btnCreate" Content="Đổi Password" Width="170" Height="41"
+                Margin="10,0" FontSize="15" Background="#FF66A8D5"
+                Foreground="White" FontWeight="Bold" Click="btnChangePass_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

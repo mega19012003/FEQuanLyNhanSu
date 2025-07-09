@@ -47,7 +47,7 @@
                Foreground="White"
                VerticalAlignment="Center"/>
             </StackPanel>
-            <Button Content="" HorizontalAlignment="Left" Margin="914,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="2.776,2.281" Height="50" Width="50" Click="Button_Click" HorizontalContentAlignment="Center">
+            <Button Content="" HorizontalAlignment="Right" Margin="0,0,50,0" VerticalAlignment="Center" RenderTransformOrigin="2.776,2.281" Height="50" Width="50" Click="Button_Click" HorizontalContentAlignment="Center">
                 <Button.Background>
                     <ImageBrush ImageSource="/Assets/user.png"/>
                 </Button.Background>

@@ -70,7 +70,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
         }
 
-
         private async Task LoadUsers()
         {
             var token = Application.Current.Properties["Token"]?.ToString();

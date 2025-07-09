@@ -94,6 +94,10 @@
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                     Margin="10,0" FontSize="15" Click="btnExit_Click"/>
 
+                <Button x:Name="btnChnagePass" Content="Đổi Password" Width="150" Height="41"
+                    Margin="10,0" FontSize="15" Background="#FF66A8D5"
+                    Foreground="White" FontWeight="Bold" Click="btnChangePass_Click"/>
+
                 <Button x:Name="btnUpdate" Content="Đăng xuất" Width="150" Height="41"
                     Margin="10,0" FontSize="15" Background="#FF66A8D5"
                     Foreground="White" FontWeight="Bold" Click="btnLogout_Click"/>
