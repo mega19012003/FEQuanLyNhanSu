@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Users"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="UpdateCreate" Height="870" Width="750">
+        Title="UpdateCreate" Height="900" Width="750">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser"
                Content="Cập nhật người dùng"
@@ -17,6 +17,7 @@
 
         <Grid Margin="40,80,40,20" VerticalAlignment="Top">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -99,11 +100,21 @@
             <TextBox Grid.Row="6" Grid.Column="1" x:Name="txtSalary"
                      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <TextBox Grid.Row="7" Grid.Column="0" Text="Image" IsReadOnly="True"
+            <TextBox Grid.Row="7" Grid.Column="0" Text="IsActive" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <Grid Grid.Row="7" Grid.Column="1" Margin="0,5">
+            <CheckBox x:Name="chkIsActive"
+                    Grid.Row="7" Grid.Column="1" FontSize="16" Height="20" Margin="0,5" VerticalContentAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center">
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <TextBox Grid.Row="8" Grid.Column="0" Text="Image" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <Grid Grid.Row="8" Grid.Column="1" Margin="0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -117,13 +128,13 @@
                         Grid.Column="1" Click="btnSelectImage_Click"/>
             </Grid>
 
-            <TextBox Grid.Row="8" Grid.Column="0" Text="preview" IsReadOnly="True"
+            <TextBox Grid.Row="9" Grid.Column="0" Text="preview" IsReadOnly="True"
                       Background="#FF99C5E3" Foreground="White" FontSize="15"
                       VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,10,0,10" FontWeight="Heavy"/>
-            <Image x:Name="imgAvatar" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Center" Width="250" Height="250"/>
+            <Image x:Name="imgAvatar" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Center" Width="250" Height="250"/>
 
             <!-- Buttons -->
-            <StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal"
                         HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Click="btnExit_Click"/>

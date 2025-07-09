@@ -18,6 +18,7 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string DepartmentName { get; set; }
             public string PositionName { get; set; }
             public double? BasicSalary { get; set; }
+            public bool IsActive { get; set; } 
             public string ImageUrl { get; set; }
         }
         public class UserResultUpdateDto
@@ -31,6 +32,7 @@ namespace FEQuanLyNhanSu.Services.UserService
             public Guid? DepartmentId { get; set; }
             public string PositionName { get; set; }
             public Guid? PositionId { get; set; }
+            public bool IsActive { get; set; }
             public double? BasicSalary { get; set; }
             public string ImageUrl { get; set; }
         }

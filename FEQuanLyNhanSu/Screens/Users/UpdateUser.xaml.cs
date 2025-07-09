@@ -179,6 +179,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     cmbRole.Text = user.RoleName;
                     txtSalary.Text = user.BasicSalary?.ToString();
                     txtImage.Text = user.ImageUrl;
+                    chkIsActive.IsChecked = user.IsActive;
 
                     if (user.DepartmentId != null)
                     {
@@ -299,6 +300,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     { new StringContent(roleType.ToString()), "Role" },
                     { new StringContent(txtSalary.Text), "BasicSalary" },
                     { new StringContent(txtImage.Text), "ImageUrl" },
+                    { new StringContent(chkIsActive.IsChecked == true ? "true" : "false"), "IsActive" } 
                 };
 
                 if (selectedDepartment?.DepartmentId != null)

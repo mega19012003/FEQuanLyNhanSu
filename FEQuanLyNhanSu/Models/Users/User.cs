@@ -25,8 +25,8 @@ namespace FEQuanLyNhanSu.Models.Users
         public Guid? PositionId { get; set; }
         public Position Position { get; set; }
         public double BasicSalary { get; set; }
-        public bool IsActive { get; set; } = true;
-        public bool IsDeleted { get; set; } = false;
+        public bool IsActive { get; set; } 
+        public bool IsDeleted { get; set; } 
         public string? ImageUrl { get; set; }
         // 1. Người giao việc (manager)
         public ICollection<Duty> AssignedDuties { get; set; } = new List<Duty>();
