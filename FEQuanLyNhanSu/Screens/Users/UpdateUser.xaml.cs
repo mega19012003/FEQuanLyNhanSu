@@ -42,9 +42,16 @@ namespace FEQuanLyNhanSu.Screens.Users
 
         private async Task InitDataAsync()
         {
-            await LoadDepartments();   
-            //await LoadPositions();       
-            await LoadUserAsync();         
+            var role = Application.Current.Properties["UserRole"]?.ToString();
+            if (role == "Manager")
+            {
+                await LoadAllPositions(); // Load toàn bộ positions cho Manager
+            }
+            else
+            {
+                await LoadDepartments();
+            }
+            await LoadUserAsync();
         }
 
         private void HandleUI(string role)
@@ -80,7 +87,34 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
         }
 
-        // 🟢 Load positions theo departmentId
+        private async Task LoadAllPositions()
+        {
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await client.GetAsync(baseUrl); 
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                    cbPosition.ItemsSource = result.Data.Items;
+                }
+                else
+                {
+                    cbPosition.ItemsSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi load positions: {ex.Message}");
+            }
+        }
+
         private async Task LoadPositionsByDepartmentId(Guid departmentId)
         {
             try

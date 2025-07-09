@@ -29,8 +29,9 @@ namespace FEQuanLyNhanSu.Screens.Duties
     public partial class UpdateDetail : Window
     {
         private Guid _detailId;
-        private Action<DutyDetailResultDto> _onDetailUpdated;
-        public UpdateDetail(Guid detailId, Action<DutyDetailResultDto> onDetailUpdated)
+        private Action _onDetailUpdated;
+        //private Action<DutyDetailResultDto> _onDetailUpdated;
+        public UpdateDetail(Guid detailId, Action onDetailUpdated)
         {
             InitializeComponent();
             LoadUsers();
@@ -145,34 +146,34 @@ namespace FEQuanLyNhanSu.Screens.Duties
             using var client = CreateAuthorizedClient(token);
             var content = new StringContent(JsonConvert.SerializeObject(dutyDetail), Encoding.UTF8, "application/json");
             var response = await client.PutAsync(baseUrl, content);
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    MessageBox.Show("Cập nhật thông tin chức vụ thành công.");
-            //    _onDetailUpdated?.Invoke();
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    var errorContent = await response.Content.ReadAsStringAsync();
-            //    MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorContent}");
-            //}
             if (response.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DetailResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
-                {
-                    _onDetailUpdated?.Invoke(apiResponse.Data);
-                }
-
-                MessageBox.Show("Cập nhật chi tiết thành công.");
+                MessageBox.Show("Cập nhật thông tin chức vụ thành công.");
+                _onDetailUpdated?.Invoke();
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Cập nhật chi tiết thất bại.");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorContent}");
             }
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    var json = await response.Content.ReadAsStringAsync();
+            //    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DetailResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            //    if (apiResponse?.Data != null)
+            //    {
+            //        _onDetailUpdated?.Invoke(apiResponse.Data);
+            //    }
+
+            //    MessageBox.Show("Cập nhật chi tiết thành công.");
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Cập nhật chi tiết thất bại.");
+            //}
         }
 
         // Exit

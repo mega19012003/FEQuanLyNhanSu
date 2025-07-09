@@ -258,20 +258,7 @@ namespace FEQuanLyNhanSu
         {
             try
             {
-                var comboBox = sender as ComboBox;
-                if (comboBox?.Text == null)
-                {
-                    cbDepartment.ItemsSource = null;
-                    return;
-                }
-
-                var keyword = comboBox.Text.Trim();
-                if (keyword == "")
-                {   
-                    cbDepartment.ItemsSource = null;
-                    return;
-                }
-
+                var keyword = cbDepartment.Text.Trim();
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
 
@@ -279,18 +266,27 @@ namespace FEQuanLyNhanSu
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
-                if (response.IsSuccessStatusCode)
+                if (string.IsNullOrEmpty(keyword))
                 {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                    cbDepartment.ItemsSource = result?.Data?.Items;
-                    cbDepartment.SelectedIndex = 0;                
+                    await LoadDepartments();               // load lại toàn bộ
+                    cbDepartment.SelectedItem = null;
                     cbDepartment.IsDropDownOpen = true;
                 }
                 else
                 {
-                    cbDepartment.ItemsSource = null;
+                    var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                        cbDepartment.ItemsSource = result?.Data?.Items;
+                        cbDepartment.SelectedItem = null;
+                        cbDepartment.IsDropDownOpen = true;
+                    }
+                    else
+                    {
+                        cbDepartment.ItemsSource = null;
+                    }
                 }
             }
             catch (Exception ex)
@@ -303,20 +299,7 @@ namespace FEQuanLyNhanSu
         {
             try
             {
-                var comboBox = sender as ComboBox;
-                if (comboBox?.Text == null)
-                {
-                    cbPosition.ItemsSource = null;
-                    return;
-                }
-
-                var keyword = comboBox.Text.Trim();
-                if (keyword == "")
-                {
-                    cbPosition.ItemsSource = null;
-                    return;
-                }
-
+                var keyword = cbPosition.Text.Trim();
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
 
@@ -324,25 +307,49 @@ namespace FEQuanLyNhanSu
                 if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
                     departmentId = selectedDept.DepartmentId;
 
-                var url = $"{baseUrl}?Search={Uri.EscapeDataString(keyword)}";
-                if (departmentId.HasValue)
-                    url += $"&departmentId={departmentId.Value}";
-
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await client.GetAsync(url);
-                if (response.IsSuccessStatusCode)
+                if (string.IsNullOrEmpty(keyword))
                 {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                    cbPosition.ItemsSource = result?.Data?.Items;
-                    cbPosition.IsDropDownOpen = true;
+                    string url = baseUrl;
+                    if (departmentId.HasValue)
+                        url += $"?departmentId={departmentId.Value}";
+
+                    var response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                        cbPosition.ItemsSource = result?.Data?.Items;
+                        cbPosition.SelectedItem = null;
+                        cbPosition.IsDropDownOpen = true;
+                    }
+                    else
+                    {
+                        cbPosition.ItemsSource = null;
+                    }
                 }
                 else
                 {
-                    cbPosition.ItemsSource = null;
+                    string url = $"{baseUrl}?Search={Uri.EscapeDataString(keyword)}";
+                    if (departmentId.HasValue)
+                        url += $"&departmentId={departmentId.Value}";
+
+                    var response = await client.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                        cbPosition.ItemsSource = result?.Data?.Items;
+                        cbPosition.SelectedItem = null;
+                        cbPosition.IsDropDownOpen = true;
+                    }
+                    else
+                    {
+                        cbPosition.ItemsSource = null;
+                    }
                 }
             }
             catch (Exception ex)

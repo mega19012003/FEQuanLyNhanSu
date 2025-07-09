@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Checkout" Height="500" Width="800">
     <Grid Background="#FFCCE2F1">
-        <Label x:Name="lblCreateUser" Content="Checkin" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
+        <Label x:Name="lblCreateUser" Content="Checkout" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
 
         <!-- FORM INPUT -->
         <Grid Margin="40,80,40,0">

@@ -51,6 +51,7 @@ namespace FEQuanLyNhanSu
                 case "Employee":
                     AddPayrollBtn.Visibility = Visibility.Collapsed;
                     DtaGridAction.Visibility = Visibility.Collapsed;
+                    AddAllPayrollBtn.Visibility = Visibility.Collapsed;
                     break;
             }
         }

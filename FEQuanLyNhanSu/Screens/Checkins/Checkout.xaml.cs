@@ -33,19 +33,24 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
         }
 
-
-        private void HandleUI(string userRole)
+        private async void HandleUI(string userRole)
         {
-            if (userRole == "Admin" || userRole == "Manager")
+            switch (userRole)
             {
-                cbEmployee.Visibility = Visibility.Visible;
-                lblName.Visibility = Visibility.Visible;
-                _ = LoadUsers();
-            }
-            else
-            {
-                cbEmployee.Visibility = Visibility.Collapsed;
-                lblName.Visibility = Visibility.Collapsed;
+                case "Admin":
+                    cbEmployee.Visibility = Visibility.Visible;
+                    lblName.Visibility = Visibility.Visible;
+                    await LoadUsers();
+                    break;
+                case "Manager":
+                    cbEmployee.Visibility = Visibility.Visible;
+                    lblName.Visibility = Visibility.Visible;
+                    await LoadUsers();
+                    break;
+                case "Employee":
+                    cbEmployee.Visibility = Visibility.Collapsed;
+                    lblName.Visibility = Visibility.Collapsed;
+                    break;
             }
         }
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)

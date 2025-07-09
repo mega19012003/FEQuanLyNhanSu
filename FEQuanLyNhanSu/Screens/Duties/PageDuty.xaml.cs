@@ -348,7 +348,8 @@ namespace FEQuanLyNhanSu
         {
             if (DutyDtaGrid.SelectedItem is DutyResultDto selectedDuty)
             {
-                var window = new CreateDetail(OnDetailCreated, selectedDuty.Id);
+               // var window = new CreateDetail(OnDetailCreated, selectedDuty.Id);
+                var window = new CreateDetail(LoadDuty, selectedDuty.Id);
                 window.Show();
             }
             else
@@ -366,7 +367,8 @@ namespace FEQuanLyNhanSu
 
             if (!string.IsNullOrWhiteSpace(tagValue) && Guid.TryParse(tagValue, out Guid detailId))
             {
-                var window = new UpdateDetail(detailId, OnDetailUpdated);
+                //var window = new UpdateDetail(detailId, OnDetailUpdated);
+                var window = new UpdateDetail(detailId, LoadDuty);
                 window.Show();
             }
             else

@@ -141,11 +141,20 @@ namespace FEQuanLyNhanSu.Screens.Positions
         {
             try
             {
-                var comboBox = sender as ComboBox;
-                if (comboBox?.Text == null) return;
+                //var comboBox = sender as ComboBox;
+                //if (comboBox?.Text == null)
+                //{
+                //    cbDepartment.ItemsSource = null;
+                //    return;
+                //}
 
-                var keyword = comboBox.Text.Trim();
-                if (keyword == "") return;
+                //var keyword = comboBox.Text.Trim();
+                //if (keyword == "")
+                //{
+                //    cbDepartment.ItemsSource = null;
+                //    return;
+                //}
+                var keyword = cbDepartment.Text.Trim();
 
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";

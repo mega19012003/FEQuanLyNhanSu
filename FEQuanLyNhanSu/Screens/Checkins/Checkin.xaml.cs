@@ -31,33 +31,35 @@ namespace FEQuanLyNhanSu.Screens.Checkins
         public Checkin(Action<CheckinResultDto> onCheckinCreated)
         {
             InitializeComponent();
-
             _onCheckinCreated = onCheckinCreated;
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
         }
 
 
-        private void HandleUI(string userRole)
+        private async Task HandleUI(string userRole)
         {
-            switch(userRole)
+            switch (userRole)
             {
-                    case "Admin":
+                case "Admin":
                     cbEmployee.Visibility = Visibility.Visible;
                     lblName.Visibility = Visibility.Visible;
-                    _ = LoadUsers();
+                    await LoadUsers();
                     break;
-                    case "Manager":
+
+                case "Manager":
                     cbEmployee.Visibility = Visibility.Visible;
                     lblName.Visibility = Visibility.Visible;
-                    _ = LoadUsers();
+                    await LoadUsers();
                     break;
-                    case "Employee":
+
+                case "Employee":
                     cbEmployee.Visibility = Visibility.Collapsed;
                     lblName.Visibility = Visibility.Collapsed;
                     break;
-                }
+            }
         }
 
+       
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -129,33 +131,45 @@ namespace FEQuanLyNhanSu.Screens.Checkins
 
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
         {
-            string keyword = cbEmployee.Text.Trim();
-            if (string.IsNullOrEmpty(keyword))
+            try
             {
-                cbEmployee.ItemsSource = null;
-                return;
+                string keyword = cbEmployee.Text.Trim();
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                if (string.IsNullOrEmpty(keyword))
+                {
+                    await LoadUsers();
+                    cbEmployee.SelectedItem = null;
+                    cbEmployee.IsDropDownOpen = true;
+                }
+                else
+                {
+                    var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
+                        cbEmployee.ItemsSource = result?.Data?.Items;
+                        cbEmployee.SelectedItem = null;
+                        cbEmployee.IsDropDownOpen = true;
+                    }
+                    else
+                    {
+                        cbEmployee.ItemsSource = null;
+                    }
+                }
             }
-
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
-            if (response.IsSuccessStatusCode)
+            catch (Exception ex)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
-                cbEmployee.ItemsSource = result.Data.Items;
-                cbEmployee.IsDropDownOpen = true;
-            }
-            else
-            {
-                cbEmployee.ItemsSource = null;
+                MessageBox.Show($"Lỗi khi tìm kiếm nhân viên: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private async Task LoadUsers()
         {
@@ -173,14 +187,14 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
 
                 cbEmployee.ItemsSource = result.Data.Items;
+                cbEmployee.SelectedItem = null;
+                cbEmployee.IsDropDownOpen = true;
             }
             else
             {
                 MessageBox.Show("Không thể tải danh sách nhân viên.");
             }
         }
-
-
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {

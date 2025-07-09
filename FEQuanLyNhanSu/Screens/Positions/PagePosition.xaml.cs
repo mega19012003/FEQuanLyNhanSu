@@ -176,20 +176,26 @@ namespace FEQuanLyNhanSu
         {
             try
             {
-                var comboBox = sender as ComboBox;
-                if (comboBox?.Text == null)
-                {
-                    cbDepartment.ItemsSource = null;
-                    return;
-                }
+                //var comboBox = sender as ComboBox;
+                //if (comboBox?.Text == null)
+                //{
+                //    //cbDepartment.ItemsSource = null;
+                //    return;
+                //}
 
-                var keyword = comboBox.Text.Trim();
-                if (keyword == "")
-                {
-                    cbDepartment.ItemsSource = null;
-                    return;
-                }
-
+                //var keyword = comboBox.Text.Trim();
+                //if (keyword == "")
+                //{
+                //    //cbDepartment.ItemsSource = null;
+                //    return;
+                //}
+                var keyword = cbDepartment.Text.Trim();
+                //if (keyword == "")
+                //{
+                //    cbDepartment.ItemsSource = null;
+                //    keyword = cbDepartment.Text.Trim();
+                //    return;
+                //}
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
 
@@ -197,17 +203,42 @@ namespace FEQuanLyNhanSu
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
-                if (response.IsSuccessStatusCode)
+                //var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    var json = await response.Content.ReadAsStringAsync();
+                //    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                //    cbDepartment.ItemsSource = result.Data.Items;
+                //    cbDepartment.IsDropDownOpen = true;
+                //}
+                //else
+                //{
+                //    cbDepartment.ItemsSource = null;
+                //}
+                if (string.IsNullOrEmpty(keyword))
                 {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                    cbDepartment.ItemsSource = result.Data.Items;
-                    cbDepartment.IsDropDownOpen = true;
+                    await LoadDepartments();            
+                    cbDepartment.SelectedItem = null;      
+                    cbDepartment.IsDropDownOpen = true;     
+
+                    LoadPosition(); 
                 }
                 else
                 {
-                    cbDepartment.ItemsSource = null;
+                    var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                        cbDepartment.ItemsSource = result.Data.Items;
+
+                        cbDepartment.SelectedItem = null;
+                        cbDepartment.IsDropDownOpen = true;
+                    }
+                    else
+                    {
+                        cbDepartment.ItemsSource = null;
+                    }
                 }
             }
             catch (Exception ex)
@@ -306,9 +337,6 @@ namespace FEQuanLyNhanSu
         //    }
         //}
 
-
-
-
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -338,8 +366,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show("Không thể xóa chức vụ. Vui lòng thử lại sau.");
             }
         }
-
-
 
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {

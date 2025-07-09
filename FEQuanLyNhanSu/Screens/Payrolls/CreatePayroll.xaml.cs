@@ -123,14 +123,14 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
                     lblNote.Content = result.Data.Note ?? "Không có ghi chú";
                     lblCreatedDate.Content = result.Data.CreatedDate.ToString("dd/MM/yyyy HH:mm:ss");
                 }
-                MessageBox.Show("Tạo bảng lương thành công.");
+                MessageBox.Show("Chấm công thành công.");
                 _onPayrollCreated?.Invoke();
                 //this.Close();
             }
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Tạo bảng lương thất bại: {error}");
+                MessageBox.Show($"Chấm công thất bại: {error}");
             }
         }
 

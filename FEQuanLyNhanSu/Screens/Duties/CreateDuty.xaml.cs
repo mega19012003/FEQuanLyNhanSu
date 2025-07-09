@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
+using static FEQuanLyNhanSu.ResponseModels.Positions;
 using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu.Screens.Duties
@@ -38,12 +39,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
         {
             string keyword = cbEmployee.Text.Trim();
-            if (string.IsNullOrEmpty(keyword))
-            {
-                cbEmployee.ItemsSource = null;
-                return;
-            }
-
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
 
@@ -51,34 +46,27 @@ namespace FEQuanLyNhanSu.Screens.Duties
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    var json = await response.Content.ReadAsStringAsync();
-            //    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
-            //    cbEmployee.ItemsSource = result.Data.Items;
-            //    cbEmployee.IsDropDownOpen = true;
-            //}
-            //else
-            //{
-            //    cbEmployee.ItemsSource = null;
-            //}
-            if (response.IsSuccessStatusCode)
+            if (string.IsNullOrEmpty(keyword))
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DutyResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
-                {
-                    _onDutyCreated?.Invoke(apiResponse.Data);
-                }
-
-                MessageBox.Show("Tạo công việc thành công.");
-                this.Close();
+                await LoadUsers();
+                cbEmployee.SelectedItem = null; 
+                cbEmployee.IsDropDownOpen = true; 
             }
             else
             {
-                MessageBox.Show("Tạo công việc thất bại.");
+                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
+                    cbEmployee.ItemsSource = result?.Data?.Items;
+                    cbEmployee.SelectedItem = null;
+                    cbEmployee.IsDropDownOpen = true;
+                }
+                else
+                {
+                    cbEmployee.ItemsSource = null;
+                }
             }
         }
 
@@ -147,15 +135,32 @@ namespace FEQuanLyNhanSu.Screens.Duties
 
                 var response = await client.PostAsync($"{baseUrl}/api/Duty", content);
 
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    MessageBox.Show("Tạo công việc thành công!");
+                //    this.Close(); 
+                //}
+                //else
+                //{
+                //    var error = await response.Content.ReadAsStringAsync();
+                //    MessageBox.Show($"Tạo thất bại: {error}");
+                //}
                 if (response.IsSuccessStatusCode)
                 {
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DutyResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onDutyCreated?.Invoke(apiResponse.Data);
+                    }
+
                     MessageBox.Show("Tạo công việc thành công!");
-                    this.Close(); 
+                    this.Close();
                 }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Tạo thất bại: {error}");
+                    MessageBox.Show("Tạo công việc thất bại.");
                 }
             }
             catch (Exception ex)
