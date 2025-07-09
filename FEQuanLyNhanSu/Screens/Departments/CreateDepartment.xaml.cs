@@ -1,4 +1,6 @@
-﻿using FEQuanLyNhanSu.Helpers;
+﻿using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +68,7 @@ namespace FEQuanLyNhanSu.Screens.Departments
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<DepartmentResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DepartmentResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (apiResponse?.Data != null)
                 {
@@ -78,7 +80,10 @@ namespace FEQuanLyNhanSu.Screens.Departments
             }
             else
             {
-                MessageBox.Show("Tạo phòng ban thất bại.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponseError = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponseError?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Tạo phòng ban thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

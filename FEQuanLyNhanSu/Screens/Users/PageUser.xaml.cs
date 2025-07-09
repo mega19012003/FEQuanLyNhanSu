@@ -488,7 +488,9 @@ namespace FEQuanLyNhanSu
                     else
                     {
                         var error = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show($"Lỗi khi đặt lại mật khẩu: {response.ReasonPhrase}\nChi tiết: {error}");
+                        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(error);
+                        var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                        MessageBox.Show($"Lỗi khi đặt lại mật khẩu: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -529,7 +531,10 @@ namespace FEQuanLyNhanSu
                     }
                     else
                     {
-                        MessageBox.Show($"Lỗi khi xóa người dùng: {response.ReasonPhrase}");
+                        var error = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(error);
+                        var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                        MessageBox.Show($"Lỗi khi xóa người dùng: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }

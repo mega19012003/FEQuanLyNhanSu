@@ -94,7 +94,10 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
             else
             {
-                MessageBox.Show("Không thể tải thông tin chức vụ.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }
@@ -118,7 +121,10 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
             else
             {
-                MessageBox.Show("Không thể tải danh sách nhân viên.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

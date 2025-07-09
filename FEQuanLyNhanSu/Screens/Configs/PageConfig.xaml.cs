@@ -266,7 +266,10 @@ namespace FEQuanLyNhanSu
             }
             else
             {
-                MessageBox.Show("Không thể xóa cấu hình IP. Vui lòng thử lại sau.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể xóa cấu hình IP: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

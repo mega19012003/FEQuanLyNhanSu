@@ -222,7 +222,10 @@ namespace FEQuanLyNhanSu
             }
             else
             {
-                MessageBox.Show("Không thể xóa bảng lương. Vui lòng thử lại sau.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể xóa bảng lương. Vui lòng thử lại sau: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -277,7 +280,9 @@ namespace FEQuanLyNhanSu
                     }
                     else
                     {
-                        MessageBox.Show("Không có dữ liệu mới.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                        var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                        MessageBox.Show($"Không có dữ liệu mới: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 else

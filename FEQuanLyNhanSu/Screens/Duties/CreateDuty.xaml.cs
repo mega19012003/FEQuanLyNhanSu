@@ -89,7 +89,10 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
             else
             {
-                MessageBox.Show("Không thể tải danh sách nhân viên.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -97,7 +100,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(txtDescription.Text) || dpStartDate.Value == null || dpEndDate.Value == null)
+                if (string.IsNullOrWhiteSpace(txtDescription.Text) || dpStartDate.SelectedDate == null || dpEndDate.SelectedDate == null)
                 {
                     MessageBox.Show("Vui lòng nhập đầy đủ thông tin");
                     return;
@@ -108,11 +111,15 @@ namespace FEQuanLyNhanSu.Screens.Duties
                     MessageBox.Show("Vui lòng chọn nhân viên thực hiện");
                     return;
                 }
+
+                var startDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value);
+                var endDate = DateOnly.FromDateTime(dpEndDate.SelectedDate.Value);
+
                 var duty = new
                 {
                     name = txtUsername.Text.Trim(),
-                    startDate = dpStartDate.Value,
-                    endDate = dpEndDate.Value,
+                    startDate = startDate,
+                    endDate = endDate,
                     dutyDetails = new[]
                     {
                         new {
@@ -159,7 +166,9 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 }
                 else
                 {
-                    MessageBox.Show("Tạo công việc thất bại.");
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Tạo công việc thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

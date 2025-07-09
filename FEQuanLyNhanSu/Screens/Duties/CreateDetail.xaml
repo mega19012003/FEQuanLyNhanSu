@@ -45,7 +45,7 @@
               IsTextSearchEnabled="False"
               KeyUp="cbEmployee_KeyUp"
               DisplayMemberPath="Fullname"
-              SelectedValuePath="UserId"/>
+              SelectedValuePath="UserId" VerticalContentAlignment="Center"/>
 
             <TextBox Grid.Row="2" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"

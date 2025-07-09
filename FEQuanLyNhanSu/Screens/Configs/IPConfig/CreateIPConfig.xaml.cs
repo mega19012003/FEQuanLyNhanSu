@@ -1,4 +1,6 @@
-﻿using FEQuanLyNhanSu.Helpers;
+﻿using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +69,7 @@ namespace FEQuanLyNhanSu.Screens.Configs
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonSerializer.Deserialize<IPResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<IPResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                     if (apiResponse?.Data != null)
                     {
@@ -79,7 +81,10 @@ namespace FEQuanLyNhanSu.Screens.Configs
                 }
                 else
                 {
-                    MessageBox.Show("Tạo cấu hình IP thất bại.");
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Tạo cấu hình IP thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

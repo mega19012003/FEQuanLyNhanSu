@@ -8,8 +8,8 @@ namespace FEQuanLyNhanSu.ResponseModels
         {
             public Guid HolidayId { get; set; }
             public string Name { get; set; }
-            public DateTime startDate { get; set; }
-            public DateTime endDate { get; set; }
+            public DateOnly startDate { get; set; }
+            public DateOnly endDate { get; set; }
         }
         public class HolidayResponse
         {

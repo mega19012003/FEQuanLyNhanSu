@@ -1,5 +1,7 @@
-﻿using FEQuanLyNhanSu.Enums;
+﻿using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Enums;
 using FEQuanLyNhanSu.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,10 +81,10 @@ namespace FEQuanLyNhanSu.Screens.Users
             //    var errorContent = response.Content.ReadAsStringAsync().Result;
             //    MessageBox.Show($"Không thể tạo người dùng. Lỗi: {errorContent}");
             //}
+            var json = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonSerializer.Deserialize<UserResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<UserResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (apiResponse?.Data != null)
                 {
@@ -94,7 +96,9 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
             else
             {
-                MessageBox.Show("Tạo người dùng thất bại.");
+                var apiResponses = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponses?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Tạo người dùng thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

@@ -85,7 +85,10 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
             }
             else
             {
-                MessageBox.Show("Không thể tải danh sách nhân viên.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -129,8 +132,10 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
             }
             else
             {
-                var error = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Chấm công thất bại: {error}");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Chấm công thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

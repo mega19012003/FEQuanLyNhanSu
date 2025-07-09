@@ -81,11 +81,17 @@ namespace FEQuanLyNhanSu
 
                 var loginResult = JsonConvert.DeserializeObject<dynamic>(await loginResponse.Content.ReadAsStringAsync());
                 string accessToken = loginResult.data.accessToken;
+                string refreshToken = loginResult.data.refreshToken;
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                // Lưu
+                Application.Current.Properties["Token"] = accessToken;
+                Application.Current.Properties["RefreshToken"] = refreshToken;
+
+                // Gọi api /api/auth/current
                 var BaseUrl2 = AppsettingConfigHelper.GetBaseUrl();
                 var apiUrl2 = $"{BaseUrl2}/api/auth/current";
-                var userResponse = await client.GetAsync(apiUrl2);
+                var request = new HttpRequestMessage(HttpMethod.Get, apiUrl2);
+                var userResponse = await SendAuthorizedRequestAsync(request);
 
                 if (!userResponse.IsSuccessStatusCode)
                 {
@@ -98,10 +104,7 @@ namespace FEQuanLyNhanSu
                 string fullname = userData.data.fullname;
                 string role = userData.data.role;
                 string userId = userData.data.userId;
-                string refreshToken = userData.data.refreshToken;
 
-                Application.Current.Properties["Token"] = accessToken;
-                Application.Current.Properties["RefreshToken"] = refreshToken;
                 Application.Current.Properties["Fullname"] = fullname;
                 Application.Current.Properties["UserRole"] = role;
                 Application.Current.Properties["UserId"] = userId;
@@ -125,7 +128,7 @@ namespace FEQuanLyNhanSu
 
         public static async Task<HttpResponseMessage> SendAuthorizedRequestAsync(HttpRequestMessage request)
         {
-            var token = Application.Current.Properties["AccessToken"]?.ToString();
+            var token = Application.Current.Properties["Token"]?.ToString();
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             using var client = new HttpClient();
@@ -133,19 +136,16 @@ namespace FEQuanLyNhanSu
 
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                // Thử refresh token
                 bool refreshOk = await RefreshTokenAsync();
                 if (refreshOk)
                 {
-                    // Gửi lại request cũ với token mới
-                    var newToken = Application.Current.Properties["AccessToken"]?.ToString();
+                    var newToken = Application.Current.Properties["Token"]?.ToString();
                     request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", newToken);
                     response = await client.SendAsync(request);
                 }
                 else
                 {
                     MessageBox.Show("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại!");
-                    // TODO: Redirect về màn hình đăng nhập
                 }
             }
 
@@ -176,7 +176,7 @@ namespace FEQuanLyNhanSu
 
             if (result?.Data?.AccessToken != null)
             {
-                Application.Current.Properties["AccessToken"] = result.Data.AccessToken;
+                Application.Current.Properties["Token"] = result.Data.AccessToken;
                 Application.Current.Properties["RefreshToken"] = result.Data.RefreshToken;
                 return true;
             }

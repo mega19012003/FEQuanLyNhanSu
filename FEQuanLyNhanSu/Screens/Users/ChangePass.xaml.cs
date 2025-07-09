@@ -1,4 +1,5 @@
-﻿using FEQuanLyNhanSu.Helpers;
+﻿using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -75,8 +76,11 @@ namespace FEQuanLyNhanSu.Screens.Users
                 }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Đổi mật khẩu thất bại: {response.ReasonPhrase}\nChi tiết: {error}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var errorJson = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Lỗi khi cập nhật: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Đổi mật khẩu thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

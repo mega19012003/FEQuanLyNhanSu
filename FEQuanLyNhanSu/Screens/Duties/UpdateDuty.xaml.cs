@@ -61,12 +61,17 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 var result = JsonConvert.DeserializeObject<ApiResponse<DutyResultDto>>(json);
 
                 txtUsername.Text = result.Data.Name;
-                dpStartDate.Value = result.Data.StartDate;
-                dpEndDate.Value = result.Data.EndDate;
+
+                // Convert DateOnly to DateTime? for compatibility
+                dpStartDate.SelectedDate = result.Data.StartDate.ToDateTime(TimeOnly.MinValue);
+                dpEndDate.SelectedDate = result.Data.EndDate.ToDateTime(TimeOnly.MinValue);
             }
             else
             {
-                MessageBox.Show("Không thể tải thông tin chức vụ.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }
@@ -74,11 +79,12 @@ namespace FEQuanLyNhanSu.Screens.Duties
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             string name = txtUsername.Text?.Trim();
-            string startDate = dpStartDate.Value?.ToString();
-            string endDate = dpEndDate.Value?.ToString();
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrEmpty(startDate) || string.IsNullOrEmpty(endDate))
+            DateTime? startDate = dpStartDate.SelectedDate;
+            DateTime? endDate = dpEndDate.SelectedDate;
+
+            if (string.IsNullOrWhiteSpace(name) || startDate == null || endDate == null)
             {
-                MessageBox.Show("Vui lòng đầy đ3u thông tin");
+                MessageBox.Show("Vui lòng đầy đủ thông tin");
                 return;
             }
 
@@ -86,8 +92,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
             {
                 Id = _dutyId,
                 Name = name,
-                StartDate = (DateTime)dpStartDate.Value,
-                EndDate = (DateTime)dpEndDate.Value
+                StartDate = DateOnly.FromDateTime(startDate.Value), // Fix for CS0029
+                EndDate = DateOnly.FromDateTime(endDate.Value)      // Fix for CS0029
             };
 
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -102,16 +108,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
             var response = await client.PutAsync(url, content);
             var responseBody = await response.Content.ReadAsStringAsync();
 
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    MessageBox.Show("Cập nhật công việc thành công.");
-            //    _onDutyUpdated?.Invoke();
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
-            //}
             if (response.IsSuccessStatusCode)
             {
                 var jsonResult = await response.Content.ReadAsStringAsync();
@@ -127,7 +123,9 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
             else
             {
-                MessageBox.Show("Cập nhật công việc thất bại.");
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(responseBody);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Cập nhật công việc thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

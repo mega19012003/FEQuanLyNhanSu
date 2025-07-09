@@ -94,8 +94,10 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Không thể tải chi tiết thông tin chức vụ. Lỗi: {errorContent}");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải chi tiết thông tin chức vụ. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private async Task LoadUsers()
@@ -117,7 +119,10 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
             else
             {
-                MessageBox.Show("Không thể tải danh sách nhân viên.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -154,8 +159,10 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorContent}");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             //if (response.IsSuccessStatusCode)
             //{

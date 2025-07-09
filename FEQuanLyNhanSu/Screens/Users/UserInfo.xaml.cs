@@ -76,7 +76,9 @@ namespace FEQuanLyNhanSu.Screens.Users
                 }
                 else
                 {
-                    MessageBox.Show($"Không thể tải thông tin người dùng: {json}");
+                    var apiResponseError = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponseError?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Không thể tải thông tin người dùng: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -98,7 +100,8 @@ namespace FEQuanLyNhanSu.Screens.Users
             {
                 var response = await client.PostAsync(baseUrl, null);
                 var json = await response.Content.ReadAsStringAsync();
-
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
                 if (response.IsSuccessStatusCode)
                 {
                     Application.Current.Properties.Remove("Token");
@@ -116,7 +119,8 @@ namespace FEQuanLyNhanSu.Screens.Users
                 }
                 else
                 {
-                    MessageBox.Show($"Logout thất bại: {json}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    
+                    MessageBox.Show($"Logout thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -124,7 +128,6 @@ namespace FEQuanLyNhanSu.Screens.Users
                 MessageBox.Show($"Lỗi khi logout: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
@@ -139,6 +142,17 @@ namespace FEQuanLyNhanSu.Screens.Users
         {
             var changePassWindow = new ChangePass();
             changePassWindow.Show();
+        }
+
+        private async void btnUpdateInfo_Click(object sender, RoutedEventArgs e)
+        {
+            var updateInfoWindow = new UpdateInfo();
+            var result = updateInfoWindow.ShowDialog(); 
+
+            if (result == true)
+            {
+                await LoadCurrentUserAsync();
+            }
         }
     }
 }

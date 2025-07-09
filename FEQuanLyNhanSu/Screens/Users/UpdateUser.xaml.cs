@@ -85,6 +85,10 @@ namespace FEQuanLyNhanSu.Screens.Users
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
                 cbDepartment.ItemsSource = result.Data.Items;
             }
+            else
+            {
+                cbDepartment.ItemsSource = null;
+            }
         }
 
         private async Task LoadAllPositions()
@@ -204,8 +208,10 @@ namespace FEQuanLyNhanSu.Screens.Users
                 }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Không thể tải thông tin người dùng. Lỗi: {error}");
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<object>>(json);
+                    var errorMessage = apiResponse?.Data?.ToString() ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Không thể tải thông tin người dùng. Lỗi: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -235,7 +241,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                 bitmap.EndInit();
                 imgAvatar.Source = bitmap;
 
-                _imagePath = dialog.FileName; // lưu đường dẫn ảnh mới để upload
+                _imagePath = dialog.FileName; 
             }
         }
 
@@ -265,6 +271,17 @@ namespace FEQuanLyNhanSu.Screens.Users
                     MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
                     return;
                 }
+                if(int.Parse(txtSalary.Text) > 0)
+                {
+                    MessageBox.Show("Vui lòng nhập lương cơ bản hợp lệ.");
+                    return;
+                }
+                if (txtPhoneNo.Text.Length < 10 || txtPhoneNo.Text.Length > 11 || !txtPhoneNo.Text.All(char.IsDigit))
+                {
+                    MessageBox.Show("Số điện thoại phải có độ dài từ 10 đến 11 ký tự và chỉ chứa số.");
+                    return;
+                }
+
 
                 var formData = new MultipartFormDataContent
                 {

@@ -60,20 +60,24 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
 
                 txtName.Text = result.Data.name;
 
-                dpStartDate.Value = result.Data.startDate;
-                dpEndDate.Value = result.Data.endDate;
+                // Convert DateOnly to DateTime? for compatibility
+                dpStartDate.SelectedDate = result.Data.startDate.ToDateTime(TimeOnly.MinValue);
+                dpEndDate.SelectedDate = result.Data.endDate.ToDateTime(TimeOnly.MinValue);
             }
             else
             {
-                MessageBox.Show("Không thể tải thông tin chức vụ.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             string name = txtName.Text.Trim();
-            DateTime? startDate = dpStartDate.Value;
-            DateTime? endDate = dpEndDate.Value;
+            DateTime? startDate = dpStartDate.SelectedDate;
+            DateTime? endDate = dpEndDate.SelectedDate;
             if (string.IsNullOrEmpty(name))
             {
                 MessageBox.Show("Vui lòng nhập đầy đủ thông tin");
@@ -84,14 +88,13 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             {
                 HolidayId = _holidayConfigId,
                 name = name,
-                startDate = (DateTime)startDate,
-                endDate = (DateTime)endDate
+                startDate = startDate.HasValue ? DateOnly.FromDateTime(startDate.Value) : default,
+                endDate = endDate.HasValue ? DateOnly.FromDateTime(endDate.Value) : default
             };
 
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            //var query = $"IPAddress={Uri.EscapeDataString(LogStatusName)}";
-            var url = $"{baseUrl}/api/Holiday"; //?id={_logStatusId}&{query}";
+            var url = $"{baseUrl}/api/Holiday";
 
             var json = JsonConvert.SerializeObject(result);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -101,16 +104,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             var response = await client.PutAsync(url, content);
             var responseBody = await response.Content.ReadAsStringAsync();
 
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    MessageBox.Show("Cập nhật holdiay thành công.");
-            //    _onHolidayUpdated?.Invoke();
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
-            //}
             if (response.IsSuccessStatusCode)
             {
                 var jsonResult = await response.Content.ReadAsStringAsync();
@@ -126,7 +119,9 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             }
             else
             {
-                MessageBox.Show("Cập nhật ngày lễ thất bại.");
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Cập nhật ngày lễ thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

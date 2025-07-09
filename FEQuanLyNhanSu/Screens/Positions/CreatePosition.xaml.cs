@@ -102,7 +102,10 @@ namespace FEQuanLyNhanSu.Screens.Positions
             }
             else
             {
-                MessageBox.Show("Tạo chức vụ thất bại.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Tạo chức vụ thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -205,7 +208,10 @@ namespace FEQuanLyNhanSu.Screens.Positions
                 }
                 else
                 {
-                    MessageBox.Show("Không thể tải danh sách phòng ban.");
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Không thể tải danh sách phòng ban: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

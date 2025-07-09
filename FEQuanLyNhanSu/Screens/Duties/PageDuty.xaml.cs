@@ -298,8 +298,10 @@ namespace FEQuanLyNhanSu
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Không thể xóa công việc.\nStatusCode: {response.StatusCode}\nUrl: {baseUrl}\nChi tiết: {errorContent}");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể xóa công việc: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -307,41 +309,41 @@ namespace FEQuanLyNhanSu
         /// ///////////////////////////////////////
         /// /////////////////////////////////////// Duty Detail 
 
-        private void OnDetailCreated(Duties.DutyDetailResultDto newDept)
-        {
-            if (newDept != null)
-            {
-                var list = DutyDtaGrid.ItemsSource as List<Duties.DutyDetailResultDto> ?? new List<Duties.DutyDetailResultDto>();
-                list.Insert(0, newDept);
-                DutyDtaGrid.ItemsSource = null;
-                DutyDtaGrid.ItemsSource = list;
+        //private void OnDetailCreated(Duties.DutyDetailResultDto newDept)
+        //{
+        //    if (newDept != null)
+        //    {
+        //        var list = DutyDtaGrid.ItemsSource as List<Duties.DutyDetailResultDto> ?? new List<Duties.DutyDetailResultDto>();
+        //        list.Insert(0, newDept);
+        //        DutyDtaGrid.ItemsSource = null;
+        //        DutyDtaGrid.ItemsSource = list;
 
-                DutyDtaGrid.SelectedItem = newDept;
-                DutyDtaGrid.ScrollIntoView(newDept);
-            }
-        }
+        //        DutyDtaGrid.SelectedItem = newDept;
+        //        DutyDtaGrid.ScrollIntoView(newDept);
+        //    }
+        //}
 
-        private void OnDetailUpdated(Duties.DutyDetailResultDto updatedDept)
-        {
-            if (updatedDept != null)
-            {
-                var list = DutyDtaGrid.ItemsSource as List<Duties.DutyDetailResultDto> ?? new List<Duties.DutyDetailResultDto>();
+        //private void OnDetailUpdated(Duties.DutyDetailResultDto updatedDept)
+        //{
+        //    if (updatedDept != null)
+        //    {
+        //        var list = DutyDtaGrid.ItemsSource as List<Duties.DutyDetailResultDto> ?? new List<Duties.DutyDetailResultDto>();
 
-                var existing = list.FirstOrDefault(d => d.DutyDetailId == updatedDept.DutyDetailId);
-                if (existing != null)
-                {
-                    list.Remove(existing);
-                }
+        //        var existing = list.FirstOrDefault(d => d.DutyDetailId == updatedDept.DutyDetailId);
+        //        if (existing != null)
+        //        {
+        //            list.Remove(existing);
+        //        }
 
-                list.Insert(0, updatedDept);
+        //        list.Insert(0, updatedDept);
 
-                DutyDtaGrid.ItemsSource = null;
-                DutyDtaGrid.ItemsSource = list;
+        //        DutyDtaGrid.ItemsSource = null;
+        //        DutyDtaGrid.ItemsSource = list;
 
-                DutyDtaGrid.SelectedItem = updatedDept;
-                DutyDtaGrid.ScrollIntoView(updatedDept);
-            }
-        }
+        //        DutyDtaGrid.SelectedItem = updatedDept;
+        //        DutyDtaGrid.ScrollIntoView(updatedDept);
+        //    }
+        //}
 
         /// Create Detail
         private void btnAddDetail_Click(object sender, RoutedEventArgs e)

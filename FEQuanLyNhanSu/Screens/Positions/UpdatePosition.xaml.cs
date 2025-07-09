@@ -83,7 +83,10 @@ namespace FEQuanLyNhanSu.Screens.Positions
             }
             else
             {
-                MessageBox.Show("Cập nhật chức vụ thất bại.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show("Cập nhật chức vụ thất bại :{ errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -116,7 +119,10 @@ namespace FEQuanLyNhanSu.Screens.Positions
             }
             else
             {
-                MessageBox.Show("Không thể tải thông tin chức vụ.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

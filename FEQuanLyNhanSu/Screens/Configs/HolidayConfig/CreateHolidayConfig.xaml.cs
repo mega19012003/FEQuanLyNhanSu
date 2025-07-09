@@ -1,4 +1,5 @@
-﻿using FEQuanLyNhanSu.Helpers;
+﻿using FEQuanLyNhanSu.Base;
+using FEQuanLyNhanSu.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -48,8 +49,10 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
                 return;
             }
 
-            var startDate = dpStartDate.Value;
-            var endDate = dpEndDate.Value;
+            var startDate = dpStartDate.SelectedDate;
+            var endDate = dpEndDate.SelectedDate;
+            var startDateOnly = DateOnly.FromDateTime(startDate.Value);
+            var endDateOnly = DateOnly.FromDateTime(endDate.Value);
             if (startDate == null || endDate == null)
             {
                 MessageBox.Show("Vui lòng chọn ngày bắt đầu và kết thúc");
@@ -62,8 +65,8 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             var holiday = new
             {
                 name = name,
-                startDate = startDate,
-                endDate = endDate
+                startDate = startDateOnly,
+                endDate = endDateOnly
             };
 
             var json = JsonConvert.SerializeObject(holiday);
@@ -75,17 +78,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
 
             var response = await client.PostAsync($"{baseUrl}/api/Holiday", content);
 
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    MessageBox.Show("Tạo thêm ngày lễ thành công.");
-            //    _onHolidayCreated?.Invoke();
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    var error = await response.Content.ReadAsStringAsync();
-            //    MessageBox.Show($"Tạo ngày lễ thất bại: {error}");
-            //}
             if (response.IsSuccessStatusCode)
             {
                 var jsonResult = await response.Content.ReadAsStringAsync();
@@ -101,7 +93,16 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             }
             else
             {
-                MessageBox.Show("Tạo ngày lễ thất bại.");
+                var jsonResult = await response.Content.ReadAsStringAsync();
+
+                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(
+                    jsonResult,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                var errorData = apiResponse?.Data?.ToString() ?? apiResponse?.Message ?? "Có lỗi xảy ra";
+
+                MessageBox.Show($"Tạo ngày lễ thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

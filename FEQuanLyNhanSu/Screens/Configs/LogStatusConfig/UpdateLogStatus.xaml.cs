@@ -62,7 +62,10 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
             }
             else
             {
-                MessageBox.Show("Không thể tải thông tin chức vụ.");
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -79,6 +82,12 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
             if (!double.TryParse(LogStatusMultiply, out double multiplier))
             {
                 MessageBox.Show("Hệ số lương phải là số hợp lệ");
+                return;
+            }
+
+            if (multiplier < 0)
+            {
+                MessageBox.Show("Hệ số lương không được nhỏ hơn 0");
                 return;
             }
 
@@ -111,7 +120,9 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
             }
             else
             {
-                MessageBox.Show($"Lỗi khi cập nhật: {responseBody}");
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Lỗi khi cập nhật: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

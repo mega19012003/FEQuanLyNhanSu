@@ -49,7 +49,6 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             await LoadCheckinAsync();     
         }
 
-
         private async Task LoadLogStatusesAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -156,7 +155,10 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             }
             else
             {
-                MessageBox.Show("Không thể tải thông tin checkin.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải thông tin checkin: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -213,7 +215,9 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             }
             else
             {
-                MessageBox.Show($"Cập nhật checkin thất bại: {responseJson}");
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Cập nhật checkin thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

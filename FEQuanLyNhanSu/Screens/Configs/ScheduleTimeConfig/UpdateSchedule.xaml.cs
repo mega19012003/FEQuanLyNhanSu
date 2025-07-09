@@ -62,7 +62,10 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                     }
                     else
                     {
-                        MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                        var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                        MessageBox.Show($"Không thể tải cấu hình: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -79,7 +82,7 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
 
-                if(int.Parse(txtAllowTime.Text) >= 60 || int.Parse(txtAllowTime.Text) < 1)
+                if (int.Parse(txtAllowTime.Text) >= 60 || int.Parse(txtAllowTime.Text) < 1)
                 {
                     MessageBox.Show("Thời gian cho phép checkin phải nằm trong khoảng từ 1-60 phút", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
@@ -116,10 +119,10 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                 }
                 else
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    var errorObj = JsonConvert.DeserializeObject<ApiResponse>(errorContent);
-
-                    MessageBox.Show($"Lỗi khi cập nhật: {errorObj?.Data}");
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(responseContent);
+                    var errorData = apiResponse?.Data ?? apiResponse?.Message ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Lỗi khi cập nhật: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
