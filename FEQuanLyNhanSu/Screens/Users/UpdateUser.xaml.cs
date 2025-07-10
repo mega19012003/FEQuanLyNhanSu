@@ -45,7 +45,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             var role = Application.Current.Properties["UserRole"]?.ToString();
             if (role == "Manager")
             {
-                await LoadAllPositions(); // Load toàn bộ positions cho Manager
+                await LoadAllPositions(); 
             }
             else
             {
@@ -65,6 +65,45 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
         }
 
+        //private async Task<UserResultDetailDto> GetUserByIdAsync(Guid userId)
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+        //    var url = $"{baseUrl}/api/User/{userId}";
+
+        //    using var client = new HttpClient();
+        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //    var response = await client.GetAsync(url);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var json = await response.Content.ReadAsStringAsync();
+
+        //        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<UserResultDetailDto>>(json);
+        //        return apiResponse?.Data;
+        //    }
+
+        //    return null;
+        //}
+        //private async Task<List<PositionResultDto>> GetPositionsByDepartmentIdAsync(Guid departmentId)
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+        //    var url = $"{baseUrl}/api/Position?{departmentId}";
+
+        //    using var client = new HttpClient();
+        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        //    var response = await client.GetAsync(url);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var json = await response.Content.ReadAsStringAsync();
+        //        var positions = JsonConvert.DeserializeObject<List<PositionResultDto>>(json);
+        //        return positions;
+        //    }
+
+        //    return new List<PositionResultDto>();
+        //}
         private void LoadRoles()
         {
             var roles = Enum.GetNames(typeof(RoleType)).ToList();
@@ -177,21 +216,40 @@ namespace FEQuanLyNhanSu.Screens.Users
                     txtAddress.Text = user.Address;
                     txtPhoneNo.Text = user.PhoneNumber;
                     cmbRole.Text = user.RoleName;
-                    txtSalary.Text = user.BasicSalary?.ToString();
+                    txtSalary.Text = user.SalaryPerHour?.ToString();
                     txtImage.Text = user.ImageUrl;
                     chkIsActive.IsChecked = user.IsActive;
 
-                    if (user.DepartmentId != null)
+                   // var user = await GetUserByIdAsync(_userId);
+
+                    if (user != null)
                     {
-                        cbDepartment.SelectedValue = user.DepartmentId;
-                        await LoadPositionsByDepartmentId(user.DepartmentId.Value);
-                        cbPosition.SelectedValue = user.PositionId;
+                        //MessageBox.Show($"DepartmentId: {user.DepartmentId}", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        //MessageBox.Show($"PositionId: {user.PositionId}", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        if (user.DepartmentId != null)
+                        {
+                            if (user.DepartmentId != null)
+                            {
+                                cbDepartment.SelectedValue = user.DepartmentId;
+
+                                await LoadPositionsByDepartmentId(user.DepartmentId.Value);
+
+                                cbPosition.SelectedValue = user.PositionId;
+                            }
+                        }
                     }
-                    else
-                    {
-                        cbDepartment.Text = user.DepartmentName ?? "";
-                        cbPosition.Text = user.PositionName ?? "";
-                    }
+
+                    //if (user.DepartmentId != null)
+                    //{
+                    //    cbDepartment.SelectedValue = user.DepartmentId;
+                    //    await LoadPositionsByDepartmentId(user.DepartmentId.Value);
+                    //    cbPosition.SelectedValue = user.PositionId;
+                    //}
+                    //else
+                    //{
+                    //    cbDepartment.Text = user.DepartmentName ?? "";
+                    //    cbPosition.Text = user.PositionName ?? "";
+                    //}
 
                     if (!string.IsNullOrEmpty(user.ImageUrl))
                     {
@@ -266,7 +324,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                 var selectedDepartment = cbDepartment.SelectedItem as DepartmentResultDto;
                 var selectedPosition = cbPosition.SelectedItem as PositionResultDto;
                 var selectedRole = cmbRole.SelectedItem as string;
-
+               
                 if (!Enum.TryParse(selectedRole, out RoleType roleType))
                 {
                     MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
@@ -290,7 +348,6 @@ namespace FEQuanLyNhanSu.Screens.Users
                     }
                 }
 
-
                 var formData = new MultipartFormDataContent
                 {
                     { new StringContent(_userId.ToString()), "UserId" },
@@ -298,7 +355,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     { new StringContent(txtPhoneNo.Text), "PhoneNumber" },
                     { new StringContent(txtAddress.Text), "Address" },
                     { new StringContent(roleType.ToString()), "Role" },
-                    { new StringContent(txtSalary.Text), "BasicSalary" },
+                    { new StringContent(txtSalary.Text), "SalaryPerHour" },
                     { new StringContent(txtImage.Text), "ImageUrl" },
                     { new StringContent(chkIsActive.IsChecked == true ? "true" : "false"), "IsActive" } 
                 };
@@ -337,8 +394,12 @@ namespace FEQuanLyNhanSu.Screens.Users
                 }
                 else
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Không thể cập nhật thông tin người dùng. Lỗi: {errorContent}");
+                    var errorJson = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    //MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //var errorContent = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Không thể cập nhật thông tin người dùng. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

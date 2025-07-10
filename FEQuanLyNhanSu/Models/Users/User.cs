@@ -24,7 +24,7 @@ namespace FEQuanLyNhanSu.Models.Users
         public Department Department { get; set; }
         public Guid? PositionId { get; set; }
         public Position Position { get; set; }
-        public double BasicSalary { get; set; }
+        public double SalaryPerHour { get; set; }
         public bool IsActive { get; set; } 
         public bool IsDeleted { get; set; } 
         public string? ImageUrl { get; set; }

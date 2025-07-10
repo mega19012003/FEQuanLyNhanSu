@@ -20,6 +20,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
 using static FEQuanLyNhanSu.ResponseModels.Auths;
 
 namespace FEQuanLyNhanSu
@@ -43,13 +44,28 @@ namespace FEQuanLyNhanSu
             this.Close();
         }
         private async void btnLogin_Click(object sender, RoutedEventArgs e)
-        { // Hiện loading
+        { 
             btnCreate.IsEnabled = false;
             loadingBar.Visibility = Visibility.Visible;
             txtLoading.Visibility = Visibility.Visible;
 
             try
             {
+                if (string.IsNullOrWhiteSpace(txtUsername.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập tên đăng nhập!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                if (txtPassword.Visibility == Visibility.Collapsed && string.IsNullOrWhiteSpace(txtPasswordVisible.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập mật khẩu!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                if (txtPassword.Visibility == Visibility.Visible && string.IsNullOrWhiteSpace(txtPassword.Password))
+                {
+                    MessageBox.Show("Vui lòng nhập mật khẩu!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 string password;
                 if (txtPassword.Visibility == Visibility.Collapsed)
                 {
@@ -66,7 +82,6 @@ namespace FEQuanLyNhanSu
 
                 using var client = new HttpClient();
 
-                // B1: Gửi yêu cầu login
                 var loginJson = JsonConvert.SerializeObject(loginDto);
                 var loginContent = new StringContent(loginJson, Encoding.UTF8, "application/json");
                 var BaseUrl1 = AppsettingConfigHelper.GetBaseUrl();
@@ -75,7 +90,11 @@ namespace FEQuanLyNhanSu
 
                 if (!loginResponse.IsSuccessStatusCode)
                 {
-                    MessageBox.Show("Đăng nhập thất bại!");
+                    var errorJson = await loginResponse.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    //MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Đăng nhập thất bại!: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -83,11 +102,9 @@ namespace FEQuanLyNhanSu
                 string accessToken = loginResult.data.accessToken;
                 string refreshToken = loginResult.data.refreshToken;
 
-                // Lưu
                 Application.Current.Properties["Token"] = accessToken;
                 Application.Current.Properties["RefreshToken"] = refreshToken;
 
-                // Gọi api /api/auth/current
                 var BaseUrl2 = AppsettingConfigHelper.GetBaseUrl();
                 var apiUrl2 = $"{BaseUrl2}/api/auth/current";
                 var request = new HttpRequestMessage(HttpMethod.Get, apiUrl2);

@@ -35,7 +35,7 @@
                 <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="*" />
                 <DataGridTextColumn Header="Phòng ban" Binding="{Binding DepartmentName}" Width="*" />
                 <DataGridTextColumn Header="Vị trí" Binding="{Binding PositionName}" Width="*" />
-                <DataGridTextColumn Header="Lương cơ bản" Binding="{Binding BasicSalary}" Width="*" />
+                <DataGridTextColumn Header="Lương cơ bản" Binding="{Binding SalaryPerHour}" Width="*" />
                 <DataGridTextColumn Header="Còn hoạt động" Binding="{Binding IsActive}" Width="*" />
                 <DataGridTextColumn Header="Ảnh" Binding="{Binding ImageUrl}" Width="*" />
             </DataGrid.Columns>

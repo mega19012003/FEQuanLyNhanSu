@@ -17,8 +17,24 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string? Address { get; set; }
             public string DepartmentName { get; set; }
             public string PositionName { get; set; }
-            public double? BasicSalary { get; set; }
+            public double? SalaryPerHour { get; set; }
             public bool IsActive { get; set; } 
+            public string ImageUrl { get; set; }
+        }
+        public class UserResultDetailDto
+        {
+            public Guid UserId { get; set; }
+            public string? Fullname { get; set; }
+            public string? Username { get; set; }
+            public string RoleName { get; set; }
+            public string? PhoneNumber { get; set; }
+            public string? Address { get; set; }
+            public string DepartmentName { get; set; }
+            public Guid? DepartmentId { get; set; }
+            public string PositionName { get; set; }
+            public Guid? PositionId { get; set; }
+            public double? SalaryPerHour { get; set; }
+            public bool IsActive { get; set; }
             public string ImageUrl { get; set; }
         }
         public class UserResultUpdateDto
@@ -33,7 +49,7 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string PositionName { get; set; }
             public Guid? PositionId { get; set; }
             public bool IsActive { get; set; }
-            public double? BasicSalary { get; set; }
+            public double? SalaryPerHour { get; set; }
             public string ImageUrl { get; set; }
         }
         public class UserResponse
