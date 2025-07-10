@@ -53,7 +53,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     if (user != null)
                     {
                         txtFullname.Text = user.Fullname;
-                        txtRole.Text = user.RoleName;
+                        //txtRole.Text = user.RoleName;
                         txtPhoneNo.Text = user.PhoneNumber;
                         txtAddress.Text = user.Address;
                         txtDepartment.Text = user.DepartmentName;

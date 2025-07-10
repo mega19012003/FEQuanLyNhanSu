@@ -101,7 +101,11 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
 
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            //var query = $"IPAddress={Uri.EscapeDataString(LogStatusName)}";
+            
+            
+            
+            
+            var query = $"IPAddress={Uri.EscapeDataString(LogStatusName)}";
             var url = $"{baseUrl}/api/LogStatusConfig"; //?id={_logStatusId}&{query}";
 
             var json = JsonConvert.SerializeObject(result);

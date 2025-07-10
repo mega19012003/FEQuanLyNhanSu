@@ -88,11 +88,11 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                     return;
                 }
 
-                if (int.Parse(txtLateMinutes.Text) >= 60 || int.Parse(txtLateMinutes.Text) < 1)
-                {
-                    MessageBox.Show("Thời gian cho phép trễ phải nằm trong khoảng từ 1-60 phút", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                //if (int.Parse(txtLateMinutes.Text) >= 60 || int.Parse(txtLateMinutes.Text) < 1)
+                //{
+                //    MessageBox.Show("Thời gian cho phép trễ phải nằm trong khoảng từ 1-60 phút", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                //    return;
+                //}
 
                 var updated = new ScheduleTime
                 {

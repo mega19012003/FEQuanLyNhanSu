@@ -437,23 +437,9 @@ namespace FEQuanLyNhanSu
             }
         }
 
-
-        //private async void txtTextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    var token = Application.Current.Properties["Token"].ToString();
-        //    string keyword = txtSearch.Text?.Trim();
-
-        //    if (string.IsNullOrWhiteSpace(keyword))
-        //        LoadUser();
-        //    else
-        //    {
-        //        //cbDepartment.Text = string.Empty;
-        //        //cbPosition.Text = string.Empty;
-        //        var result = await SearchHelper.SearchAsync<UserResultDto>("api/User", keyword, token);
-        //        UserDtaGrid.ItemsSource = result;
-        //    }
-        //}
-        /// Reset password
+        
+        
+        // Reset password
         private void btnResetPass_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;

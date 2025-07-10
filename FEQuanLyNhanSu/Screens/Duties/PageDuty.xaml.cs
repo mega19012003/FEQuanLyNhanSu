@@ -172,19 +172,7 @@ namespace FEQuanLyNhanSu
         private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
-        //private async void txtTextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    var token = Application.Current.Properties["Token"].ToString();
-        //    string keyword = txtSearch.Text?.Trim();
 
-        //    if (string.IsNullOrWhiteSpace(keyword))
-        //        LoadDuty();
-        //    else
-        //    {
-        //        var result = await SearchHelper.SearchAsync<DutyResultDto>("api/Duty", keyword, token);
-        //        DutyDtaGrid.ItemsSource = result;
-        //    }
-        //}
 
         /// Pagination
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
@@ -310,42 +298,6 @@ namespace FEQuanLyNhanSu
         /// ///////////////////////////////////////
         /// /////////////////////////////////////// Duty Detail 
 
-        //private void OnDetailCreated(Duties.DutyDetailResultDto newDept)
-        //{
-        //    if (newDept != null)
-        //    {
-        //        var list = DutyDtaGrid.ItemsSource as List<Duties.DutyDetailResultDto> ?? new List<Duties.DutyDetailResultDto>();
-        //        list.Insert(0, newDept);
-        //        DutyDtaGrid.ItemsSource = null;
-        //        DutyDtaGrid.ItemsSource = list;
-
-        //        DutyDtaGrid.SelectedItem = newDept;
-        //        DutyDtaGrid.ScrollIntoView(newDept);
-        //    }
-        //}
-
-        //private void OnDetailUpdated(Duties.DutyDetailResultDto updatedDept)
-        //{
-        //    if (updatedDept != null)
-        //    {
-        //        var list = DutyDtaGrid.ItemsSource as List<Duties.DutyDetailResultDto> ?? new List<Duties.DutyDetailResultDto>();
-
-        //        var existing = list.FirstOrDefault(d => d.DutyDetailId == updatedDept.DutyDetailId);
-        //        if (existing != null)
-        //        {
-        //            list.Remove(existing);
-        //        }
-
-        //        list.Insert(0, updatedDept);
-
-        //        DutyDtaGrid.ItemsSource = null;
-        //        DutyDtaGrid.ItemsSource = list;
-
-        //        DutyDtaGrid.SelectedItem = updatedDept;
-        //        DutyDtaGrid.ScrollIntoView(updatedDept);
-        //    }
-        //}
-
         /// Create Detail
         private void btnAddDetail_Click(object sender, RoutedEventArgs e)
         {
@@ -422,8 +374,11 @@ namespace FEQuanLyNhanSu
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Không thể xóa chi tiết công việc.\nStatusCode: {response.StatusCode}\nUrl: {baseUrl}\nChi tiết: {errorContent}");
+                var errorJson = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                //var errorContent = await response.Content.ReadAsStringAsync();
+                MessageBox.Show($"Không thể xóa chi tiết công việc: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -468,8 +423,12 @@ namespace FEQuanLyNhanSu
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành.\nStatusCode: {response.StatusCode}\nUrl: {baseUrl}\nChi tiết: {errorContent}");
+                var errorJson = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                //MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                //MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành.\nStatusCode: {response.StatusCode}\nUrl: {baseUrl}\nChi tiết: {errorContent}");
             }
         }
     }
