@@ -44,8 +44,10 @@ namespace FEQuanLyNhanSu.Helpers
 
             if (!response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Không thể tải dữ liệu.");
-                return;
+                var errorJson = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             var json = await response.Content.ReadAsStringAsync();

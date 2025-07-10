@@ -114,11 +114,11 @@ namespace FEQuanLyNhanSu
         private void LoadDateComboboxes()
         {
             var days = new List<string> { "Ngày" };
-            days.AddRange(Enumerable.Range(1, 31).Select(i => i.ToString()));
+            days.AddRange(Enumerable.Range(0, 31).Select(i => i.ToString()));
             cbDay.ItemsSource = days;
 
             var months = new List<string> { "Tháng" };
-            months.AddRange(Enumerable.Range(1, 12).Select(i => i.ToString()));
+            months.AddRange(Enumerable.Range(0, 12).Select(i => i.ToString()));
             cbMonth.ItemsSource = months;
 
             int currentYear = DateTime.Now.Year;

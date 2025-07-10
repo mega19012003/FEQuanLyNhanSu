@@ -53,7 +53,7 @@ namespace FEQuanLyNhanSu
                     break;
 
                 case "Employee":
-                    foreach (var control in new[] { /*btnDashboard,*/ btnUser, btnDepartment, btnPosition})
+                    foreach (var control in new[] { btnDashboard, btnUser, btnDepartment, btnPosition})
                         control.Visibility = Visibility.Collapsed;
                     break;
             }
