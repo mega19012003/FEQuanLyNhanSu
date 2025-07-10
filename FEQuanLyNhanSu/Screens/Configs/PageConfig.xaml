@@ -10,7 +10,7 @@
       Title="PageConfig">
 
     <Grid Background="White" Margin="0,-3,0,-164">
-        <TextBlock Text="Trang cấu hình" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="lblTitle" Text="Trang quản lý cấu hình" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
 
         <TabControl Margin="10,70,10,0" VerticalAlignment="Top" Height="466">
            

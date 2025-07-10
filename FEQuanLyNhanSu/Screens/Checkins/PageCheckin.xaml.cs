@@ -107,6 +107,7 @@ namespace FEQuanLyNhanSu
                     break;
                 case "Employee":
                     DtaGridAction.Visibility = Visibility.Collapsed;
+                    lblTitle.Text = "Chấm công";
                     break;
             }
         }

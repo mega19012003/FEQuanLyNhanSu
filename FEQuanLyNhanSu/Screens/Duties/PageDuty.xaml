@@ -17,7 +17,7 @@
 
     <Grid Background="White" Margin="0,-3,0,0">
         
-        <TextBlock Text="Trang quản lý công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="lblTitle" Text="Trang quản lý công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn x:Name="DtaGridActionDuty" Header="Hành động" Width="150">

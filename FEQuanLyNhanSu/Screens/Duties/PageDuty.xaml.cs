@@ -45,6 +45,7 @@ namespace FEQuanLyNhanSu
                 case "Employee":
                     AdDutyBtn.Visibility = Visibility.Collapsed;
                     DtaGridActionDuty.Visibility = Visibility.Collapsed;
+                    lblTitle.Text = "Công việc";
                     //btnDeleteDetail.Visibility = Visibility.Collapsed;
                     break;
             }

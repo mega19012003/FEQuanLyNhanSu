@@ -61,6 +61,7 @@ namespace FEQuanLyNhanSu
                     btnUpdateWorkTime.Visibility = Visibility.Collapsed;
                     DtaGridActionHoliday.Visibility = Visibility.Collapsed;
                     DtaGridActionStatus.Visibility = Visibility.Collapsed;
+                    lblTitle.Text = "Xem cấu hình";
                     LoadLogStatus();
                     LoadHolidayConfig();
                     LoadScheduleTime();
@@ -72,6 +73,7 @@ namespace FEQuanLyNhanSu
                     btnUpdateWorkTime.Visibility = Visibility.Collapsed;
                     DtaGridActionHoliday.Visibility = Visibility.Collapsed;
                     DtaGridActionStatus.Visibility = Visibility.Collapsed;
+                    lblTitle.Text = "Xem cấu hình";
                     LoadLogStatus();
                     LoadHolidayConfig();
                     LoadScheduleTime();

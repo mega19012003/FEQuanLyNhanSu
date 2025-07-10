@@ -50,11 +50,17 @@ namespace FEQuanLyNhanSu
 
                 case "Manager":
                     btnDepartment.Visibility = Visibility.Collapsed;
+                    btnConfig.Content = "Xem cấu hình";
                     break;
 
                 case "Employee":
                     foreach (var control in new[] { btnDashboard, btnUser, btnDepartment, btnPosition})
                         control.Visibility = Visibility.Collapsed;
+                    btnPayroll.Content = "Chấm công";
+                    btnCheckin.Content = "Checkin";
+                    btnDuty.Content = "Công việc";
+                    btnConfig.Content = "Cấu hình";
+                    btnConfig.Content = "Xem cấu hình";
                     break;
             }
         }

@@ -9,7 +9,7 @@
       Title="PagePayroll">
 
     <Grid Background="White" Margin="0,-3,0,0">
-        <TextBlock Text="Trang quản lý chấm công"
+        <TextBlock x:Name="lblTitle" Text="Trang quản lý chấm công"
          FontSize="24"
          HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
@@ -35,7 +35,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddPayrollBtn" Content="Thêm chấm công" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPayroll" FontWeight="Bold"/>
-        <Button x:Name="AddAllPayrollBtn" Content="Chấm công tất cả" HorizontalAlignment="Left" Height="35" Margin="200,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPayrollAll" FontWeight="Bold"/>
+        <!--<Button x:Name="AddAllPayrollBtn" Content="Chấm công tất cả" HorizontalAlignment="Left" Height="35" Margin="200,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPayrollAll" FontWeight="Bold"/>-->
         
         <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
             <Grid.ColumnDefinitions>
