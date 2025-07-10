@@ -21,7 +21,7 @@
             <!-- Các nút đều nhau -->
             <StackPanel Margin="10">
                 <Image Source="assets/images.png" Width="160" Height="160" Margin="0,10"/>
-                <!--<Button x:Name="btnDashboard" Content="Trang chủ" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="TrangChu_Click" FontWeight="Bold"/>-->
+                <Button x:Name="btnDashboard" Content="DashBoard" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="TrangChu_Click" FontWeight="Bold"/>
                 <Button x:Name="btnUser" Content="Quản lý người dùng" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Dashboard" FontWeight="Bold"/>
                 <Button x:Name="btnDepartment" Content="Quản lý phòng ban" Height="40" Margin="0,5" FontSize="15" Background="#99c5e3" Click="Department" FontWeight="Bold"/>
                 <Button x:Name="btnPosition" Content="Quản lý chức vụ" Height="40" Margin="0,5" FontSize="15" Background="	#99c5e3" Click="Position" FontWeight="Bold"/>

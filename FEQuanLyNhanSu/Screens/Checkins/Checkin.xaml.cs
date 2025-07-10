@@ -86,14 +86,9 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
                 if (apiResponse?.Data != null)
                 {
-                    lblCheckinMor.Content = apiResponse.Data.CheckinMorning;
-                    lblCheckoutMor.Content = apiResponse.Data.CheckoutMorning;
-                    lblCheckinAft.Content = apiResponse.Data.CheckinAfternoon;
-                    lblCheckoutAft.Content = apiResponse.Data.CheckoutAfternoon;
-                    lblCheckinMorStatus.Content = apiResponse.Data.CheckinMorningStatus;
-                    lblCheckoutMorStatus.Content = apiResponse.Data.CheckoutMorningStatus;
-                    lblCheckinAftStatus.Content = apiResponse.Data.CheckinAfternoonStatus;
-                    lblCheckoutAftStatus.Content = apiResponse.Data.CheckoutAfternoonStatus;
+                    lblCheckinMor.Content = apiResponse.Data.CheckinTime;
+                    lblCheckoutMor.Content = apiResponse.Data.CheckoutTime;
+                    lblCheckinAft.Content = apiResponse.Data.LogStatus;
                     lblSalaryPerDay.Content = apiResponse.Data.SalaryPerDay.ToString("N0");
 
                     _onCheckinCreated?.Invoke(apiResponse.Data);

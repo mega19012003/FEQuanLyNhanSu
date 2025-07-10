@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Checkins"
         mc:Ignorable="d"
-        Title="Checkin" Height="500" Width="800">
+        Title="Checkin" Height="450" Width="800">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" Content="Checkin" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
 
@@ -42,7 +42,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Margin="50,220,50,0">
+        <Grid Margin="150,220,150,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -52,50 +52,28 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="180"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <!--Label Left-->
-            <Label Grid.Row="0" Grid.Column="0" Content="Thời gian checkin sáng" FontSize="15"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="Thời gian checkout sáng" FontSize="15"/>
-            <Label Grid.Row="2" Grid.Column="0" Content="Thời gian checkin chiều" FontSize="15"/>
-            <Label Grid.Row="3" Grid.Column="0" Content="Thời gian checkout chiều" FontSize="15"/>
-            <Label Grid.Row="4" Grid.Column="0" Content="Lương" FontSize="15"/>
+            <Label Grid.Row="0" Grid.Column="0" Content="Thời gian checkin" FontSize="15"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Thời gian checkout" FontSize="15"/>
+            <Label Grid.Row="2" Grid.Column="0" Content="LogStatus" FontSize="15"/>
+            <Label Grid.Row="3" Grid.Column="0" Content="Lương" FontSize="15"/>
             <!--Content Left-->
             <Label Grid.Row="0" Grid.Column="2" x:Name="lblCheckinMor" Content="....." FontSize="15"/>
             <Label x:Name="lblCheckoutMor" Grid.Row="1" Grid.Column="2" Content="....." FontSize="15"/>
             <Label x:Name="lblCheckinAft" Grid.Row="2" Grid.Column="2" Content="....." FontSize="15"/>
-            <Label x:Name="lblCheckoutAft" Grid.Row="3" Grid.Column="2" Content="....." FontSize="15"/>
-            <Label x:Name="lblSalaryPerDay" Grid.Row="4" Grid.Column="2" Content="....." FontSize="15"/>
+            <Label x:Name="lblSalaryPerDay" Grid.Row="3" Grid.Column="2" Content="....." FontSize="15"/>
+     
 
             <!--Middle-->
             <Label Grid.Row="0" Grid.Column="1" Content=":" FontSize="15"/>
             <Label Grid.Row="1" Grid.Column="1" Content=":" FontSize="15"/>
             <Label Grid.Row="2" Grid.Column="1" Content=":" FontSize="15"/>
             <Label Grid.Row="3" Grid.Column="1" Content=":" FontSize="15"/>
-            <Label Grid.Row="4" Grid.Column="1" Content=":" FontSize="15"/>
-
-            <Label Grid.Row="0" Grid.Column="4" Content=":" FontSize="15"/>
-            <Label Grid.Row="1" Grid.Column="4" Content=":" FontSize="15"/>
-            <Label Grid.Row="2" Grid.Column="4" Content=":" FontSize="15"/>
-            <Label Grid.Row="3" Grid.Column="4" Content=":" FontSize="15"/>
-
-            <!--Label Right-->
-            <Label Grid.Row="0" Grid.Column="3" Content="Trạng thái checkin sáng" FontSize="15"/>
-            <Label Grid.Row="1" Grid.Column="3" Content="Trạng thái checkout sáng" FontSize="15"/>
-            <Label Grid.Row="2" Grid.Column="3" Content="Trạng thái checkin chiều" FontSize="15"/>
-            <Label Grid.Row="3" Grid.Column="3" Content="Trạng thái checkout chiều" FontSize="15"/>
-            <!--Content Right-->
-            <Label x:Name="lblCheckinMorStatus" Grid.Row="0" Grid.Column="5"  Content="....." FontSize="15"/>
-            <Label x:Name="lblCheckoutMorStatus" Grid.Row="1" Grid.Column="5" Content="....." FontSize="15"/>
-            <Label x:Name="lblCheckinAftStatus" Grid.Row="2" Grid.Column="5" Content="....." FontSize="15"/>
-            <Label x:Name="lblCheckoutAftStatus" Grid.Row="3" Grid.Column="5" Content="....." FontSize="15"/>
-
 
             <StackPanel Grid.Row="6" Grid.ColumnSpan="6" Orientation="Horizontal"
                 HorizontalAlignment="Center" Margin="0,20,0,20">

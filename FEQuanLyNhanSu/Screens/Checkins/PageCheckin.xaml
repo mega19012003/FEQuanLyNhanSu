@@ -26,14 +26,9 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Id" Binding="{Binding CheckinId}" Width="*" />
                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Thời gian Checkin sáng" Binding="{Binding CheckinMorning}" Width="*" />
-                <DataGridTextColumn Header="Thời gian Checkout sáng" Binding="{Binding CheckoutMorning}" Width="*" />
-                <DataGridTextColumn Header="Thời gian Checkin chiều" Binding="{Binding CheckinAfternoon}" Width="*" />
-                <DataGridTextColumn Header="Thời gian Checkin chiều" Binding="{Binding CheckoutAfternoon}" Width="*" />
-                <DataGridTextColumn Header="Trạng thái Checkin sáng" Binding="{Binding CheckinMorningStatus}" Width="*" />
-                <DataGridTextColumn Header="Trạng thái Checkout sáng" Binding="{Binding CheckoutMorningStatus}" Width="*" />
-                <DataGridTextColumn Header="Trạng thái Checkin chiều" Binding="{Binding CheckinAfternoonStatus}" Width="*" />
-                <DataGridTextColumn Header="Trạng thái Checkin chiều" Binding="{Binding CheckoutAfternoonStatus}" Width="*" />
+                <DataGridTextColumn Header="Thời gian Checkin" Binding="{Binding CheckinTime}" Width="*" />
+                <DataGridTextColumn Header="Thời gian Checkout" Binding="{Binding CheckoutTime}" Width="*" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*" />
                 <DataGridTextColumn Header="Lương 1 ngày" Binding="{Binding SalaryPerDay}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>

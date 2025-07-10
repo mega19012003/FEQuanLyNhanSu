@@ -9,7 +9,7 @@ namespace FEQuanLyNhanSu.Models.Configs
         public TimeOnly StartTimeMorning { get; set; }
         public TimeOnly EndTimeMorning { get; set; }
         public int LogAllowtime { get; set; }
-        public int LateThresholdMinutes { get; set; }
+        //public int LateThresholdMinutes { get; set; }
         public TimeOnly StartTimeAfternoon { get; set; }
         public TimeOnly EndTimeAfternoon { get; set; }
     }

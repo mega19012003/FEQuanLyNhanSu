@@ -413,7 +413,7 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private void LoadUser()
+        private async Task LoadUser()
         {
             try
             {
@@ -429,13 +429,14 @@ namespace FEQuanLyNhanSu
                     txtPage
                 );
 
-                _ = _paginationHelper.LoadPageAsync(1);
+                await _paginationHelper.LoadPageAsync(1);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu người dùng: {ex.Message}");
+                MessageBox.Show($"Lỗi khi tải dữ liệu người dùng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         //private async void txtTextChanged(object sender, TextChangedEventArgs e)
         //{

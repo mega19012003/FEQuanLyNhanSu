@@ -55,7 +55,7 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
 
                         txtStatTimeMorning.Text = data.StartTimeMorning.ToString();
                         txtEndTimeMorning.Text = data.EndTimeMorning.ToString();
-                        txtLateMinutes.Text = data.LateThresholdMinutes.ToString();
+                        //txtLateMinutes.Text = data.LateThresholdMinutes.ToString();
                         txtAllowTime.Text = data.LogAllowtime.ToString();
                         txtStartTimeAfternoon.Text = data.StartTimeAfternoon.ToString();
                         txtEndTimeAfternoon.Text = data.EndTimeAfternoon.ToString();
@@ -101,7 +101,7 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                     StartTimeAfternoon = TimeOnly.Parse(txtStartTimeAfternoon.Text),
                     EndTimeAfternoon = TimeOnly.Parse(txtEndTimeAfternoon.Text),
                     LogAllowtime = int.Parse(txtAllowTime.Text),
-                    LateThresholdMinutes = int.Parse(txtLateMinutes.Text)
+                    //LateThresholdMinutes = int.Parse(txtLateMinutes.Text)
                 };
 
                 var json = JsonConvert.SerializeObject(updated);

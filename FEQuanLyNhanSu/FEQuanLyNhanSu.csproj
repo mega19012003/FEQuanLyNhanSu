@@ -37,10 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ResponseModels\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Screens\Duties\CreateDetail.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

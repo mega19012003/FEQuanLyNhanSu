@@ -175,7 +175,7 @@ namespace FEQuanLyNhanSu
 
                         txtStartTimeMorning.Text = data.StartTimeMorning.ToString();
                         txtEndTimeMorning.Text = data.EndTimeMorning.ToString();
-                        txtLateTime.Text = data.LateThresholdMinutes.ToString();
+                        //txtLateTime.Text = data.LateThresholdMinutes.ToString();
                         txtAllowTime.Text = data.LogAllowtime.ToString();
                         txtStartTimeAfternoon.Text = data.StartTimeAfternoon.ToString();
                         txtEndTimeAfternoon.Text = data.EndTimeAfternoon.ToString();

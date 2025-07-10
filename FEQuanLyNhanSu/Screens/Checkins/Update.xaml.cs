@@ -67,19 +67,19 @@ namespace FEQuanLyNhanSu.Screens.Checkins
 
                 // Phải gán ItemsSource tại đây
                 cbChkinMor.ItemsSource = _logStatuses;
-                cbChkoutMor.ItemsSource = _logStatuses;
-                cbChkinAft.ItemsSource = _logStatuses;
-                cbChkoutAft.ItemsSource = _logStatuses;
+                //cbChkoutMor.ItemsSource = _logStatuses;
+                //cbChkinAft.ItemsSource = _logStatuses;
+                //cbChkoutAft.ItemsSource = _logStatuses;
 
                 cbChkinMor.DisplayMemberPath = "Name";
-                cbChkoutMor.DisplayMemberPath = "Name";
-                cbChkinAft.DisplayMemberPath = "Name";
-                cbChkoutAft.DisplayMemberPath = "Name";
+                //cbChkoutMor.DisplayMemberPath = "Name";
+                //cbChkinAft.DisplayMemberPath = "Name";
+                //cbChkoutAft.DisplayMemberPath = "Name";
 
                 cbChkinMor.SelectedValuePath = "Id";
-                cbChkoutMor.SelectedValuePath = "Id";
-                cbChkinAft.SelectedValuePath = "Id";
-                cbChkoutAft.SelectedValuePath = "Id";
+                //cbChkoutMor.SelectedValuePath = "Id";
+                //cbChkinAft.SelectedValuePath = "Id";
+                //cbChkoutAft.SelectedValuePath = "Id";
             }
             else
             {
@@ -136,16 +136,16 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                     //MessageBox.Show($"API raw CheckoutAfternoonStatus: '{result.Data.CheckoutAfternoonStatus}'");
 
                     cbChkinMor.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                        string.Equals(x.Name?.Trim(), result.Data.CheckinMorningStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
+                        string.Equals(x.Name?.Trim(), result.Data.Status?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
 
-                    cbChkoutMor.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                        string.Equals(x.Name?.Trim(), result.Data.CheckoutMorningStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
+                    //cbChkoutMor.SelectedValue = _logStatuses.FirstOrDefault(x =>
+                    //    string.Equals(x.Name?.Trim(), result.Data.CheckoutMorningStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
 
-                    cbChkinAft.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                        string.Equals(x.Name?.Trim(), result.Data.CheckinAfternoonStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
+                    //cbChkinAft.SelectedValue = _logStatuses.FirstOrDefault(x =>
+                    //    string.Equals(x.Name?.Trim(), result.Data.CheckinAfternoonStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
 
-                    cbChkoutAft.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                        string.Equals(x.Name?.Trim(), result.Data.CheckoutAfternoonStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
+                    //cbChkoutAft.SelectedValue = _logStatuses.FirstOrDefault(x =>
+                    //    string.Equals(x.Name?.Trim(), result.Data.CheckoutAfternoonStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
 
                     //MessageBox.Show($"Mapped Morning Checkin Id: {cbChkinMor.SelectedValue}");
                     //MessageBox.Show($"Mapped Morning Checkout Id: {cbChkoutMor.SelectedValue}");
@@ -189,10 +189,10 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             var request = new CheckinResultDto1
             {
                 CheckinId = _checkinId,
-                CheckinMorningStatus = (int?)cbChkinMor.SelectedValue ?? 0,
-                CheckoutMorningStatus = (int?)cbChkoutMor.SelectedValue ?? 0,
-                CheckinAfternoonStatus = (int?)cbChkinAft.SelectedValue ?? 0,
-                CheckoutAfternoonStatus = (int?)cbChkoutAft.SelectedValue ?? 0
+                LogStatus = (int?)cbChkinMor.SelectedValue ?? 0,
+                //CheckoutMorningStatus = (int?)cbChkoutMor.SelectedValue ?? 0,
+                //CheckinAfternoonStatus = (int?)cbChkinAft.SelectedValue ?? 0,
+                //CheckoutAfternoonStatus = (int?)cbChkoutAft.SelectedValue ?? 0
             };
 
             var json = System.Text.Json.JsonSerializer.Serialize(request);
