@@ -9,10 +9,9 @@ namespace FEQuanLyNhanSu.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is string role)
-            {
-                return role == "Employee" ? Visibility.Collapsed : Visibility.Visible;
-            }
+            var role = value as string;
+            if (role == "Administrator" || role == "Manager")
+                return Visibility.Visible;
             return Visibility.Collapsed;
         }
 

@@ -4,26 +4,16 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FEQuanLyNhanSu.Helpers
 {
-    public class AppState
+    public static class AppState
     {
-        private static string _currentRole = "Employee";
-        public static string CurrentRole
+        public static string get_CurrentRole()
         {
-            get => _currentRole;
-            set
-            {
-                if (_currentRole != value)
-                {
-                    _currentRole = value;
-                    StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(CurrentRole)));
-                }
-            }
+            return Application.Current.Properties["UserRole"]?.ToString();
         }
-
-        public static event PropertyChangedEventHandler StaticPropertyChanged;
     }
 
 }
