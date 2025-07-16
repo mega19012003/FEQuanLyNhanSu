@@ -50,15 +50,21 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                     if (response.IsSuccessStatusCode)
                     {
                         var responseStr = await response.Content.ReadAsStringAsync();
-                        var apiResult = JsonConvert.DeserializeObject<ApiResponse<ScheduleTime>>(responseStr);
-                        var data = apiResult.Data;
+                        var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<ScheduleTime>>>(responseStr);
 
-                        txtStatTimeMorning.Text = data.StartTimeMorning.ToString();
-                        txtEndTimeMorning.Text = data.EndTimeMorning.ToString();
-                        //txtLateMinutes.Text = data.LateThresholdMinutes.ToString();
-                        txtAllowTime.Text = data.LogAllowtime.ToString();
-                        txtStartTimeAfternoon.Text = data.StartTimeAfternoon.ToString();
-                        txtEndTimeAfternoon.Text = data.EndTimeAfternoon.ToString();
+                        var schedule = apiResult.Data?.Items?.FirstOrDefault();
+                        if (schedule != null)
+                        {
+                            txtStatTimeMorning.Text = schedule.StartTimeMorning.ToString();
+                            txtEndTimeMorning.Text = schedule.EndTimeMorning.ToString();
+                            txtAllowTime.Text = schedule.LogAllowtime.ToString();
+                            txtStartTimeAfternoon.Text = schedule.StartTimeAfternoon.ToString();
+                            txtEndTimeAfternoon.Text = schedule.EndTimeAfternoon.ToString();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không tìm thấy cấu hình thời gian.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
                     }
                     else
                     {

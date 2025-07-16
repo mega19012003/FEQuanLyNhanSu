@@ -54,6 +54,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     {
                         txtFullname.Text = user.Fullname;
                         //txtRole.Text = user.RoleName;
+                        txtCompany.Text = user.CompanyName;
                         txtPhoneNo.Text = user.PhoneNumber;
                         txtAddress.Text = user.Address;
                         txtDepartment.Text = user.DepartmentName;

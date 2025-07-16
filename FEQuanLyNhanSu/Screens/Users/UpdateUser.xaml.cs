@@ -53,7 +53,6 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
             await LoadUserAsync();
         }
-
         private void HandleUI(string role)
         {
             if (role == "Manager")
@@ -64,137 +63,12 @@ namespace FEQuanLyNhanSu.Screens.Users
                 txtboxDepartment.Visibility = Visibility.Collapsed;
             }
         }
-
-        //private async Task<UserResultDetailDto> GetUserByIdAsync(Guid userId)
-        //{
-        //    var token = Application.Current.Properties["Token"]?.ToString();
-        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-        //    var url = $"{baseUrl}/api/User/{userId}";
-
-        //    using var client = new HttpClient();
-        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        //    var response = await client.GetAsync(url);
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var json = await response.Content.ReadAsStringAsync();
-
-        //        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<UserResultDetailDto>>(json);
-        //        return apiResponse?.Data;
-        //    }
-
-        //    return null;
-        //}
-        //private async Task<List<PositionResultDto>> GetPositionsByDepartmentIdAsync(Guid departmentId)
-        //{
-        //    var token = Application.Current.Properties["Token"]?.ToString();
-        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-        //    var url = $"{baseUrl}/api/Position?{departmentId}";
-
-        //    using var client = new HttpClient();
-        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        //    var response = await client.GetAsync(url);
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var json = await response.Content.ReadAsStringAsync();
-        //        var positions = JsonConvert.DeserializeObject<List<PositionResultDto>>(json);
-        //        return positions;
-        //    }
-
-        //    return new List<PositionResultDto>();
-        //}
+      
         private void LoadRoles()
         {
             var roles = Enum.GetNames(typeof(RoleType)).ToList();
             cmbRole.ItemsSource = roles;
         }
-
-        private async Task LoadDepartments()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync(baseUrl);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                cbDepartment.ItemsSource = result.Data.Items;
-            }
-            else
-            {
-                cbDepartment.ItemsSource = null;
-            }
-        }
-
-        private async Task LoadAllPositions()
-        {
-            try
-            {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
-
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = await client.GetAsync(baseUrl); 
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                    cbPosition.ItemsSource = result.Data.Items;
-                }
-                else
-                {
-                    cbPosition.ItemsSource = null;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi load positions: {ex.Message}");
-            }
-        }
-
-        private async Task LoadPositionsByDepartmentId(Guid departmentId)
-        {
-            try
-            {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-                var url = $"{baseUrl}/api/Position?departmentId={departmentId}";
-
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = await client.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                    cbPosition.ItemsSource = result.Data.Items;
-                }
-                else
-                {
-                    cbPosition.ItemsSource = null;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi load positions: {ex.Message}");
-            }
-        }
-
-        private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
-            {
-                await LoadPositionsByDepartmentId(selectedDept.DepartmentId);
-            }
-        }
-
         private async Task LoadUserAsync()
         {
             try
@@ -219,8 +93,6 @@ namespace FEQuanLyNhanSu.Screens.Users
                     txtSalary.Text = user.SalaryPerHour?.ToString();
                     txtImage.Text = user.ImageUrl;
                     chkIsActive.IsChecked = user.IsActive;
-
-                   // var user = await GetUserByIdAsync(_userId);
 
                     if (user != null)
                     {
@@ -279,13 +151,95 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
         }
 
+        private async Task LoadDepartments()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync(baseUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                cbDepartment.ItemsSource = result.Data.Items;
+            }
+            else
+            {
+                cbDepartment.ItemsSource = null;
+            }
+        }
+        private async Task LoadAllPositions()
+        {
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await client.GetAsync(baseUrl); 
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                    cbPosition.ItemsSource = result.Data.Items;
+                }
+                else
+                {
+                    cbPosition.ItemsSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi load positions: {ex.Message}");
+            }
+        }
+        private async Task LoadPositionsByDepartmentId(Guid departmentId)
+        {
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+                var url = $"{baseUrl}/api/Position?departmentId={departmentId}";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                    cbPosition.ItemsSource = result.Data.Items;
+                }
+                else
+                {
+                    cbPosition.ItemsSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi load positions: {ex.Message}");
+            }
+        }
+
+        private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
+            {
+                await LoadPositionsByDepartmentId(selectedDept.DepartmentId);
+            }
+        }
+
         private HttpClient CreateAuthorizedClient(string token)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
         }
-
         private void btnSelectImage_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog { Title = "Chọn ảnh", Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp" };
@@ -303,7 +257,6 @@ namespace FEQuanLyNhanSu.Screens.Users
                 _imagePath = dialog.FileName; 
             }
         }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
@@ -311,12 +264,12 @@ namespace FEQuanLyNhanSu.Screens.Users
 
             this.Close();
         }
-
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 btnUpdate.IsEnabled = false;
+                btnExit.IsEnabled = false;
 
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
@@ -394,12 +347,10 @@ namespace FEQuanLyNhanSu.Screens.Users
                 }
                 else
                 {
-                    var errorJson = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
-                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                    //MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    //var errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Không thể cập nhật thông tin người dùng. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var json = await response.Content.ReadAsStringAsync();
+                    dynamic? apiResponse = JsonConvert.DeserializeObject<dynamic>(json);
+                    string errorMessage = apiResponse?.Data != null ? apiResponse.Data.ToString() : apiResponse?.Message != null ? apiResponse.Message.ToString() : "Có lỗi xảy ra";
+                    MessageBox.Show($"Không thể cập nhật thông tin người dùng. Lỗi: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
@@ -409,6 +360,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             finally
             {
                 btnUpdate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
         private async void cbDepartment_KeyUp(object sender, KeyEventArgs e)
@@ -494,6 +446,5 @@ namespace FEQuanLyNhanSu.Screens.Users
                 MessageBox.Show($"Lỗi khi tìm kiếm chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
     }
 }

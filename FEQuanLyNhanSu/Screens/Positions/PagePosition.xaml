@@ -14,7 +14,7 @@
         <DataGrid x:Name="PositionDtaGrid" Margin="20,100,20,50" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
 
-                <DataGridTemplateColumn Header="Hành động" Width="100">
+                <DataGridTemplateColumn x:Name="DtaGridActionPosition" Header="Hành động" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -26,11 +26,11 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
                 <DataGridTextColumn Header="Tên chức vụ" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Tên phòng ban" Binding="{Binding DepartmentName}" Width="*" />
+                <DataGridTextColumn x:Name="HeaderDepartment" Header="Tên phòng ban" Binding="{Binding DepartmentName}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddPositionBtn" Content="Thêm chức vụ" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="150" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPosition" FontWeight="Bold"/>
-        <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
+        <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="250" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -45,14 +45,23 @@
             <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
             <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
         </Grid>
-        <ComboBox x:Name="cbDepartment"          
-          FontSize="15" Height="41" Width="250" Margin="270,56,330,356" Padding="10,0"
-          IsEditable="True"
-          StaysOpenOnEdit="True"
-          IsTextSearchEnabled="False"
-          KeyUp="cbDepartment_KeyUp"
-          DisplayMemberPath="Name"
-          SelectedValuePath="DepartmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban" />
-    
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0" >
+            <ComboBox x:Name="cbCompany" Width="200" Height="41" Margin="5,0"
+              FontSize="15" Padding="10,0"
+              IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+              KeyUp="cbCompany_KeyUp"
+              DisplayMemberPath="Name"
+              SelectedValuePath="CompanyId"
+              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+              SelectionChanged="cbCompany_SelectionChanged" Text="Nhập tên công ty"/>
+            <ComboBox x:Name="cbDepartment" Width="200" Height="41" Margin="5,0"
+              FontSize="15" Padding="10,0"
+              IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+              KeyUp="cbDepartment_KeyUp"
+              DisplayMemberPath="Name"
+              SelectedValuePath="DepartmentId"
+              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+              SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban"/>
+        </StackPanel>
     </Grid>
 </Page>

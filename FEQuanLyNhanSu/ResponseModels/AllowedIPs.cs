@@ -9,6 +9,7 @@ namespace FEQuanLyNhanSu.ResponseModels
         {
             public Guid AllowedIPId { get; set; }
             public string IPAddress { get; set; } = string.Empty;
+            public string companyName { get; set; }
         }
         public class IPResponse
         {

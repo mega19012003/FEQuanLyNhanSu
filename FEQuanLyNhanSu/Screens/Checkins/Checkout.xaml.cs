@@ -37,7 +37,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
         {
             switch (userRole)
             {
-                case "Admin":
+                case "Administrator":
                     cbEmployee.Visibility = Visibility.Visible;
                     lblName.Visibility = Visibility.Visible;
                     await LoadUsers();

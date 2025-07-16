@@ -186,7 +186,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
 
             using var client = CreateAuthorizedClient(token);
 
-            var request = new CheckinResultDto1
+            var request = new CheckinResultDto
             {
                 CheckinId = _checkinId,
                 LogStatus = (int?)cbChkinMor.SelectedValue ?? 0,

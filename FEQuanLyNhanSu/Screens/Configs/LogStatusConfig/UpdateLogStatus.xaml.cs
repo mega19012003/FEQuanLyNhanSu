@@ -25,9 +25,9 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
     /// </summary>
     public partial class UpdateLogStatus : Window
     {
-        private int _logStatusId;
+        private Guid _logStatusId;
         private Action _onLogStatusUpdated;
-        public UpdateLogStatus(int logStatusId, Action onCreated)
+        public UpdateLogStatus(Guid logStatusId, Action onCreated)
         {
             InitializeComponent();
             _logStatusId = logStatusId;

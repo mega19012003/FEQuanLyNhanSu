@@ -13,6 +13,9 @@
                         ObjectType="{x:Type helpers:AppState}" 
                         MethodName="get_CurrentRole" />
         <helpers:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter"/>
+        <helpers:RoleToColumnWidthConverter x:Key="RoleToColumnWidthConverter" />
+        <helpers:RoleToDoneButtonVisibilityConverter x:Key="RoleToDoneButtonVisibilityConverter" />
+        <helpers:RoleToHeaderTextConverter x:Key="RoleToHeaderTextConverter" />
     </Page.Resources>
 
     <Grid Background="White" Margin="0,-3,0,0">
@@ -44,18 +47,22 @@
                     <Grid>
                         <DataGrid ItemsSource="{Binding DutyDetails}" AutoGenerateColumns="False" IsReadOnly="True" Margin="20,5,20,5" ColumnWidth="*" HeadersVisibility="Column" HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Hành động" Width="200">
+                                <DataGridTemplateColumn 
+                                    Header="{Binding Source={StaticResource AppStateProvider},
+                                                Converter={StaticResource RoleToHeaderTextConverter},
+                                                ConverterParameter=Hành động}"
+                                    Width="{Binding Source={StaticResource AppStateProvider},
+                                                Converter={StaticResource RoleToColumnWidthConverter},
+                                                ConverterParameter=200}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click" Tag="{Binding DutyDetailId}" />
+                                                <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click" Tag="{Binding DutyDetailId}" 
+                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToDoneButtonVisibilityConverter}}" />
                                                 <Button x:Name="btnUpdateDetail" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" Tag="{Binding DutyDetailId}"
-                                                Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}}" />
-
-
+                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}}" />
                                                 <Button x:Name="btnDeleteDetail" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" Tag="{Binding DutyDetailId}"
-                                                 Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}}" />
-
+                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}}" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
@@ -76,7 +83,7 @@
             <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
         </Grid>
         <Button x:Name="AdDutyBtn" Content="Thêm công việc" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" FontSize="20" Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="AdDutyBtn_Click"/>
-        <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
+        <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="250" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -86,11 +93,21 @@
 
             <TextBox x:Name="txtSearch" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChanged" Height="35" VerticalAlignment="Top"/>
         </Grid>
-        <Grid HorizontalAlignment="Center" Width="200">
-            <ComboBox x:Name="cbDay" HorizontalAlignment="Left" Margin="0,60,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbDay_SelectionChanged"/>
-            <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="60,60,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
-            <ComboBox x:Name="cbYear" HorizontalAlignment="Left" Margin="120,60,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbYear_SelectionChanged"/>
-        </Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0" >
+                <ComboBox x:Name="cbCompany" Width="200" Height="41" Margin="5,0"
+                      FontSize="15" Padding="10,0"
+                      IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+                      KeyUp="cbCompany_KeyUp"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="CompanyId"
+                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                      SelectionChanged="cbCompany_SelectionChanged" Text="Nhập tên công ty"/>
+                <Grid HorizontalAlignment="Center" Width="200">
+                    <ComboBox x:Name="cbDay" HorizontalAlignment="Left" Margin="0,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbDay_SelectionChanged"/>
+                    <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="60,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
+                    <ComboBox x:Name="cbYear" HorizontalAlignment="Left" Margin="120,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbYear_SelectionChanged"/>
+                </Grid>
+            </StackPanel>
     </Grid>
-
+    
 </Page>

@@ -1,5 +1,7 @@
-﻿using FEQuanLyNhanSu.Base;
+﻿using EmployeeAPI.Models;
+using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.Departments;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -8,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static FEQuanLyNhanSu.ResponseModels.Dashboards;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FEQuanLyNhanSu.Screens.Dashboard
 {
@@ -18,8 +21,23 @@ namespace FEQuanLyNhanSu.Screens.Dashboard
         public PageDashboard()
         {
             InitializeComponent();
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             this.DataContext = this;
             LoadDashboard();
+        }
+
+        private void HandleUI(string role)
+        {
+            switch (role)
+            {
+                case "Manager":
+                    BrdrCompany.Visibility = Visibility.Collapsed;
+                    BrdrDepartment.Visibility = Visibility.Collapsed;
+                    break;
+                case "Administrator":
+                    BrdrCompany.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
 
         private async void LoadDashboard()
@@ -47,7 +65,10 @@ namespace FEQuanLyNhanSu.Screens.Dashboard
                 }
                 else
                 {
-                    MessageBox.Show($"Không thể load dashboard: {response.ReasonPhrase}");
+                    var json = await response.Content.ReadAsStringAsync();
+                    dynamic? apiResponse = JsonConvert.DeserializeObject<dynamic>(json);
+                    string errorMessage = apiResponse?.Data != null ? apiResponse.Data.ToString() : apiResponse?.Message != null ? apiResponse.Message.ToString() : "Có lỗi xảy ra";
+                    MessageBox.Show($"Không thể load dashboard. Lỗi: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

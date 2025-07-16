@@ -160,27 +160,11 @@ namespace FEQuanLyNhanSu.Screens.Duties
             else
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                dynamic? apiResponse = JsonConvert.DeserializeObject<dynamic>(json);
+                string errorMessage = apiResponse?.Data != null ? apiResponse.Data.ToString() : apiResponse?.Message != null ? apiResponse.Message.ToString() : "Có lỗi xảy ra";
+                MessageBox.Show($"Cập nhật thông tin chức vụ thất bại.  Lỗi: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+               // MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    var json = await response.Content.ReadAsStringAsync();
-            //    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DetailResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            //    if (apiResponse?.Data != null)
-            //    {
-            //        _onDetailUpdated?.Invoke(apiResponse.Data);
-            //    }
-
-            //    MessageBox.Show("Cập nhật chi tiết thành công.");
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Cập nhật chi tiết thất bại.");
-            //}
         }
 
         // Exit

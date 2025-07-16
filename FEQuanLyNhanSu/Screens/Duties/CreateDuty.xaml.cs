@@ -166,9 +166,10 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 }
                 else
                 {
-                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                    MessageBox.Show($"Tạo công việc thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    dynamic? apiResponse = JsonConvert.DeserializeObject<dynamic>(jsonResult);
+                    string errorMessage = apiResponse?.Data != null ? apiResponse.Data.ToString() : apiResponse?.Message != null ? apiResponse.Message.ToString() : "Có lỗi xảy ra";
+                    MessageBox.Show($"Tạo công việc thất bại.  Lỗi: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

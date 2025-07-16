@@ -25,6 +25,9 @@ namespace FEQuanLyNhanSu.ResponseModels
         {
             public string AccessToken { get; set; }
             public string RefreshToken { get; set; }
+            public bool isResetPassword { get; set; }
         }
+
+
     }
 }

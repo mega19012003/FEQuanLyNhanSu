@@ -6,6 +6,7 @@ using FEQuanLyNhanSu.Models.Departments;
 using FEQuanLyNhanSu.Models.Duties;
 using FEQuanLyNhanSu.Models.Payrolls;
 using FEQuanLyNhanSu.Models.Positions;
+using EmployeeAPI.Models;
 
 namespace FEQuanLyNhanSu.Models.Users
 {
@@ -24,9 +25,12 @@ namespace FEQuanLyNhanSu.Models.Users
         public Department Department { get; set; }
         public Guid? PositionId { get; set; }
         public Position Position { get; set; }
+        public Company Company { get; set; }
+        public Guid? companyId { get; set; }
         public double SalaryPerHour { get; set; }
         public bool IsActive { get; set; } 
         public bool IsDeleted { get; set; } 
+        public bool isResetPassword { get; set; }
         public string? ImageUrl { get; set; }
         // 1. Người giao việc (manager)
         public ICollection<Duty> AssignedDuties { get; set; } = new List<Duty>();

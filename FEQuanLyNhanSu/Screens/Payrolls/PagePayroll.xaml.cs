@@ -19,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static FEQuanLyNhanSu.ResponseModels.Companies;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.ResponseModels.Payrolls;
 using static FEQuanLyNhanSu.ResponseModels.Positions;
@@ -45,18 +46,25 @@ namespace FEQuanLyNhanSu
             switch (role)
             {
                 case "Administrator":
+                    cbCompany.Visibility = Visibility.Collapsed;
                     break; 
                 case "Manager":
+                    cbCompany.Visibility = Visibility.Collapsed;
                     break;
                 case "Employee":
                     AddPayrollBtn.Visibility = Visibility.Collapsed;
                     DtaGridAction.Visibility = Visibility.Collapsed;
+                    cbCompany.Visibility = Visibility.Collapsed;
                     lblTitle.Text = "Chấm công";
                     //AddAllPayrollBtn.Visibility = Visibility.Collapsed;
                     break;
+                case "SystemAdmin":
+                    DtaGridAction.Visibility = Visibility.Collapsed;
+                    AddPayrollBtn.Visibility = Visibility.Collapsed;
+                    LoadCompanies();
+                    break;
             }
         }
-
         private void LoadPayroll()
         {
             try
@@ -78,8 +86,21 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tải dữ liệu bảng lương: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
+        private async Task LoadCompanies()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Company";
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = client.GetAsync(baseUrl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var json = response.Content.ReadAsStringAsync().Result;
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<CompanyResultDto>>>(json);
+                cbCompany.ItemsSource = result.Data.Items;
+            }
+        }
         private void LoadDateComboboxes()
         {
             var days = new List<string> { "Ngày" };
@@ -99,6 +120,7 @@ namespace FEQuanLyNhanSu
             cbMonth.SelectedIndex = 0;
             cbYear.SelectedIndex = 0;
         }
+        
         private async Task FilterAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -109,27 +131,24 @@ namespace FEQuanLyNhanSu
             int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
             int? year = cbYear.SelectedIndex > 0 ? int.Parse(cbYear.SelectedItem.ToString()) : (int?)null;
 
-            var items = await SearchAndFilterCheckinsAsync(
-                baseUrl,
-                token,
-                keyword,
-                day,
-                month,
-                year
-            );
+            Guid? companyId = null;
+            string companyText = cbCompany.Text?.Trim();
+            if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
+            {
+                companyId = selectedCompany.CompanyId;
+            }
+            else if (!string.IsNullOrEmpty(companyText))
+            {
+                var found = (cbCompany.ItemsSource as IEnumerable<CompanyResultDto>)
+                    ?.FirstOrDefault(c => c.Name.Equals(companyText, StringComparison.OrdinalIgnoreCase));
+                if (found != null)
+                    companyId = found.CompanyId;
+            }
 
+            var items = await SearchAndFilterCheckinsAsync(baseUrl, token, keyword, day, month, year, companyId);
             PayrollDtaGrid.ItemsSource = items;
         }
-
-        public static async Task<List<PayrollResultDto>> SearchAndFilterCheckinsAsync(
-            string baseUrl,
-            string token,
-            string searchKeyword,
-            int? day,
-            int? month,
-            int? year,
-            int pageIndex = 1,
-            int pageSize = 20)
+        public static async Task<List<PayrollResultDto>> SearchAndFilterCheckinsAsync(string baseUrl, string token, string searchKeyword, int? day, int? month, int? year, Guid? companyId, int pageIndex = 1, int pageSize = 20)
         {
             try
             {
@@ -139,6 +158,7 @@ namespace FEQuanLyNhanSu
                 if (day.HasValue) parameters.Add($"Day={day}");
                 if (month.HasValue) parameters.Add($"Month={month}");
                 if (year.HasValue) parameters.Add($"Year={year}");
+                if (companyId.HasValue) parameters.Add($"companId={year}");
                 parameters.Add($"pageIndex={pageIndex}");
                 parameters.Add($"pageSize={pageSize}");
 
@@ -172,24 +192,53 @@ namespace FEQuanLyNhanSu
             }
         }
 
+        private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                var keyword = cbCompany.Text.Trim();
 
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Company";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                if (string.IsNullOrEmpty(keyword))
+                {
+                    await LoadCompanies();
+                    cbCompany.SelectedItem = null;
+                    cbCompany.IsDropDownOpen = true;
+                }
+                else
+                {
+                    var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<CompanyResultDto>>>(json);
+                        cbCompany.ItemsSource = result.Data.Items;
+
+                        cbCompany.SelectedItem = null;
+                        cbCompany.IsDropDownOpen = true;
+                    }
+                    else
+                    {
+                        cbCompany.ItemsSource = null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tìm kiếm công ty: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbDay_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
-        //private async void txtTextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    var token = Application.Current.Properties["Token"].ToString();
-        //    string keyword = txtSearch.Text?.Trim();
-
-        //    if (string.IsNullOrWhiteSpace(keyword))
-        //        LoadPayroll();
-        //    else
-        //    {
-        //        var result = await SearchHelper.SearchAsync<Payrolls.PayrollResultDto>("api/Payroll", keyword, token);
-        //        PayrollDtaGrid.ItemsSource = result;
-        //    }
-        //}
 
         private void AddPayroll(object sender, RoutedEventArgs e)
         {
@@ -237,64 +286,6 @@ namespace FEQuanLyNhanSu
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.PrevPageAsync();
-        }
-
-        private async void AddPayrollAll(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-                var url = $"{baseUrl}/api/Payroll/calculateAll";
-
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.PostAsync(url, null);
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = System.Text.Json.JsonSerializer.Deserialize<
-                        ApiResponse<List<PayrollResultDto>>>(json, new System.Text.Json.JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-
-                    if (result?.Data != null && result.Data.Any())
-                    {
-                        MessageBox.Show("Chấm công thành công!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                        var currentList = PayrollDtaGrid.ItemsSource as List<PayrollResultDto> ?? new List<PayrollResultDto>();
-                        foreach (var item in result.Data)
-                        {
-                            var existed = currentList.FirstOrDefault(x => x.Id == item.Id && x.CreatedDate.Month == item.CreatedDate.Month && x.CreatedDate.Year == item.CreatedDate.Year && x.CreatedDate.Day == item.CreatedDate.Day);
-                            if (existed != null)
-                                currentList.Remove(existed);
-
-                            currentList.Insert(0, item);
-                        }
-
-                        PayrollDtaGrid.ItemsSource = null; 
-                        PayrollDtaGrid.ItemsSource = currentList;
-                    }
-                    else
-                    {
-                        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                        var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                        MessageBox.Show($"Không có dữ liệu mới: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show($"API lỗi: {response.StatusCode}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
     }
 }

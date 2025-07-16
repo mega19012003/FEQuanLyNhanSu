@@ -37,7 +37,7 @@
         <Button x:Name="AddPayrollBtn" Content="Thêm chấm công" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPayroll" FontWeight="Bold"/>
         <!--<Button x:Name="AddAllPayrollBtn" Content="Chấm công tất cả" HorizontalAlignment="Left" Height="35" Margin="200,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPayrollAll" FontWeight="Bold"/>-->
         
-        <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="284" Height="35">
+        <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="250" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <!-- Cột cho icon -->
@@ -54,10 +54,20 @@
             <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Left" Height="34" Margin="230,0,0,0" VerticalAlignment="Top" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
             <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
         </Grid>
-        <Grid HorizontalAlignment="Center" Width="200">
-            <ComboBox x:Name="cbDay" HorizontalAlignment="Left" Margin="0,60,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbDay_SelectionChanged"/>
-            <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="60,60,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
-            <ComboBox x:Name="cbYear" HorizontalAlignment="Left" Margin="120,60,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbYear_SelectionChanged"/>
-        </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0" >
+            <ComboBox x:Name="cbCompany" Width="200" Height="41" Margin="5,0"
+                      FontSize="15" Padding="10,0"
+                      IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+                      KeyUp="cbCompany_KeyUp"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="CompanyId"
+                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                      SelectionChanged="cbCompany_SelectionChanged" Text="Nhập tên công ty"/>
+            <Grid HorizontalAlignment="Center" Width="200">
+                <ComboBox x:Name="cbDay" HorizontalAlignment="Left" Margin="0,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbDay_SelectionChanged"/>
+                <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="60,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
+                <ComboBox x:Name="cbYear" HorizontalAlignment="Left" Margin="120,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbYear_SelectionChanged"/>
+            </Grid>
+        </StackPanel>
     </Grid>
 </Page>

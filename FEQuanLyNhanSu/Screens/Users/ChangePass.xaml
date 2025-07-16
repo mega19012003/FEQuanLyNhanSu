@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Users"
+        WindowStyle="None"
         mc:Ignorable="d"
         Title="ChangePass" Height="350" Width="560">
     <Grid Background="#FFCCE2F1">
@@ -11,7 +12,7 @@
         <Label x:Name="lblCreateUser" Content="Thay đổi password" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,10" />
 
         <!-- Form -->
-        <Grid Margin="40,80,40,20">
+        <Grid Margin="40,80,40,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>

@@ -1,5 +1,6 @@
 ﻿using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.Departments;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Duties;
 using Newtonsoft.Json;
@@ -9,7 +10,10 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+using static FEQuanLyNhanSu.ResponseModels.Companies;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.Services.Checkins;
 using static FEQuanLyNhanSu.Services.UserService.Users;
@@ -37,16 +41,24 @@ namespace FEQuanLyNhanSu
                 case "Administrator":
                     AdDutyBtn.Visibility = Visibility.Visible;
                     DtaGridActionDuty.Visibility = Visibility.Visible;
+                    cbCompany.Visibility = Visibility.Collapsed;
                     break;
                 case "Manager":
                     AdDutyBtn.Visibility = Visibility.Visible;
                     DtaGridActionDuty.Visibility = Visibility.Visible;
+                    cbCompany.Visibility = Visibility.Collapsed;
                     break;
                 case "Employee":
                     AdDutyBtn.Visibility = Visibility.Collapsed;
                     DtaGridActionDuty.Visibility = Visibility.Collapsed;
                     lblTitle.Text = "Công việc";
+                    cbCompany.Visibility = Visibility.Collapsed;
                     //btnDeleteDetail.Visibility = Visibility.Collapsed;
+                    break;
+                case "SystemAdmin":
+                    DtaGridActionDuty.Visibility = Visibility.Collapsed;
+                    AdDutyBtn.Visibility = Visibility.Collapsed;
+                    LoadCompanies();
                     break;
             }
         }
@@ -94,37 +106,51 @@ namespace FEQuanLyNhanSu
             cbMonth.SelectedIndex = 0;
             cbYear.SelectedIndex = 0;
         }
+        private async Task LoadCompanies()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Company";
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = client.GetAsync(baseUrl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var json = response.Content.ReadAsStringAsync().Result;
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<CompanyResultDto>>>(json);
+                cbCompany.ItemsSource = result.Data.Items;
+            }
+        }
         private async Task FilterAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-        var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
 
-        string keyword = txtSearch.Text?.Trim();
-        int? day = cbDay.SelectedIndex > 0 ? int.Parse(cbDay.SelectedItem.ToString()) : (int?)null;
-        int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
-        int? year = cbYear.SelectedIndex > 0 ? int.Parse(cbYear.SelectedItem.ToString()) : (int?)null;
+            string keyword = txtSearch.Text?.Trim();
+            int? day = cbDay.SelectedIndex > 0 ? int.Parse(cbDay.SelectedItem.ToString()) : (int?)null;
+            int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
+            int? year = cbYear.SelectedIndex > 0 ? int.Parse(cbYear.SelectedItem.ToString()) : (int?)null;
 
-        var items = await SearchAndFilterCheckinsAsync(
-            baseUrl,
-            token,
-            keyword,
-            day,
-            month,
-            year
-        );
+            Guid? companyId = null;
+            string companyText = cbCompany.Text?.Trim();
+            if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
+            {
+                companyId = selectedCompany.CompanyId;
+            }
+            else if (!string.IsNullOrEmpty(companyText))
+            {
+                var found = (cbCompany.ItemsSource as IEnumerable<CompanyResultDto>)
+                    ?.FirstOrDefault(c => c.Name.Equals(companyText, StringComparison.OrdinalIgnoreCase));
+                if (found != null)
+                    companyId = found.CompanyId;
+            }
 
-        DutyDtaGrid.ItemsSource = items;
+            var items = await SearchAndFilterCheckinsAsync(baseUrl, token, keyword, day, month, year, companyId);
+            DutyDtaGrid.ItemsSource = items;
         }
 
-        public static async Task<List<DutyResultDto>> SearchAndFilterCheckinsAsync(
-            string baseUrl,
-            string token,
-            string searchKeyword,
-            int? day,
-            int? month,
-            int? year,
-            int pageIndex = 1,
-            int pageSize = 20)
+
+        public static async Task<List<DutyResultDto>> SearchAndFilterCheckinsAsync(string baseUrl, string token, string searchKeyword, int? day, int? month, int? year, Guid? companyId, int pageIndex = 1, int pageSize = 20)
         {
             try
             {
@@ -134,6 +160,7 @@ namespace FEQuanLyNhanSu
                 if (day.HasValue) parameters.Add($"Day={day}");
                 if (month.HasValue) parameters.Add($"Month={month}");
                 if (year.HasValue) parameters.Add($"Year={year}");
+                if (companyId.HasValue) parameters.Add($"companyId={companyId}");
                 parameters.Add($"pageIndex={pageIndex}");
                 parameters.Add($"pageSize={pageSize}");
 
@@ -167,7 +194,50 @@ namespace FEQuanLyNhanSu
             }
         }
 
+     
+        private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                var keyword = cbCompany.Text.Trim();
 
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Company";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                if (string.IsNullOrEmpty(keyword))
+                {
+                    await LoadCompanies();
+                    cbCompany.SelectedItem = null;
+                    cbCompany.IsDropDownOpen = true;
+                }
+                else
+                {
+                    var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<CompanyResultDto>>>(json);
+                        cbCompany.ItemsSource = result.Data.Items;
+
+                        cbCompany.SelectedItem = null;
+                        cbCompany.IsDropDownOpen = true;
+                    }
+                    else
+                    {
+                        cbCompany.ItemsSource = null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tìm kiếm công ty: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbDay_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();

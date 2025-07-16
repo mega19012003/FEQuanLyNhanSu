@@ -11,6 +11,7 @@ namespace FEQuanLyNhanSu.ResponseModels
     {
         public class DashboardOverviewDto
         {
+            public int TotalCompanies { get; set; }
             public int TotalEmployees { get; set; }
             public int ActiveEmployees { get; set; }
             public int TotalDepartments { get; set; }

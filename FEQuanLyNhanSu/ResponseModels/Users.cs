@@ -15,6 +15,7 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string RoleName { get; set; }
             public string? PhoneNumber { get; set; }
             public string? Address { get; set; }
+            public string CompanyName { get; set; }
             public string DepartmentName { get; set; }
             public string PositionName { get; set; }
             public double? SalaryPerHour { get; set; }
@@ -33,6 +34,8 @@ namespace FEQuanLyNhanSu.Services.UserService
             public Guid? DepartmentId { get; set; }
             public string PositionName { get; set; }
             public Guid? PositionId { get; set; }
+            public string CompanyName { get; set; }
+            public Guid? CompanyId { get; set; }
             public double? SalaryPerHour { get; set; }
             public bool IsActive { get; set; }
             public string ImageUrl { get; set; }

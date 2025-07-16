@@ -12,26 +12,57 @@
     <Grid Background="White" Margin="0,-3,0,-164">
         <TextBlock x:Name="lblTitle" Text="Trang quản lý cấu hình" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
 
-        <TabControl Margin="10,70,10,0" VerticalAlignment="Top" Height="466">
-           
+        <TabControl Margin="10,70,10,0" VerticalAlignment="Top" Height="547">
+
             <!-- Tab 2: Checkin Status Config -->
             <TabItem Header="Trạng thái Checkin">
                 <Grid Background="White">
                     <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-                    <DataGrid x:Name="ChknDtaGrid" Margin="10,10,10,10" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center">
+                    <DataGrid x:Name="LogDtaGrid" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
 
-                            <DataGridTemplateColumn x:Name="DtaGridActionStatus" Header="Hành động">
+                            <DataGridTemplateColumn x:Name="DtaGridActionStatus" Header="Hành động" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button x:Name="btnUpdateLogStatus" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateStatus_Click" Tag="{Binding Id}"/>
+                                            <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateStatus_Click" Tag="{Binding HolidayId}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Id" Binding="{Binding enumId}" Width="*" />
+                            <DataGridTextColumn Header="Tên status" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="Salary multiplier" Binding="{Binding SalaryMultiplier}" Width="*" />
+                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*" />
+                            <DataGridTextColumn x:Name="HeaderCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
+                    <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="250" Height="35">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <!-- Cột cho icon -->
+                            <ColumnDefinition Width="*" />
+                            <!-- Cột cho TextBox -->
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
+
+                        <TextBox x:Name="txtSearchLog" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChangedLog"/>
+                    </Grid>
+                    
+                    <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
+                        <Button x:Name="btnPrevPageLogStatus" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPageLogStatus_Click"/>
+                        <Button x:Name="btnNextPageLogStatus" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPageLogStatus_Click"/>
+                        <Label x:Name="txtPageLogStatus" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                    </Grid>
+                    <ComboBox x:Name="cbCompanyStatus"          
+                        FontSize="15" Height="41" Width="200" Margin="0,10,0,0" Padding="10,0"
+                        IsEditable="True"
+                        StaysOpenOnEdit="True"
+                        IsTextSearchEnabled="False"
+                        KeyUp="cbCompanyStatus_KeyUp"
+                        DisplayMemberPath="Name"
+                        SelectedValuePath="CompanyId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbCompanyStatus_SelectionChanged" Text="Nhập tên công ty" />
                 </Grid>
             </TabItem>
             <!--///////////////////////////////////////////////////////////////-->
@@ -62,7 +93,7 @@
                             <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding endDate}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="284" Height="35">
+                    <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="250" Height="35">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <!-- Cột cho icon -->
@@ -79,10 +110,18 @@
                         <Button x:Name="btnNextPageHoliday" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPageHoliday_Click"/>
                         <Label x:Name="txtPageHoliday" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
                     </Grid>
+                    <ComboBox x:Name="cbCompanyHoliday"          
+                            FontSize="15" Height="41" Width="200" Margin="0,10,0,0" Padding="10,0"
+                            IsEditable="True"
+                            StaysOpenOnEdit="True"
+                            IsTextSearchEnabled="False"
+                            KeyUp="cbCompanyHoliday_KeyUp"
+                            DisplayMemberPath="Name"
+                            SelectedValuePath="CompanyId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbCompanyHoliday_SelectionChanged" Text="Nhập tên công ty" />
                 </Grid>
             </TabItem>
             <!--///////////////////////////////////////////////////////////////-->
-            <TabItem Header="Thời gian làm việc">
+            <TabItem x:Name="TabSchedule" Header="Thời gian làm việc">
                 <Grid Background="White" Height="409">
                     <Grid Width="500" HorizontalAlignment="Center">
                         <Grid.RowDefinitions>
@@ -110,7 +149,8 @@
                         <Label Content="Thời gian checkin/checkout (phút)" Width="300" Height="40" Grid.Row="2" Grid.Column="0" FontSize="15" Background="#FF66A8D5" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                         <TextBox x:Name="txtAllowTime" Width="200" Height="40" Grid.Row="2" Grid.Column="2" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True" FontSize="15"/>
 
-                        <!-- Dòng 4 --><!--
+                        <!-- Dòng 4 -->
+                        <!--
                         <Label Content="Thời gian cho phép trễ (phút)" Width="300" Height="40" Grid.Row="3" Grid.Column="0" FontSize="15" Background="#FF66A8D5" Foreground="White" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                         <TextBox x:Name="txtLateTime" Width="200" Height="40" Grid.Row="3" Grid.Column="2" Margin="0,10,0,10" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsReadOnly="True" FontSize="15"/>-->
 
@@ -130,13 +170,47 @@
             </TabItem>
 
             <!--///////////////////////////////////////////////////////////////-->
+            <!--Danh sách thời gian lam việc (system Admin)-->
+            <TabItem x:Name="TabListSchedule" Header="Danh sách thời gian làm việc">
+
+                <Grid Background="White">
+
+                    <DataGrid x:Name="ScheduleDtaGrid" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+
+                            <!--<DataGridTextColumn Header="Id" Binding="{Binding id}" Width="*" />-->
+                            <DataGridTextColumn Header="Công ty" Binding="{Binding CompanyName}" Width="*" />
+                            <DataGridTextColumn Header="Bắt đầu ca sáng" Binding="{Binding StartTimeMorning}" Width="*" />
+                            <DataGridTextColumn Header="Kết thúc ca sáng" Binding="{Binding EndTimeMorning}" Width="*" />
+                            <DataGridTextColumn Header="Thời gian checkin" Binding="{Binding LogAllowtime}" Width="*" />
+                            <DataGridTextColumn Header="Bắt đầu ca chiều" Binding="{Binding StartTimeAfternoon}" Width="*" />
+                            <DataGridTextColumn Header="Kết thúc ca chiều" Binding="{Binding EndTimeAfternoon}" Width="*" />
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
+                        <Button x:Name="btnPrevPageSchedule" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPageSchedule_Click"/>
+                        <Button x:Name="btnNextPageSchedule" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPageSchedule_Click"/>
+                        <Label x:Name="txtPageSchedule" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+                    </Grid>
+                    <ComboBox x:Name="cbCompanySchedule"          
+                           FontSize="15" Height="41" Width="200" Margin="0,10,0,0" Padding="10,0"
+                           IsEditable="True"
+                           StaysOpenOnEdit="True"
+                           IsTextSearchEnabled="False"
+                           KeyUp="cbCompanySchedule_KeyUp"
+                           DisplayMemberPath="Name"
+                           SelectedValuePath="CompanyId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbCompanySchedule_SelectionChanged" Text="Nhập tên công ty" />
+                </Grid>
+            </TabItem>
+            <!--///////////////////////////////////////////////////////////////-->
             <TabItem x:Name="TabIP" Header="Allowed IP">
                 <Grid x:Name="IPGrid" Background="White">
                     <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-                    <DataGrid x:Name="IPDtaGrid" Margin="10,60,10,55" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+                    <DataGrid x:Name="AllowedIPDtaGrid" Margin="10,60,10,55" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
 
-                            <DataGridTemplateColumn Header="Hành động">
+                            <DataGridTemplateColumn x:Name="DtaGridActionIP" Header="Hành động" >
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -153,7 +227,7 @@
                     <Button x:Name="AddIPBtn" Content="Thêm IP" HorizontalAlignment="Left" Height="35" Margin="10,10,0,0"
          VerticalAlignment="Top" Width="150" FontSize="16"
          Background="#FF66A8D5" Foreground="White" FontWeight="Bold" Click="AddIPBtn_Click"/>
-                    <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="284" Height="35">
+                    <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="250" Height="35">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <!-- Cột cho icon -->
@@ -163,13 +237,21 @@
 
                         <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
 
-                        <TextBox x:Name="txtSearchIP" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChangedIP"/>
+                        <TextBox x:Name="txtSearchAllowedIP" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChangedIP"/>
                     </Grid>
                     <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
                         <Button x:Name="btnPrevPageIP" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPageIP_Click"/>
                         <Button x:Name="btnNextPageIP" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPageIP_Click"/>
                         <Label x:Name="txtPageIP" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
                     </Grid>
+                    <ComboBox x:Name="cbCompanyAllowedIP"          
+                        FontSize="15" Height="41" Width="200" Margin="0,10,0,0" Padding="10,0"
+                        IsEditable="True"
+                        StaysOpenOnEdit="True"
+                        IsTextSearchEnabled="False"
+                        KeyUp="cbCompanyIP_KeyUp"
+                        DisplayMemberPath="Name"
+                        SelectedValuePath="CompanyId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbCompanyIP_SelectionChanged" Text="Nhập tên công ty" />
                 </Grid>
             </TabItem>
             <!--///////////////////////////////////////////////////////////////-->
