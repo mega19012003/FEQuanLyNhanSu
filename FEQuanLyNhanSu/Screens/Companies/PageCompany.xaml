@@ -30,7 +30,7 @@
                 <DataGridTemplateColumn Header="Ảnh" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Width="60" Height="60" Stretch="UniformToFill">
+                            <Image Width="100" Height="100" Stretch="UniformToFill">
                                 <Image.Source>
                                     <Binding Path="LogoUrl" 
                                       TargetNullValue="pack://application:,,,/Assets/none.jpg"
