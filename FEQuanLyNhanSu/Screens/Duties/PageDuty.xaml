@@ -35,7 +35,13 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
-                <DataGridTextColumn Header="Tên công việc" Binding="{Binding Name}" Width="*" />
+                <DataGridTemplateColumn Header="Tên công việc" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" TextWrapping="Wrap" ToolTip="{Binding Name}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}" Width="*" />
                 <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}" Width="*" />
                 <DataGridTextColumn Header="Người tạo" Binding="{Binding AssignedBy}" Width="*" />
@@ -69,7 +75,18 @@
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="DutyDetailId" Binding="{Binding DutyDetailId}" Width="*" />
                                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
-                                <DataGridTextColumn Header="Mô tả" Binding="{Binding Description}" Width="*" />
+                                <DataGridTemplateColumn Header="Mô tả" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock 
+                                                Text="{Binding Description}" 
+                                                TextWrapping="Wrap"
+                                                ToolTip="{Binding Description}"
+                                                MaxHeight="80"
+                                                VerticalAlignment="Top"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridCheckBoxColumn Header="Đã hoàn thành" Binding="{Binding IsCompleted}" Width="*" />
                             </DataGrid.Columns>
                         </DataGrid>

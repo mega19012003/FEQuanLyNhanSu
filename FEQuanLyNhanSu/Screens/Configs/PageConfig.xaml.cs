@@ -48,7 +48,7 @@ namespace FEQuanLyNhanSu
         private PaginationHelper<Holidays.HolidayResultDto> _holidayPaginationHelper;
         private PaginationHelper<LogStatusConfigs.LogStatusDto> _logStatusPaginationHelper;
         private PaginationHelper<Schedules.ScheduleDto> _schedulePaginationHelper;
-
+        private ScheduleTime _currentScheduleTime;
         public PageConfig()
         {
             InitializeComponent();
@@ -243,6 +243,7 @@ namespace FEQuanLyNhanSu
 
                 if (schedule != null)
                 {
+                    _currentScheduleTime = schedule;
                     txtStartTimeMorning.Text = schedule.StartTimeMorning.ToString();
                     txtEndTimeMorning.Text = schedule.EndTimeMorning.ToString();
                     txtAllowTime.Text = schedule.LogAllowtime.ToString();
@@ -460,7 +461,7 @@ namespace FEQuanLyNhanSu
         //////////////////////////////////////////////// Schedule
         private void btnUpdateWorkTime_Click(object sender, RoutedEventArgs e)
         {
-            var window = new UpdateSchedule(LoadScheduleTime);
+            var window = new UpdateSchedule(LoadScheduleTime, _currentScheduleTime);
             window.ShowDialog();
         }
         // Pagination

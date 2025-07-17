@@ -43,7 +43,7 @@ namespace FEQuanLyNhanSu
             {
                 return;
             }
-            this.Close();
+            Application.Current.Shutdown();
         }
         private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {

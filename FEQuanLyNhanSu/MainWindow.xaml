@@ -51,7 +51,7 @@
             </StackPanel>
             <Button Content="" HorizontalAlignment="Right" Margin="0,0,50,0" VerticalAlignment="Center" RenderTransformOrigin="2.776,2.281" Height="50" Width="50" Click="Button_Click" HorizontalContentAlignment="Center">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Assets/user.png"/>
+                    <ImageBrush ImageSource="/Assets/iconuser.png"/>
                 </Button.Background>
             </Button>
         </Grid>

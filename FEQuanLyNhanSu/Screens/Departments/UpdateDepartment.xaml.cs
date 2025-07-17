@@ -93,7 +93,7 @@ namespace FEQuanLyNhanSu.Screens.Departments
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<Departments.UpdateDepartment>>(json);
+                var result = JsonConvert.DeserializeObject<ApiResponse<DepartmentResultDto>>(json);
 
                 txtName.Text = result.Data.Name;
 

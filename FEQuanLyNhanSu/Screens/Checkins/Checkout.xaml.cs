@@ -99,13 +99,15 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
 
                 cbEmployee.ItemsSource = result.Data.Items;
+                cbEmployee.SelectedItem = null;
+                cbEmployee.IsDropDownOpen = true;
             }
             else
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
                 var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

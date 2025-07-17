@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\iconuser.png" />
     <None Remove="Assets\user.png" />
     <None Remove="calendar.png" />
     <None Remove="eye.png" />
@@ -30,6 +35,9 @@
 
   <ItemGroup>
     <Resource Include="Assets\calendar.png" />
+    <Resource Include="Assets\iconuser.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\images.png" />
     <Resource Include="Assets\eye.png" />
     <Resource Include="Assets\hidden.png" />

@@ -27,11 +27,13 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
     /// </summary>
     public partial class UpdateSchedule : Window
     {
+        private ScheduleTime _currentScheduleTime;
         public Action _onUpdated;
-        public UpdateSchedule(Action onUpdated)
+        public UpdateSchedule(Action onUpdated, ScheduleTime currentScheduleTime)
         {
             InitializeComponent();
             _onUpdated = onUpdated;
+            _currentScheduleTime = currentScheduleTime;
             LoadScheduleTime();
         }
 
@@ -93,21 +95,19 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                     MessageBox.Show("Thời gian cho phép checkin phải nằm trong khoảng từ 1-60 phút", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-
-                //if (int.Parse(txtLateMinutes.Text) >= 60 || int.Parse(txtLateMinutes.Text) < 1)
-                //{
-                //    MessageBox.Show("Thời gian cho phép trễ phải nằm trong khoảng từ 1-60 phút", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                //    return;
-                //}
-
+                if (_currentScheduleTime == null)
+                {
+                    MessageBox.Show("Lỗi: _currentScheduleTime đang null");
+                    return;
+                }
                 var updated = new ScheduleTime
                 {
+                    id = _currentScheduleTime.id,
                     StartTimeMorning = TimeOnly.Parse(txtStatTimeMorning.Text),
                     EndTimeMorning = TimeOnly.Parse(txtEndTimeMorning.Text),
                     StartTimeAfternoon = TimeOnly.Parse(txtStartTimeAfternoon.Text),
                     EndTimeAfternoon = TimeOnly.Parse(txtEndTimeAfternoon.Text),
                     LogAllowtime = int.Parse(txtAllowTime.Text),
-                    //LateThresholdMinutes = int.Parse(txtLateMinutes.Text)
                 };
 
                 var json = JsonConvert.SerializeObject(updated);

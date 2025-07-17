@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -37,16 +38,13 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             InitializeComponent();
             _onUpdated = onUpdated;
             _checkinId = checkinId;
-
-            //LoadLogStatusesAsync();
-            //LoadCheckinAsync();
             _ = LoadDataAsync();
         }
 
         private async Task LoadDataAsync()
         {
-            await LoadLogStatusesAsync(); 
-            await LoadCheckinAsync();     
+            await LoadLogStatusesAsync();
+            await LoadCheckinAsync();
         }
 
         private async Task LoadLogStatusesAsync()
@@ -62,57 +60,19 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<List<LogStatusConfig>>>(json);
-                _logStatuses = apiResponse?.Data;
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<PagedResult<LogStatusConfig>>>(json);
+                _logStatuses = apiResponse?.Data?.Items?.ToList();
 
                 // Phải gán ItemsSource tại đây
                 cbChkinMor.ItemsSource = _logStatuses;
-                //cbChkoutMor.ItemsSource = _logStatuses;
-                //cbChkinAft.ItemsSource = _logStatuses;
-                //cbChkoutAft.ItemsSource = _logStatuses;
-
                 cbChkinMor.DisplayMemberPath = "Name";
-                //cbChkoutMor.DisplayMemberPath = "Name";
-                //cbChkinAft.DisplayMemberPath = "Name";
-                //cbChkoutAft.DisplayMemberPath = "Name";
-
                 cbChkinMor.SelectedValuePath = "Id";
-                //cbChkoutMor.SelectedValuePath = "Id";
-                //cbChkinAft.SelectedValuePath = "Id";
-                //cbChkoutAft.SelectedValuePath = "Id";
             }
             else
             {
                 MessageBox.Show("Không thể tải LogStatus", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        //private async Task LoadLogStatusesAsync()
-        //{
-        //    var token = Application.Current.Properties["Token"]?.ToString();
-        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/LogStatusConfig";
-
-        //    using var client = new HttpClient();
-        //    client.DefaultRequestHeaders.Authorization =
-        //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-        //    var response = await client.GetAsync(baseUrl);
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var json = await response.Content.ReadAsStringAsync();
-        //        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<List<LogStatusConfig>>>(json);
-        //        _logStatuses = apiResponse?.Data;
-
-        //        cbChkinMor.ItemsSource = _logStatuses;
-        //        cbChkoutMor.ItemsSource = _logStatuses;
-        //        cbChkinAft.ItemsSource = _logStatuses;
-        //        cbChkoutAft.ItemsSource = _logStatuses;
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("Không thể tải LogStatus", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-        //    }
-        //}
 
         private async Task LoadCheckinAsync()
         {
@@ -126,31 +86,15 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
+                
                 if (result?.Data != null)
                 {
                     txtFullname.Text = result.Data.Name;
 
-                    //MessageBox.Show($"API raw CheckinMorningStatus: '{result.Data.CheckinMorningStatus}'");
-                    //MessageBox.Show($"API raw CheckoutMorningStatus: '{result.Data.CheckoutMorningStatus}'");
-                    //MessageBox.Show($"API raw CheckinAfternoonStatus: '{result.Data.CheckinAfternoonStatus}'");
-                    //MessageBox.Show($"API raw CheckoutAfternoonStatus: '{result.Data.CheckoutAfternoonStatus}'");
+                    //cbChkinMor.SelectedValue = _logStatuses.FirstOrDefault(x =>
+                    //    string.Equals(x.Name?.Trim(), result.Data.Status?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
 
-                    cbChkinMor.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                        string.Equals(x.Name?.Trim(), result.Data.Status?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
-
-                    //cbChkoutMor.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                    //    string.Equals(x.Name?.Trim(), result.Data.CheckoutMorningStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
-
-                    //cbChkinAft.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                    //    string.Equals(x.Name?.Trim(), result.Data.CheckinAfternoonStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
-
-                    //cbChkoutAft.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                    //    string.Equals(x.Name?.Trim(), result.Data.CheckoutAfternoonStatus?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
-
-                    //MessageBox.Show($"Mapped Morning Checkin Id: {cbChkinMor.SelectedValue}");
-                    //MessageBox.Show($"Mapped Morning Checkout Id: {cbChkoutMor.SelectedValue}");
-                    //MessageBox.Show($"Mapped Afternoon Checkin Id: {cbChkinAft.SelectedValue}");
-                    //MessageBox.Show($"Mapped Afternoon Checkout Id: {cbChkoutAft.SelectedValue}");
+                    cbChkinMor.SelectedValue = _logStatuses.FirstOrDefault(x => x.enumId == result.Data.LogStatus)?.Id;
                 }
             }
             else
@@ -178,47 +122,112 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
         }
+
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var url = $"{baseUrl}/api/Checkin";
-
-            using var client = CreateAuthorizedClient(token);
-
-            var request = new CheckinResultDto
+            // Kiểm tra đã chọn LogStatus chưa
+            if (cbChkinMor.SelectedValue is Guid selectedId)
             {
-                CheckinId = _checkinId,
-                LogStatus = (int?)cbChkinMor.SelectedValue ?? 0,
-                //CheckoutMorningStatus = (int?)cbChkoutMor.SelectedValue ?? 0,
-                //CheckinAfternoonStatus = (int?)cbChkinAft.SelectedValue ?? 0,
-                //CheckoutAfternoonStatus = (int?)cbChkoutAft.SelectedValue ?? 0
-            };
+                // Tìm lại LogStatus được chọn trong danh sách
+                var selectedLogStatus = _logStatuses.FirstOrDefault(x => x.Id == selectedId);
 
-            var json = System.Text.Json.JsonSerializer.Serialize(request);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await client.PutAsync(url, content);
-            var responseJson = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<CheckinResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
+                if (selectedLogStatus != null)
                 {
-                    _onUpdated?.Invoke(apiResponse.Data);
-                }
+                    // Lấy enumId từ LogStatus đã chọn
+                    int enumIdToSend = selectedLogStatus.enumId;
 
-                MessageBox.Show("Cập nhật checkin thành công.");
-                this.Close();
+                    // Tạo object dữ liệu để gửi API
+                    var dataToSend = new
+                    {
+                        LogStatus = enumIdToSend,
+                        CheckinId = _checkinId,
+                    };
+
+                    var token = Application.Current.Properties["Token"]?.ToString();
+                    using var client = new HttpClient();
+                    client.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                    var json = JsonConvert.SerializeObject(dataToSend);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var apiUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin"; // chỉnh đúng URL API
+
+                    var response = await client.PutAsync(apiUrl, content);
+                    var responseJson = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        var apiResponse = System.Text.Json.JsonSerializer.Deserialize<CheckinResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        if (apiResponse?.Data != null)
+                        {
+                            _onUpdated?.Invoke(apiResponse.Data);
+                        }
+                        MessageBox.Show("Cập nhật thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi khi cập nhật!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy trạng thái log đã chọn!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Cập nhật checkin thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Vui lòng chọn trạng thái checkin!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
+        //private async void btnUpdate_Click(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+        //        var token = Application.Current.Properties["Token"]?.ToString();
+        //        var url = $"{baseUrl}/api/Checkin";
+
+        //        using var client = CreateAuthorizedClient(token);
+
+        //        var request = new CheckinResultDto
+        //        {
+        //            CheckinId = _checkinId,
+        //            LogStatus = (int?)cbChkinMor.SelectedValue ?? 0,
+        //        };
+
+        //        var json = System.Text.Json.JsonSerializer.Serialize(request);
+        //        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //        var response = await client.PutAsync(url, content);
+        //        var responseJson = await response.Content.ReadAsStringAsync();
+
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var apiResponse = System.Text.Json.JsonSerializer.Deserialize<CheckinResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        //            if (apiResponse?.Data != null)
+        //            {
+        //                _onUpdated?.Invoke(apiResponse.Data);
+        //            }
+
+        //            MessageBox.Show("Cập nhật checkin thành công.");
+        //            this.Close();
+        //        }
+        //        else
+        //        {
+        //            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(responseJson);
+        //            var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+        //            MessageBox.Show($"Cập nhật checkin thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
+
     }
 }

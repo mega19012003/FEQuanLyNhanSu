@@ -51,6 +51,8 @@ namespace FEQuanLyNhanSu.Services.UserService
             public Guid? DepartmentId { get; set; }
             public string PositionName { get; set; }
             public Guid? PositionId { get; set; }
+            public string CompanyName { get; set; }
+            public Guid? CompanyId { get; set; }
             public bool IsActive { get; set; }
             public double? SalaryPerHour { get; set; }
             public string ImageUrl { get; set; }
