@@ -303,7 +303,8 @@ namespace FEQuanLyNhanSu
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Xóa phòng ban thành công.");
-                _ = _paginationHelper.LoadPageAsync(1); // Reload the first page
+                //_ = _paginationHelper.LoadPageAsync(1); // Reload the first page
+                await FilterAsync();
             }
             else
             {

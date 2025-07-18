@@ -113,19 +113,20 @@ namespace FEQuanLyNhanSu.Screens.Users
 
                     if (user != null)
                     {
-                        //MessageBox.Show($"DepartmentId: {user.DepartmentId}", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        //MessageBox.Show($"PositionId: {user.PositionId}", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        if (user != null)
+                        if (user.CompanyId != null)
                         {
                             cbCompany.SelectedValue = user.CompanyId;
-
                             await LoadDepartmentsByCompanyId(user.CompanyId.Value);
-                            cbDepartment.SelectedValue = user.DepartmentId;
 
                             if (user.DepartmentId != null)
                             {
-                                await LoadPositionsByDepartmentId(user.DepartmentId.Value);
-                                cbPosition.SelectedValue = user.PositionId;
+                                cbDepartment.SelectedValue = user.DepartmentId;
+
+                                if (user.PositionId != null)
+                                {
+                                    await LoadPositionsByDepartmentId(user.DepartmentId.Value);
+                                    cbPosition.SelectedValue = user.PositionId;
+                                }
                             }
                         }
                     }

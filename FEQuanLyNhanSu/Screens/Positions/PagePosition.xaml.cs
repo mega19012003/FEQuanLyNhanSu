@@ -404,7 +404,8 @@ namespace FEQuanLyNhanSu
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Xóa chức vụ thành công.");
-                LoadPosition(); 
+                //LoadPosition();
+                await FilterAsync();
             }
             else
             {

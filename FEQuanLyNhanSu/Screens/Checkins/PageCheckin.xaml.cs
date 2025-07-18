@@ -320,7 +320,8 @@ namespace FEQuanLyNhanSu
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Xóa checkin thành công.");
-                LoadCheckin();
+                //LoadCheckin();
+                await FilterAsync();
             }
             else
             {

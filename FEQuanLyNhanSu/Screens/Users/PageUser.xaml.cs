@@ -647,7 +647,8 @@ namespace FEQuanLyNhanSu
                     if (response.IsSuccessStatusCode)
                     {
                         MessageBox.Show("Xóa người dùng thành công.");
-                        LoadUser();
+                        //LoadUser();
+                        await FilterAsync();
                     }
                     else
                     {

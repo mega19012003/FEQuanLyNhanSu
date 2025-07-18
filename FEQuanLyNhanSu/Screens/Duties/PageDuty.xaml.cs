@@ -489,7 +489,8 @@ namespace FEQuanLyNhanSu
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Đánh dấu công việc là đã hoàn thành thành công.");
-                LoadDuty();
+                //LoadDuty();
+                await FilterAsync();
             }
             else
             {

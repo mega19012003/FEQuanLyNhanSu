@@ -114,7 +114,7 @@
             <TextBox Grid.Row="7" Grid.Column="1" x:Name="txtSalary"
                      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <TextBox Grid.Row="8" Grid.Column="0" Text="IsActive" IsReadOnly="True"
+            <TextBox x:Name="txtboxIsActive" Grid.Row="8" Grid.Column="0" Text="IsActive" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5" FontWeight="Heavy"/>
