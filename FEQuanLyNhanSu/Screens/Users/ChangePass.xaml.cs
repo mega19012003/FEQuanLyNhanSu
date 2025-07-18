@@ -73,6 +73,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                 if (response.IsSuccessStatusCode)
                 {
                     MessageBox.Show("Đổi mật khẩu thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.DialogResult = true;
                     this.Close();
                 }
                 else
