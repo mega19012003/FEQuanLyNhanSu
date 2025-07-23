@@ -47,6 +47,7 @@ namespace FEQuanLyNhanSu
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             //_ = LoadPositionsByDepartmentAsync();
             _ = FilterAsync();
+            LoadDateComboboxes();
         }
 
         private void HandleUI(string role)
@@ -56,13 +57,10 @@ namespace FEQuanLyNhanSu
                 case "Manager":
                     cbDepartment.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
-                    HeaderCompany.Visibility = Visibility.Collapsed;
-                    HeaderDepartment.Visibility = Visibility.Collapsed;
                     _ = LoadPosition();
                     break;
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
-                    HeaderCompany.Visibility = Visibility.Collapsed;
                     _ = LoadDepartments();
                     _ = LoadPositionsByDepartmentAsync();
                     break;
@@ -72,6 +70,22 @@ namespace FEQuanLyNhanSu
                     _ = LoadPositionByCompanyAsync();
                     break;
             }
+        }
+
+
+        private void LoadDateComboboxes()
+        {
+
+            var months = new List<string> { "Tháng" };
+            months.AddRange(Enumerable.Range(1, 12).Select(i => i.ToString()));
+            cbMonth.ItemsSource = months;
+
+            int currentYear = DateTime.Now.Year;
+            var years = new List<string> { "Năm" };
+            years.AddRange(Enumerable.Range(2000, currentYear - 2000 + 1).Select(i => i.ToString()).Reverse());
+
+            cbMonth.SelectedIndex = DateTime.Now.Month;
+            
         }
         private async Task LoadUser()
         {
@@ -253,7 +267,7 @@ namespace FEQuanLyNhanSu
             {
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
+                int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
                 string keyword = txtSearch.Text?.Trim();
 
                 Guid? companyId = null;
@@ -282,7 +296,8 @@ namespace FEQuanLyNhanSu
                         keyword,
                         companyId,
                         departmentId,
-                        positionId
+                        positionId,
+                        month
                     );
                 }
 
@@ -295,7 +310,7 @@ namespace FEQuanLyNhanSu
             }
         }
         
-        public static async Task<List<UserResultDto>> SearchAndFilterUsersAsync(string baseUrl, string token, string searchKeyword, Guid? companyId, Guid? departmentId, Guid? positionId, int pageIndex = 1, int pageSize = 20)
+        public static async Task<List<UserResultDto>> SearchAndFilterUsersAsync(string baseUrl, string token, string searchKeyword, Guid? companyId, Guid? departmentId, Guid? positionId, int? month, int pageIndex = 1, int pageSize = 20)
         {
             try
             {
@@ -308,6 +323,7 @@ namespace FEQuanLyNhanSu
                     parameters.Add($"departmentId={departmentId.Value}");
                 if (positionId.HasValue)
                     parameters.Add($"positionId={positionId.Value}");
+                if (month.HasValue) parameters.Add($"Month={month}");
                 parameters.Add($"pageIndex={pageIndex}");
                 parameters.Add($"pageSize={pageSize}");
 
@@ -784,5 +800,7 @@ namespace FEQuanLyNhanSu
         {
             await _paginationHelper.NextPageAsync();
         }
+
+        private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
     }
 }

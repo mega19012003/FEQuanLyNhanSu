@@ -50,7 +50,7 @@ namespace FEQuanLyNhanSu
                 case "Manager":
                     cbDepartment.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
-                    HeaderDepartment.Visibility = Visibility.Collapsed;
+                    //HeaderDepartment.Visibility = Visibility.Collapsed;
                     _ = LoadDepartments();
                     break;
                 case "Administrator":

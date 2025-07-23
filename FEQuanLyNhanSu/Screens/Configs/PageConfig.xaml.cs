@@ -83,9 +83,6 @@ namespace FEQuanLyNhanSu
                     cbCompanyHoliday.Visibility = Visibility.Collapsed;
                     cbCompanyStatus.Visibility = Visibility.Collapsed;
                     TabListSchedule.Visibility = Visibility.Collapsed;
-                    HeaderCompany.Visibility = Visibility.Collapsed;
-                    HeaderCompanyIP.Visibility = Visibility.Collapsed;
-                    HeaderCompanyHoliday.Visibility = Visibility.Collapsed;
                     break;
                 case "Manager":
                     TabIP.Visibility = Visibility.Collapsed;
@@ -101,9 +98,6 @@ namespace FEQuanLyNhanSu
                     cbCompanyHoliday.Visibility = Visibility.Collapsed;
                     cbCompanyStatus.Visibility = Visibility.Collapsed;
                     TabListSchedule.Visibility = Visibility.Collapsed;
-                    HeaderCompany.Visibility = Visibility.Collapsed;
-                    HeaderCompanyIP.Visibility = Visibility.Collapsed;
-                    HeaderCompanyHoliday.Visibility = Visibility.Collapsed;
                     lblTitle.Text = "Xem cấu hình";
                     LoadLogStatus();
                     LoadHolidayConfig();
@@ -123,9 +117,6 @@ namespace FEQuanLyNhanSu
                     cbCompanyHoliday.Visibility = Visibility.Collapsed;
                     cbCompanyStatus.Visibility = Visibility.Collapsed;
                     TabListSchedule.Visibility = Visibility.Collapsed;
-                    HeaderCompany.Visibility = Visibility.Collapsed;
-                    HeaderCompanyIP.Visibility= Visibility.Collapsed;
-                    HeaderCompanyHoliday.Visibility= Visibility.Collapsed;
                     lblTitle.Text = "Xem cấu hình";
                     LoadLogStatus();
                     LoadHolidayConfig();

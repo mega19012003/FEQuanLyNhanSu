@@ -229,8 +229,11 @@ namespace FEQuanLyNhanSu
             cbYear.ItemsSource = years;
 
             //cbDay.SelectedIndex = 0;
-            cbMonth.SelectedIndex = 0;
-            cbYear.SelectedIndex = 0;
+            //cbMonth.SelectedIndex = 0;
+            //cbYear.SelectedIndex = 0;
+            //cbDay.SelectedIndex = DateTime.Now.Day;
+            cbMonth.SelectedIndex = DateTime.Now.Month;
+            cbYear.SelectedIndex = years.IndexOf(currentYear.ToString());
         }
         
         private async Task FilterAsync()
@@ -276,7 +279,7 @@ namespace FEQuanLyNhanSu
 
                 var url = baseUrl + "/api/Payroll/user-payrolls";
                 if (parameters.Any()) url += "?" + string.Join("&", parameters);
-
+           
                 using var client = new HttpClient();
                 if (!string.IsNullOrWhiteSpace(token))
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);

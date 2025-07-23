@@ -82,7 +82,6 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Tên" Binding="{Binding Name}" />
                             <DataGridTextColumn Header="Checkin" Binding="{Binding CheckinTime}" />
                             <DataGridTextColumn Header="Checkout" Binding="{Binding CheckoutTime}" />
                             <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" />

@@ -26,7 +26,7 @@
                 </DataGridTemplateColumn>
                 <!--<DataGridTextColumn Header="Id" Binding="{Binding DepartmentId}" Width="*" />-->
                 <DataGridTextColumn Header="Tên phòng ban" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn x:Name="DtaGridColumnCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />
+                <!--<DataGridTextColumn x:Name="DtaGridColumnCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />-->
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddDprtmntBtn" Content="Thêm phòng ban" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="180" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="btnAdd_Click" FontWeight="Bold"/>

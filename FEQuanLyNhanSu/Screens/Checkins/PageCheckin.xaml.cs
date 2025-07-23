@@ -57,7 +57,7 @@ namespace FEQuanLyNhanSu
                     _ = LoadUserWithCheckin();
                     _ = LoadCompanies();
                     _ = LoadDepartmentByCompanyAsync();
-                    _ = LoadPositionByCompanyAsync();
+                    _ = LoadPositionsByDepartmentAsync();
                     break;
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
@@ -86,21 +86,22 @@ namespace FEQuanLyNhanSu
         private void LoadDateComboboxes()
         {
             var days = new List<string> { "Ngày" };
-            days.AddRange(Enumerable.Range(0, 31).Select(i => i.ToString()));
+            days.AddRange(Enumerable.Range(1, 31).Select(i => i.ToString()));
             cbDay.ItemsSource = days;
 
             var months = new List<string> { "Tháng" };
-            months.AddRange(Enumerable.Range(0, 12).Select(i => i.ToString()));
+            months.AddRange(Enumerable.Range(1, 12).Select(i => i.ToString()));
             cbMonth.ItemsSource = months;
 
             int currentYear = DateTime.Now.Year;
             var years = new List<string> { "Năm" };
-            years.AddRange(Enumerable.Range(2000, currentYear - 2000 + 1).Select(i => i.ToString()).Reverse());
+            var yearList = Enumerable.Range(2000, currentYear - 2000 + 1).Select(i => i.ToString()).Reverse().ToList();
+            years.AddRange(yearList);
             cbYear.ItemsSource = years;
 
-            cbDay.SelectedIndex = 0;
-            cbMonth.SelectedIndex = 0;
-            cbYear.SelectedIndex = 0;
+            cbDay.SelectedIndex = DateTime.Now.Day;
+            cbMonth.SelectedIndex = DateTime.Now.Month;
+            cbYear.SelectedIndex = years.IndexOf(currentYear.ToString());
         }
         private async Task LoadCompanies()
         {
@@ -307,7 +308,7 @@ namespace FEQuanLyNhanSu
         private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await LoadDepartmentByCompanyAsync();
-            await LoadPositionByCompanyAsync();
+            await LoadPositionsByDepartmentAsync();
             await FilterAsync();
         }
         private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e)

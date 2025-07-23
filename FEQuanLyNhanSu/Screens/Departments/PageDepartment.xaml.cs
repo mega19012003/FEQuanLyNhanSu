@@ -54,7 +54,7 @@ namespace FEQuanLyNhanSu
 
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
-                    DtaGridColumnCompany.Visibility = Visibility.Collapsed;
+                    //DtaGridColumnCompany.Visibility = Visibility.Collapsed;
                     break;
             }
         }

@@ -58,7 +58,7 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     DtaGridActionDuty.Visibility = Visibility.Collapsed;
                     AdDutyBtn.Visibility = Visibility.Collapsed;
-                    LoadCompanies();
+                    _ = LoadCompanies();
                     break;
             }
         }
@@ -101,12 +101,13 @@ namespace FEQuanLyNhanSu
 
             int currentYear = DateTime.Now.Year;
             var years = new List<string> { "Năm" };
-            years.AddRange(Enumerable.Range(2000, currentYear - 2000 + 1).Select(i => i.ToString()).Reverse());
+            var yearList = Enumerable.Range(2000, currentYear - 2000 + 1).Select(i => i.ToString()).Reverse().ToList();
+            years.AddRange(yearList);
             cbYear.ItemsSource = years;
 
-            cbDay.SelectedIndex = 0;
-            cbMonth.SelectedIndex = 0;
-            cbYear.SelectedIndex = 0;
+            cbDay.SelectedIndex = DateTime.Now.Day;         
+            cbMonth.SelectedIndex = DateTime.Now.Month;    
+            cbYear.SelectedIndex = years.IndexOf(currentYear.ToString()); 
         }
         private async Task LoadCompanies()
         {

@@ -33,11 +33,12 @@
                 <DataGridTextColumn Header="Role" Binding="{Binding RoleName}" Width="Auto" />
                 <DataGridTextColumn Header="Số điện thoại" Binding="{Binding PhoneNumber}" Width="Auto" />
                 <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="*" />
-                <DataGridTextColumn x:Name="HeaderCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />
+                <!--<DataGridTextColumn x:Name="HeaderCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />
                 <DataGridTextColumn x:Name="HeaderDepartment" Header="Phòng ban" Binding="{Binding DepartmentName}" Width="*" />
-                <DataGridTextColumn Header="Chức vụ" Binding="{Binding PositionName}" Width="*" />
-                <DataGridTextColumn Header="Lương cơ bản" Binding="{Binding SalaryPerHour}" Width="Auto" />
-                <DataGridTextColumn Header="Còn hoạt động" Binding="{Binding IsActive}" Width="Auto" />
+                <DataGridTextColumn Header="Chức vụ" Binding="{Binding PositionName}" Width="*" />-->
+                <DataGridTextColumn Header="Công việc đã xong trong tháng" Binding="{Binding CompletedDuties}" Width="Auto" />
+                <DataGridTextColumn Header="Công việc chưa xong" Binding="{Binding InProgressDuties}" Width="Auto" />
+                <DataGridCheckBoxColumn Header="Còn hoạt động" Binding="{Binding IsActive}" Width="Auto" />
                 <DataGridTemplateColumn Header="Ảnh" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -101,6 +102,9 @@
                   KeyUp="cbPosition_KeyUp"
                   DisplayMemberPath="Name"
                   SelectedValuePath="positionId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbPosition_SelectionChanged" Text="Nhập tên chức vụ"/>
-            </StackPanel>
+            <Grid HorizontalAlignment="Center" Width="120">
+                <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="0,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
+            </Grid>
+        </StackPanel>
     </Grid>
 </Page>

@@ -30,7 +30,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn x:Name="HeaderCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />
+                            <!--<DataGridTextColumn x:Name="HeaderCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />-->
                             <DataGridTextColumn Header="Id" Binding="{Binding enumId}" Width="*" />
                             <DataGridTextColumn Header="Tên status" Binding="{Binding Name}" Width="*" />
                             <DataGridTextColumn Header="Salary multiplier" Binding="{Binding SalaryMultiplier}" Width="*" />
@@ -91,7 +91,7 @@
                             <DataGridTextColumn Header="Tên ngày nghỉ lễ" Binding="{Binding Name}" Width="*" />
                             <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding startDate}" Width="*" />
                             <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding endDate}" Width="*" />
-                            <DataGridTextColumn x:Name="HeaderCompanyHoliday" Header="Công ty" Binding="{Binding companyName}" Width="*" />
+                            <!--<DataGridTextColumn x:Name="HeaderCompanyHoliday" Header="Công ty" Binding="{Binding companyName}" Width="*" />-->
                         </DataGrid.Columns>
                     </DataGrid>
                     <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="250" Height="35">
@@ -180,7 +180,7 @@
                         <DataGrid.Columns>
 
                             <!--<DataGridTextColumn Header="Id" Binding="{Binding id}" Width="*" />-->
-                            <DataGridTextColumn Header="Công ty" Binding="{Binding CompanyName}" Width="*" />
+                            <!--<DataGridTextColumn Header="Công ty" Binding="{Binding CompanyName}" Width="*" />-->
                             <DataGridTextColumn Header="Bắt đầu ca sáng" Binding="{Binding StartTimeMorning}" Width="*" />
                             <DataGridTextColumn Header="Kết thúc ca sáng" Binding="{Binding EndTimeMorning}" Width="*" />
                             <DataGridTextColumn Header="Thời gian checkin" Binding="{Binding LogAllowtime}" Width="*" />
@@ -223,7 +223,7 @@
                             </DataGridTemplateColumn>
                             <!--<DataGridTextColumn Header="Id" Binding="{Binding AllowedIPId}" Width="*" />-->
                             <DataGridTextColumn Header="Địa chỉ IP" Binding="{Binding IPAddress}" Width="*" />
-                            <DataGridTextColumn x:Name="HeaderCompanyIP" Header="Công ty" Binding="{Binding companyName}" Width="*" />
+                            <!--<DataGridTextColumn x:Name="HeaderCompanyIP" Header="Công ty" Binding="{Binding companyName}" Width="*" />-->
                         </DataGrid.Columns>
                     </DataGrid>
                     <Button x:Name="AddIPBtn" Content="Thêm IP" HorizontalAlignment="Left" Height="35" Margin="10,10,0,0"

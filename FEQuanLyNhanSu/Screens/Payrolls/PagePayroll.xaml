@@ -59,7 +59,7 @@
             <!-- Phần chi tiết khi click vào 1 user -->
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid ItemsSource="{Binding Checkins}"
+                    <DataGrid ItemsSource="{Binding Payrolls}"
               AutoGenerateColumns="False"
               IsReadOnly="True"
               HeadersVisibility="Column"
@@ -84,7 +84,6 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
                             <DataGridTextColumn Header="Ngày chấm công" Binding="{Binding CreatedDate}" Width="*" />
                             <DataGridTextColumn Header="Nội dung" Binding="{Binding Note}" Width="*" />
                             <DataGridTextColumn Header="Số ngày đi làm" Binding="{Binding DaysWorked}" Width="*" />
