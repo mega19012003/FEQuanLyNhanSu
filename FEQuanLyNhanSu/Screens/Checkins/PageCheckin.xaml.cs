@@ -42,7 +42,6 @@ namespace FEQuanLyNhanSu
         {
             InitializeComponent();
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-
             LoadDateComboboxes();
         }
 

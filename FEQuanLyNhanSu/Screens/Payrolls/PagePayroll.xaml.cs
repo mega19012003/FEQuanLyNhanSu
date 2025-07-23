@@ -53,19 +53,19 @@ namespace FEQuanLyNhanSu
                     _ = LoadUserWithPayroll();
                     _ = LoadCompanies();
                     _ = LoadDepartmentByCompanyAsync();
-                    _ = LoadPositionByCompanyAsync();
+                    _ = LoadPositionsByDepartmentAsync();
                     break;
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
                     _ = LoadUserWithPayroll();
                     _ = LoadDepartments();
-                    _ = LoadPositionByCompanyAsync();
+                    _ = LoadPositionsByDepartmentAsync();
                     break; 
                 case "Manager":
-                    _ = LoadUserWithPayroll();
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
                     DtaDridColDepartment.Visibility = Visibility.Collapsed;
+                    _ = LoadUserWithPayroll();
                     _ = LoadPositions();
                     break;
                 case "Employee":
@@ -155,7 +155,6 @@ namespace FEQuanLyNhanSu
                 if (result.Data.Items != null && result.Data.Items.Any())
                 {
                     cbDepartment.SelectedItem = result.Data.Items.First();
-                    await LoadPositionsByDepartmentAsync();
                     await FilterAsync();
                 }
             }
@@ -272,7 +271,7 @@ namespace FEQuanLyNhanSu
                 if (month.HasValue) parameters.Add($"Month={month}");
                 if (year.HasValue) parameters.Add($"Year={year}");
                 if (companyId.HasValue) parameters.Add($"companyId={companyId}");
-                if (departmentId.HasValue) parameters.Add($"dempartmentId={departmentId}");
+                if (departmentId.HasValue) parameters.Add($"departmentId={departmentId}");
                 if (positionId.HasValue) parameters.Add($"positionId={positionId}");
                 parameters.Add($"pageIndex={pageIndex}");
                 parameters.Add($"pageSize={pageSize}");
