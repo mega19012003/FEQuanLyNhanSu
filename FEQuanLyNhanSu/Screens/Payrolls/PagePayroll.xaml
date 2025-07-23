@@ -50,10 +50,22 @@
               RowDetailsVisibilityMode="VisibleWhenSelected">
             <!-- Cột thông tin người dùng -->
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Công ty" Binding="{Binding CompanyName}" />
                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Fullname}" />
-                <DataGridTextColumn x:Name="DtaDridColDepartment" Header="Phòng ban" Binding="{Binding DepartmentName}" />
-                <DataGridTextColumn Header="Chức vụ" Binding="{Binding PositionName}" />
+                <DataGridTextColumn Header="Số điện thoại" Binding="{Binding PhoneNumber}" />
+                <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" />
+                <DataGridTemplateColumn Header="Ảnh" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Width="60" Height="60" Stretch="UniformToFill">
+                                <Image.Source>
+                                    <Binding Path="ImageUrl" 
+             TargetNullValue="pack://application:,,,/Assets/none.jpg"
+             FallbackValue="pack://application:,,,/Assets/user.png"/>
+                                </Image.Source>
+                            </Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
 
             <!-- Phần chi tiết khi click vào 1 user -->

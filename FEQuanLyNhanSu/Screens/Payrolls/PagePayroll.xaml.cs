@@ -64,7 +64,6 @@ namespace FEQuanLyNhanSu
                 case "Manager":
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
-                    DtaDridColDepartment.Visibility = Visibility.Collapsed;
                     _ = LoadUserWithPayroll();
                     _ = LoadPositions();
                     break;
@@ -288,7 +287,7 @@ namespace FEQuanLyNhanSu
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"API Error: {response.StatusCode}");
+                    MessageBox.Show($"Lỗi khi lọc payrol: {response.StatusCode}");
                     return new List<UserWithPayrollDto>();
                 }
 

@@ -32,6 +32,7 @@ namespace FEQuanLyNhanSu
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadDuty();
             LoadDateComboboxes();
+            Loaded += async (s, e) => await FilterAsync();
         }
 
         private void HandleUI(string role)
@@ -187,7 +188,8 @@ namespace FEQuanLyNhanSu
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"API Error: {response.StatusCode}");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Lỗi khi lọc công việc: {response.StatusCode}\n{errorContent}");
                     return new List<DutyResultDto>();
                 }
 

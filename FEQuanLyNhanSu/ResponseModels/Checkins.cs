@@ -28,9 +28,9 @@ namespace FEQuanLyNhanSu.Services
         {
             public Guid UserId { get; set; }
             public string FullName { get; set; } = null!;
-            public string CompanyName { get; set; }
-            public string DepartmentName { get; set; }
-            public string PositionName { get; set; }
+            public string? PhoneNumber { get; set; }
+            public string? Address { get; set; }
+            public string ImageUrl { get; set; }
 
             public List<CheckinResultDto> Checkins { get; set; } = new List<CheckinResultDto>();
         }

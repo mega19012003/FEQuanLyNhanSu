@@ -226,7 +226,7 @@ namespace FEQuanLyNhanSu
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"API Error: {response.StatusCode}");
+                    MessageBox.Show($"Lỗi khi lọc phòng ban: {response.StatusCode}");
                     return new List<DepartmentResultDto>();
                 }
 

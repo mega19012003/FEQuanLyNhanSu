@@ -48,6 +48,7 @@ namespace FEQuanLyNhanSu
         private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
             loadingBar.Visibility = Visibility.Visible;
             txtLoading.Visibility = Visibility.Visible;
 
@@ -155,6 +156,7 @@ namespace FEQuanLyNhanSu
             finally
             {
                 btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
                 loadingBar.Visibility = Visibility.Collapsed;
                 txtLoading.Visibility = Visibility.Collapsed;
             }

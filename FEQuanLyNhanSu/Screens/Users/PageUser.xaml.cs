@@ -43,11 +43,12 @@ namespace FEQuanLyNhanSu
         public PageUser()
         {
             InitializeComponent();
-            LoadUser();
+            _ = LoadUser();
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             //_ = LoadPositionsByDepartmentAsync();
-            _ = FilterAsync();
+            //_ = FilterAsync();
             LoadDateComboboxes();
+            Loaded += async (s, e) => await FilterAsync();
         }
 
         private void HandleUI(string role)
@@ -67,7 +68,7 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     _ = LoadCompanies();
                     _ = LoadDepartmentByCompanyAsync();
-                    _ = LoadPositionByCompanyAsync();
+                    _ = LoadPositionsByDepartmentAsync();
                     break;
             }
         }
@@ -123,7 +124,7 @@ namespace FEQuanLyNhanSu
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"API Error: {response.StatusCode}");
+                    MessageBox.Show($"Lỗi khi load người dùng: {response.StatusCode}");
                     return new List<UserResultDto>();
                 }
 
@@ -340,7 +341,8 @@ namespace FEQuanLyNhanSu
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"API Error: {response.StatusCode}");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Lỗi khi lọc người dùng: {response.StatusCode}\n{errorContent}");
                     return new List<UserResultDto>();
                 }
 
