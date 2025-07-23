@@ -13,9 +13,6 @@
                         ObjectType="{x:Type helpers:AppState}" 
                         MethodName="get_CurrentRole" />
         <helpers:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter"/>
-        <helpers:RoleToColumnWidthConverter x:Key="RoleToColumnWidthConverter" />
-        <helpers:RoleToDoneButtonVisibilityConverter x:Key="RoleToDoneButtonVisibilityConverter" />
-        <helpers:RoleToHeaderTextConverter x:Key="RoleToHeaderTextConverter" />
     </Page.Resources>
 
     <Grid Background="White" Margin="0,-3,0,0">
@@ -34,7 +31,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
+                <!--<DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />-->
                 <DataGridTemplateColumn Header="Tên công việc" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -54,36 +51,25 @@
                         <DataGrid ItemsSource="{Binding DutyDetails}" AutoGenerateColumns="False" IsReadOnly="True" Margin="20,5,20,5" ColumnWidth="*" HeadersVisibility="Column" HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn 
-                                    Header="{Binding Source={StaticResource AppStateProvider},
-                                                Converter={StaticResource RoleToHeaderTextConverter},
-                                                ConverterParameter=Hành động}"
-                                    Width="{Binding Source={StaticResource AppStateProvider},
-                                                Converter={StaticResource RoleToColumnWidthConverter},
-                                                ConverterParameter=200}">
+                                                   Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='SystemAdmin'}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click" Tag="{Binding DutyDetailId}" 
-                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToDoneButtonVisibilityConverter}}" />
-                                                <Button x:Name="btnUpdateDetail" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" Tag="{Binding DutyDetailId}"
-                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}}" />
-                                                <Button x:Name="btnDeleteDetail" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" Tag="{Binding DutyDetailId}"
-                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}}" />
+                                                <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click" Tag="{Binding DutyDetailId}" />
+                                                <Button x:Name="btnUpdateDetail" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" Tag="{Binding DutyDetailId}" 
+                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
+                                                <Button x:Name="btnDeleteDetail" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" Tag="{Binding DutyDetailId}" 
+                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="DutyDetailId" Binding="{Binding DutyDetailId}" Width="*" />
                                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
                                 <DataGridTemplateColumn Header="Mô tả" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock 
-                                                Text="{Binding Description}" 
-                                                TextWrapping="Wrap"
-                                                ToolTip="{Binding Description}"
-                                                MaxHeight="80"
-                                                VerticalAlignment="Top"/>
+                                                Text="{Binding Description}" TextWrapping="Wrap" ToolTip="{Binding Description}" MaxHeight="80" VerticalAlignment="Top"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

@@ -36,6 +36,8 @@ namespace FEQuanLyNhanSu.Screens.Configs
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
             try
             {
                 string ipAddress = txtIP.Text.Trim();
@@ -90,6 +92,11 @@ namespace FEQuanLyNhanSu.Screens.Configs
             catch (Exception ex)
             {
                 MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}");
+            }
+            finally
+            {
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

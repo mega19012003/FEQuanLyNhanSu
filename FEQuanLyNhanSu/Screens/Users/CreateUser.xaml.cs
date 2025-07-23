@@ -44,6 +44,9 @@ namespace FEQuanLyNhanSu.Screens.Users
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try { 
             var token = Application.Current.Properties["Token"]?.ToString();
             var selectedRole = cmbRole.SelectedItem as string;
             if (!Enum.TryParse<RoleType>(selectedRole, out var roleEnum))
@@ -99,6 +102,12 @@ namespace FEQuanLyNhanSu.Screens.Users
                 var apiResponses = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
                 var errorData = apiResponses?.Data ?? "Có lỗi xảy ra";
                 MessageBox.Show($"Tạo người dùng thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            }
+            finally
+            {
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

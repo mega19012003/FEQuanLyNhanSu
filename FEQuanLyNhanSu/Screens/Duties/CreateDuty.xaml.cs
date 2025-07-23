@@ -40,7 +40,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
         {
             string keyword = cbEmployee.Text.Trim();
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
@@ -73,7 +73,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
         private async Task LoadUsers()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
@@ -98,6 +98,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
             try
             {
                 if (string.IsNullOrWhiteSpace(txtDescription.Text) || dpStartDate.SelectedDate == null || dpEndDate.SelectedDate == null)
@@ -175,6 +177,11 @@ namespace FEQuanLyNhanSu.Screens.Duties
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi: {ex.Message}");
+            }
+            finally
+            {
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

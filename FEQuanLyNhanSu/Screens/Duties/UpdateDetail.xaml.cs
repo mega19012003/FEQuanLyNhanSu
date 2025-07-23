@@ -129,41 +129,51 @@ namespace FEQuanLyNhanSu.Screens.Duties
         // Update
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            if (cbEmployee.SelectedItem == null)
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                MessageBox.Show("Vui lòng chọn nhân viên.");
-                return;
+                if (cbEmployee.SelectedItem == null)
+                {
+                    MessageBox.Show("Vui lòng chọn nhân viên.");
+                    return;
+                }
+                var selectedUser = cbEmployee.SelectedItem as UserResultDto;
+                if (selectedUser == null)
+                {
+                    MessageBox.Show("Vui lòng chọn nhân viên hợp lệ.");
+                    return;
+                }
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty/DutyDetail";
+                var dutyDetail = new DutyDetailResultDto
+                {
+                    DutyDetailId = _detailId,
+                    UserId = selectedUser.UserId,
+                    Description = txtDescription.Text.Trim()
+                };
+                using var client = CreateAuthorizedClient(token);
+                var content = new StringContent(JsonConvert.SerializeObject(dutyDetail), Encoding.UTF8, "application/json");
+                var response = await client.PutAsync(baseUrl, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Cập nhật thông tin chức vụ thành công.");
+                    _onDetailUpdated?.Invoke();
+                    this.Close();
+                }
+                else
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    dynamic? apiResponse = JsonConvert.DeserializeObject<dynamic>(json);
+                    string errorMessage = apiResponse?.Data != null ? apiResponse.Data.ToString() : apiResponse?.Message != null ? apiResponse.Message.ToString() : "Có lỗi xảy ra";
+                    MessageBox.Show($"Cập nhật thông tin chức vụ thất bại.  Lỗi: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            var selectedUser = cbEmployee.SelectedItem as UserResultDto;
-            if (selectedUser == null)
+            finally
             {
-                MessageBox.Show("Vui lòng chọn nhân viên hợp lệ.");
-                return;
-            }
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty/DutyDetail";
-            var dutyDetail = new DutyDetailResultDto
-            {
-                DutyDetailId = _detailId,
-                UserId = selectedUser.UserId,
-                Description = txtDescription.Text.Trim()
-            };
-            using var client = CreateAuthorizedClient(token);
-            var content = new StringContent(JsonConvert.SerializeObject(dutyDetail), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync(baseUrl, content);
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Cập nhật thông tin chức vụ thành công.");
-                _onDetailUpdated?.Invoke();
-                this.Close();
-            }
-            else
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                dynamic? apiResponse = JsonConvert.DeserializeObject<dynamic>(json);
-                string errorMessage = apiResponse?.Data != null ? apiResponse.Data.ToString() : apiResponse?.Message != null ? apiResponse.Message.ToString() : "Có lỗi xảy ra";
-                MessageBox.Show($"Cập nhật thông tin chức vụ thất bại.  Lỗi: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-               // MessageBox.Show($"Cập nhật thông tin chức vụ thất bại. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

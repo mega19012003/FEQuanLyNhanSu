@@ -24,7 +24,6 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Id" Binding="{Binding CompanyId}" Width="*" />
                 <DataGridTextColumn Header="Tên công ty" Binding="{Binding Name}" Width="*" />
                 <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="*" />
                 <DataGridTemplateColumn Header="Ảnh" Width="100">

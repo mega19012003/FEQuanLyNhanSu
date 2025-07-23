@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -46,18 +47,20 @@ namespace FEQuanLyNhanSu
         {
             switch(Role)
             {
-                case "Administrator":
-                    _ = LoadDepartments();
-                    cbCompany.Visibility = Visibility.Collapsed;
-                    break;
                 case "Manager":
                     cbDepartment.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
                     HeaderDepartment.Visibility = Visibility.Collapsed;
+                    _ = LoadDepartments();
+                    break;
+                case "Administrator":
+                    _ = LoadDepartments();
+                    cbCompany.Visibility = Visibility.Collapsed;
                     break;
                 case "SystemAdmin":
                     _ = LoadCompanies();
-                    _ = LoadDepartments();
+                    //_ = LoadDepartments();
+                    _ =LoadDepartmentByCompanyAsync();
                     DtaGridActionPosition.Visibility = Visibility.Collapsed;
                     AddPositionBtn.Visibility = Visibility.Collapsed;
                     break;
@@ -79,21 +82,6 @@ namespace FEQuanLyNhanSu
 
             _ = _paginationHelper.LoadPageAsync(1);
         }
-        private async Task LoadDepartments()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            var response = client.GetAsync(baseUrl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                var json = response.Content.ReadAsStringAsync().Result;
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                cbDepartment.ItemsSource = result.Data.Items;
-            }
-        }
         private async Task LoadCompanies()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -107,30 +95,128 @@ namespace FEQuanLyNhanSu
                 var json = response.Content.ReadAsStringAsync().Result;
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<CompanyResultDto>>>(json);
                 cbCompany.ItemsSource = result.Data.Items;
+
+                if (result.Data.Items != null && result.Data.Items.Any())
+                {
+                    cbCompany.SelectedItem = result.Data.Items.First();
+                    await LoadDepartmentByCompanyAsync();
+                    //await LoadPositionByCompanyAsync();
+                    await FilterAsync();
+                }
             }
         }
-        private async Task LoadDepartmentsByCompanyId(Guid companyId)
+        private async Task LoadDepartments()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/Department?companyId={companyId}";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync(baseUrl);
+
+            //using var client = new HttpClient();
+            //client.DefaultRequestHeaders.Authorization =
+            //    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            //var response = client.GetAsync(baseUrl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var json = response.Content.ReadAsStringAsync().Result;
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                cbDepartment.ItemsSource = result.Data.Items;
+
+                if (result.Data.Items != null && result.Data.Items.Any())
+                {
+                    cbDepartment.SelectedItem = result.Data.Items.First();
+                    await FilterAsync();
+                }
+            }
+        }
+        private async Task LoadDepartmentsByCompanyId(Guid? companyId)
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+
+            if (companyId.HasValue)
+                baseUrl += $"?companyId={companyId.Value}";
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync(baseUrl);
+
+            //using var client = new HttpClient();
+            //client.DefaultRequestHeaders.Authorization =
+            //    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            //var response = client.GetAsync(baseUrl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var json = response.Content.ReadAsStringAsync().Result;
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                cbDepartment.ItemsSource = result.Data.Items;
+
+                //if (result.Data.Items != null && result.Data.Items.Any())
+                //{
+                //    cbDepartment.SelectedItem = result.Data.Items.First();
+                //    await LoadPositionsByDepartmentAsync();
+                //    await FilterAsync();
+                //}
+            }
+        }
+        //private async Task LoadDepartmentByCompanyAsync(Guid companyId)
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/Department?companyId={companyId}";
+
+        //    using var client = new HttpClient();
+        //    client.DefaultRequestHeaders.Authorization =
+        //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        //    var response = await client.GetAsync(baseUrl);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var json = await response.Content.ReadAsStringAsync();
+        //        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+        //        cbDepartment.ItemsSource = result?.Data?.Items ?? new List<DepartmentResultDto>();
+        //    }
+        //    else
+        //    {
+        //        cbDepartment.ItemsSource = null;
+        //    }
+        //}
+        private async Task LoadDepartmentByCompanyAsync()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+
+            Guid? companyId = null;
+            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
+                companyId = selectedComp.CompanyId;
+
+            string url = baseUrl;
+            if (companyId.HasValue)
+            {
+                url += $"?companyId={companyId.Value}";
+            }
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync(baseUrl);
+            var response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                cbDepartment.ItemsSource = result?.Data?.Items ?? new List<DepartmentResultDto>();
+                cbDepartment.ItemsSource = result?.Data?.Items;
+                if (result?.Data?.Items?.Any() == true)
+                    cbDepartment.SelectedItem = result.Data.Items.First();
             }
             else
             {
                 cbDepartment.ItemsSource = null;
             }
         }
-
 
         private async Task FilterAsync()
         {
@@ -231,24 +317,22 @@ namespace FEQuanLyNhanSu
         private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            await LoadDepartmentByCompanyAsync();
             await FilterAsync();
-
-            if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
-            {
-                await LoadDepartmentsByCompanyId(selectedCompany.CompanyId);
-            }
-            else
-            {
-                await LoadDepartments();
-            }
+            //if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
+            //{
+            //    await LoadDepartmentsByCompanyId(selectedCompany.CompanyId);
+            //}
+            //else
+            //{
+            //    await LoadDepartments();
+            //}
         }
         private async void cbDepartment_KeyUp(object sender, KeyEventArgs e)
         {
             try
             {
-
                 var keyword = cbDepartment.Text.Trim();
- 
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
 
@@ -258,21 +342,28 @@ namespace FEQuanLyNhanSu
 
                 if (string.IsNullOrEmpty(keyword))
                 {
-                    await LoadDepartments();            
-                    cbDepartment.SelectedItem = null;      
-                    cbDepartment.IsDropDownOpen = true;     
+                    Guid? companyId = null;
 
-                    LoadPosition(); 
+                    if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
+                        companyId = selectedCompany.CompanyId;
+
+                    await LoadDepartmentsByCompanyId(companyId);
+                    cbDepartment.SelectedItem = null;
+                    cbDepartment.IsDropDownOpen = true;
                 }
                 else
                 {
-                    var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                    string url = $"{baseUrl}?Search={Uri.EscapeDataString(keyword)}";
+
+                    if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
+                        url += $"&companyId={selectedCompany.CompanyId}";
+
+                    var response = await client.GetAsync(url);
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync();
                         var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                        cbDepartment.ItemsSource = result.Data.Items;
-
+                        cbDepartment.ItemsSource = result?.Data?.Items;
                         cbDepartment.SelectedItem = null;
                         cbDepartment.IsDropDownOpen = true;
                     }
@@ -284,16 +375,14 @@ namespace FEQuanLyNhanSu
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
         {
             try
             {
-
                 var keyword = cbCompany.Text.Trim();
-
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Company";
 
@@ -303,11 +392,9 @@ namespace FEQuanLyNhanSu
 
                 if (string.IsNullOrEmpty(keyword))
                 {
-                    await LoadCompanies();
+                    await LoadCompanies();               // load lại toàn bộ
                     cbCompany.SelectedItem = null;
                     cbCompany.IsDropDownOpen = true;
-
-                    LoadDepartments();
                 }
                 else
                 {
@@ -316,8 +403,7 @@ namespace FEQuanLyNhanSu
                     {
                         var json = await response.Content.ReadAsStringAsync();
                         var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<CompanyResultDto>>>(json);
-                        cbCompany.ItemsSource = result.Data.Items;
-
+                        cbCompany.ItemsSource = result?.Data?.Items;
                         cbCompany.SelectedItem = null;
                         cbCompany.IsDropDownOpen = true;
                     }
@@ -329,10 +415,9 @@ namespace FEQuanLyNhanSu
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm công ty: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private void OnPositionCreated(Positions.PositionResultDto newDept)
         {
             if (newDept != null)

@@ -24,7 +24,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Id" Binding="{Binding DepartmentId}" Width="*" />
+                <!--<DataGridTextColumn Header="Id" Binding="{Binding DepartmentId}" Width="*" />-->
                 <DataGridTextColumn Header="Tên phòng ban" Binding="{Binding Name}" Width="*" />
                 <DataGridTextColumn x:Name="DtaGridColumnCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />
             </DataGrid.Columns>

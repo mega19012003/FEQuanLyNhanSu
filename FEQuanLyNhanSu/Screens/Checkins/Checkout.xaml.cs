@@ -113,68 +113,78 @@ namespace FEQuanLyNhanSu.Screens.Checkins
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Chekout"; 
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            HttpContent content = null;
-
-            var selectedUser = cbEmployee.SelectedItem as UserResultDto;
-            if (selectedUser != null)
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                var form = new MultipartFormDataContent();
-                form.Add(new StringContent(selectedUser.UserId.ToString()), "userId");
-                content = form;
-            }
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Chekout";
 
-            var response = await client.PutAsync(baseUrl, content);
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode)
-            {
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
-                if (apiResponse?.Data != null)
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                HttpContent content = null;
+
+                var selectedUser = cbEmployee.SelectedItem as UserResultDto;
+                if (selectedUser != null)
                 {
-                    lblCheckinMor.Content = apiResponse.Data.CheckinTime;
-                    lblCheckoutMor.Content = apiResponse.Data.CheckoutTime;
-                    lblCheckinAft.Content = apiResponse.Data.LogStatus;
-                    lblSalaryPerDay.Content = apiResponse.Data.SalaryPerDay.ToString("N0");
-
-                    _onCheckoutCreated?.Invoke(apiResponse.Data);
-                    MessageBox.Show("Checkin thành công.");
+                    var form = new MultipartFormDataContent();
+                    form.Add(new StringContent(selectedUser.UserId.ToString()), "userId");
+                    content = form;
                 }
-                else
+
+                var response = await client.PutAsync(baseUrl, content);
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
                 {
-                    var apiResponseError = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                    var errorData = apiResponseError?.Data ?? "Có lỗi xảy ra";
-                    MessageBox.Show($"Checkin thành công nhưng không nhận được dữ liệu: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            else
-            {
-                try
-                {
-                    var errorResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                    if (!string.IsNullOrEmpty(errorResponse?.Data))
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
+                    if (apiResponse?.Data != null)
                     {
-                        MessageBox.Show($"Checkin thất bại: {errorResponse.Data}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    else if (!string.IsNullOrEmpty(errorResponse?.Message))
-                    {
-                        MessageBox.Show($"Checkin thất bại: {errorResponse.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        lblCheckinMor.Content = apiResponse.Data.CheckinTime;
+                        lblCheckoutMor.Content = apiResponse.Data.CheckoutTime;
+                        lblCheckinAft.Content = apiResponse.Data.LogStatus;
+                        //lblSalaryPerDay.Content = apiResponse.Data.SalaryPerDay.ToString("N0");
+
+                        _onCheckoutCreated?.Invoke(apiResponse.Data);
+                        MessageBox.Show("Checkin thành công.");
                     }
                     else
                     {
-                        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                        var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                        MessageBox.Show($"Checkin thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        var apiResponseError = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                        var errorData = apiResponseError?.Data ?? "Có lỗi xảy ra";
+                        MessageBox.Show($"Checkin thành công nhưng không nhận được dữ liệu: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-                catch
+                else
                 {
-                    MessageBox.Show($"Checkin thất bại: {json}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    try
+                    {
+                        var errorResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                        if (!string.IsNullOrEmpty(errorResponse?.Data))
+                        {
+                            MessageBox.Show($"Checkin thất bại: {errorResponse.Data}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        else if (!string.IsNullOrEmpty(errorResponse?.Message))
+                        {
+                            MessageBox.Show($"Checkin thất bại: {errorResponse.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        else
+                        {
+                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                            var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                            MessageBox.Show($"Checkin thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show($"Checkin thất bại: {json}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
+            }
+            finally
+            {
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
         

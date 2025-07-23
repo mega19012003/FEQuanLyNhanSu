@@ -154,6 +154,14 @@ namespace FEQuanLyNhanSu
                 var json = response.Content.ReadAsStringAsync().Result;
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<CompanyResultDto>>>(json);
                 cbCompany.ItemsSource = result.Data.Items;
+
+                if (result.Data.Items != null && result.Data.Items.Any())
+                {
+                    cbCompany.SelectedItem = result.Data.Items.First();
+                    //await LoadDepartmentByCompanyAsync();
+                    //await LoadPositionByCompanyAsync();
+                    await FilterAsync();
+                }
             }
         }
 

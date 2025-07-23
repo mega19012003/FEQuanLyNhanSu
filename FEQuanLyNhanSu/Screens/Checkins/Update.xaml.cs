@@ -125,60 +125,71 @@ namespace FEQuanLyNhanSu.Screens.Checkins
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            // Kiểm tra đã chọn LogStatus chưa
-            if (cbChkinMor.SelectedValue is Guid selectedId)
+
+            btnUpdate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                // Tìm lại LogStatus được chọn trong danh sách
-                var selectedLogStatus = _logStatuses.FirstOrDefault(x => x.Id == selectedId);
-
-                if (selectedLogStatus != null)
+                // Kiểm tra đã chọn LogStatus chưa
+                if (cbChkinMor.SelectedValue is Guid selectedId)
                 {
-                    // Lấy enumId từ LogStatus đã chọn
-                    int enumIdToSend = selectedLogStatus.enumId;
+                    // Tìm lại LogStatus được chọn trong danh sách
+                    var selectedLogStatus = _logStatuses.FirstOrDefault(x => x.Id == selectedId);
 
-                    // Tạo object dữ liệu để gửi API
-                    var dataToSend = new
+                    if (selectedLogStatus != null)
                     {
-                        LogStatus = enumIdToSend,
-                        CheckinId = _checkinId,
-                    };
+                        // Lấy enumId từ LogStatus đã chọn
+                        int enumIdToSend = selectedLogStatus.enumId;
 
-                    var token = Application.Current.Properties["Token"]?.ToString();
-                    using var client = new HttpClient();
-                    client.DefaultRequestHeaders.Authorization =
-                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                    var json = JsonConvert.SerializeObject(dataToSend);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                    var apiUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin"; // chỉnh đúng URL API
-
-                    var response = await client.PutAsync(apiUrl, content);
-                    var responseJson = await response.Content.ReadAsStringAsync();
-                    if (response.IsSuccessStatusCode)
-                    {
-
-                        var apiResponse = System.Text.Json.JsonSerializer.Deserialize<CheckinResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        if (apiResponse?.Data != null)
+                        // Tạo object dữ liệu để gửi API
+                        var dataToSend = new
                         {
-                            _onUpdated?.Invoke(apiResponse.Data);
+                            LogStatus = enumIdToSend,
+                            CheckinId = _checkinId,
+                        };
+
+                        var token = Application.Current.Properties["Token"]?.ToString();
+                        using var client = new HttpClient();
+                        client.DefaultRequestHeaders.Authorization =
+                            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                        var json = JsonConvert.SerializeObject(dataToSend);
+                        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                        var apiUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin"; // chỉnh đúng URL API
+
+                        var response = await client.PutAsync(apiUrl, content);
+                        var responseJson = await response.Content.ReadAsStringAsync();
+                        if (response.IsSuccessStatusCode)
+                        {
+
+                            var apiResponse = System.Text.Json.JsonSerializer.Deserialize<CheckinResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                            if (apiResponse?.Data != null)
+                            {
+                                _onUpdated?.Invoke(apiResponse.Data);
+                            }
+                            MessageBox.Show("Cập nhật thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                            this.Close();
                         }
-                        MessageBox.Show("Cập nhật thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        this.Close();
+                        else
+                        {
+                            MessageBox.Show("Lỗi khi cập nhật!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("Lỗi khi cập nhật!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Không tìm thấy trạng thái log đã chọn!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Không tìm thấy trạng thái log đã chọn!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Vui lòng chọn trạng thái checkin!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            else
+            finally
             {
-                MessageBox.Show("Vui lòng chọn trạng thái checkin!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                btnUpdate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

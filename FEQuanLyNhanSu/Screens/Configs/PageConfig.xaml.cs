@@ -84,6 +84,8 @@ namespace FEQuanLyNhanSu
                     cbCompanyStatus.Visibility = Visibility.Collapsed;
                     TabListSchedule.Visibility = Visibility.Collapsed;
                     HeaderCompany.Visibility = Visibility.Collapsed;
+                    HeaderCompanyIP.Visibility = Visibility.Collapsed;
+                    HeaderCompanyHoliday.Visibility = Visibility.Collapsed;
                     break;
                 case "Manager":
                     TabIP.Visibility = Visibility.Collapsed;
@@ -100,6 +102,8 @@ namespace FEQuanLyNhanSu
                     cbCompanyStatus.Visibility = Visibility.Collapsed;
                     TabListSchedule.Visibility = Visibility.Collapsed;
                     HeaderCompany.Visibility = Visibility.Collapsed;
+                    HeaderCompanyIP.Visibility = Visibility.Collapsed;
+                    HeaderCompanyHoliday.Visibility = Visibility.Collapsed;
                     lblTitle.Text = "Xem cấu hình";
                     LoadLogStatus();
                     LoadHolidayConfig();
@@ -120,6 +124,8 @@ namespace FEQuanLyNhanSu
                     cbCompanyStatus.Visibility = Visibility.Collapsed;
                     TabListSchedule.Visibility = Visibility.Collapsed;
                     HeaderCompany.Visibility = Visibility.Collapsed;
+                    HeaderCompanyIP.Visibility= Visibility.Collapsed;
+                    HeaderCompanyHoliday.Visibility= Visibility.Collapsed;
                     lblTitle.Text = "Xem cấu hình";
                     LoadLogStatus();
                     LoadHolidayConfig();
@@ -276,6 +282,20 @@ namespace FEQuanLyNhanSu
                 cbCompanySchedule.ItemsSource = result.Data.Items;
                 cbCompanyAllowedIP.ItemsSource = result.Data.Items;
                 cbCompanyHoliday.ItemsSource = result.Data.Items;
+
+                if (result.Data.Items != null && result.Data.Items.Any())
+                {
+                    cbCompanyStatus.SelectedItem = result.Data.Items.First();
+                    cbCompanySchedule.SelectedItem = result.Data.Items.First();
+                    cbCompanyAllowedIP.SelectedItem = result.Data.Items.First();
+                    cbCompanyHoliday.SelectedItem = result.Data.Items.First();
+                    //await LoadDepartmentByCompanyAsync();
+                    //await LoadPositionByCompanyAsync();
+                    await FilterHolidayAsync();
+                    await FilterIPAsync();
+                    await FilterScheduleAsync();
+                    await FilterLogStatusAsync();
+                }
             }
         }
 

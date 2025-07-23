@@ -57,7 +57,7 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
                 var result = JsonConvert.DeserializeObject<ApiResponse<FEQuanLyNhanSu.Models.Configs.LogStatusConfig>>(json);
 
                 txtName.Text = result.Data.Name;
-                txtMultiply.Text = result.Data.SalaryMultiplier.ToString();
+                //txtMultiply.Text = result.Data.SalaryMultiplier.ToString();
                 txtNote.Text = result.Data.Note;
             }
             else
@@ -71,62 +71,72 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            string LogStatusName = txtName.Text.Trim();
-            string LogStatusMultiply = txtMultiply.Text.Trim();
-            string LogStatusNote = txtNote.Text.Trim();
-            if (string.IsNullOrEmpty(LogStatusName) || string.IsNullOrEmpty(LogStatusNote))
+            btnUpdate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin");
-                return;
+                string LogStatusName = txtName.Text.Trim();
+                string LogStatusMultiply = txtMultiply.Text.Trim();
+                string LogStatusNote = txtNote.Text.Trim();
+                if (string.IsNullOrEmpty(LogStatusName) || string.IsNullOrEmpty(LogStatusNote))
+                {
+                    MessageBox.Show("Vui lòng nhập đầy đủ thông tin");
+                    return;
+                }
+                if (!double.TryParse(LogStatusMultiply, out double multiplier))
+                {
+                    MessageBox.Show("Hệ số lương phải là số hợp lệ");
+                    return;
+                }
+
+                if (multiplier < 0)
+                {
+                    MessageBox.Show("Hệ số lương không được nhỏ hơn 0");
+                    return;
+                }
+
+                var result = new FEQuanLyNhanSu.Models.Configs.LogStatusConfig
+                {
+                    Id = _logStatusId,
+                    Name = LogStatusName,
+                    //SalaryMultiplier = double.Parse(LogStatusMultiply),
+                    Note = LogStatusNote
+                };
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+
+
+
+
+                var query = $"IPAddress={Uri.EscapeDataString(LogStatusName)}";
+                var url = $"{baseUrl}/api/LogStatusConfig"; //?id={_logStatusId}&{query}";
+
+                var json = JsonConvert.SerializeObject(result);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                using var client = CreateAuthorizedClient(token);
+
+                var response = await client.PutAsync(url, content);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Cập nhật log status thành công.");
+                    _onLogStatusUpdated?.Invoke();
+                    this.Close();
+                }
+                else
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Lỗi khi cập nhật: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            if (!double.TryParse(LogStatusMultiply, out double multiplier))
+            finally
             {
-                MessageBox.Show("Hệ số lương phải là số hợp lệ");
-                return;
-            }
-
-            if (multiplier < 0)
-            {
-                MessageBox.Show("Hệ số lương không được nhỏ hơn 0");
-                return;
-            }
-
-            var result = new FEQuanLyNhanSu.Models.Configs.LogStatusConfig
-            {
-                Id = _logStatusId,
-                Name = LogStatusName,
-                SalaryMultiplier = double.Parse(LogStatusMultiply),
-                Note = LogStatusNote
-            };
-
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            
-            
-            
-            
-            var query = $"IPAddress={Uri.EscapeDataString(LogStatusName)}";
-            var url = $"{baseUrl}/api/LogStatusConfig"; //?id={_logStatusId}&{query}";
-
-            var json = JsonConvert.SerializeObject(result);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            using var client = CreateAuthorizedClient(token);
-
-            var response = await client.PutAsync(url, content);
-            var responseBody = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Cập nhật log status thành công.");
-                _onLogStatusUpdated?.Invoke();
-                this.Close();
-            }
-            else
-            {
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Lỗi khi cập nhật: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnUpdate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

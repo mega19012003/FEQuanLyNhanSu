@@ -78,54 +78,64 @@ namespace FEQuanLyNhanSu.Screens.Duties
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            string name = txtUsername.Text?.Trim();
-            DateTime? startDate = dpStartDate.SelectedDate;
-            DateTime? endDate = dpEndDate.SelectedDate;
-
-            if (string.IsNullOrWhiteSpace(name) || startDate == null || endDate == null)
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                MessageBox.Show("Vui lòng đầy đủ thông tin");
-                return;
-            }
+                string name = txtUsername.Text?.Trim();
+                DateTime? startDate = dpStartDate.SelectedDate;
+                DateTime? endDate = dpEndDate.SelectedDate;
 
-            var result = new DutyResultDto
-            {
-                Id = _dutyId,
-                Name = name,
-                StartDate = DateOnly.FromDateTime(startDate.Value), // Fix for CS0029
-                EndDate = DateOnly.FromDateTime(endDate.Value)      // Fix for CS0029
-            };
-
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var url = $"{baseUrl}/api/Duty";
-
-            var json = JsonConvert.SerializeObject(result);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            using var client = CreateAuthorizedClient(token);
-
-            var response = await client.PutAsync(url, content);
-            var responseBody = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonResult = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DutyResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
+                if (string.IsNullOrWhiteSpace(name) || startDate == null || endDate == null)
                 {
-                    _onDutyUpdated?.Invoke(apiResponse.Data);
+                    MessageBox.Show("Vui lòng đầy đủ thông tin");
+                    return;
                 }
 
-                MessageBox.Show("Cập nhật công việc thành công.");
-                this.Close();
+                var result = new DutyResultDto
+                {
+                    Id = _dutyId,
+                    Name = name,
+                    StartDate = DateOnly.FromDateTime(startDate.Value), // Fix for CS0029
+                    EndDate = DateOnly.FromDateTime(endDate.Value)      // Fix for CS0029
+                };
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+                var url = $"{baseUrl}/api/Duty";
+
+                var json = JsonConvert.SerializeObject(result);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                using var client = CreateAuthorizedClient(token);
+
+                var response = await client.PutAsync(url, content);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DutyResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onDutyUpdated?.Invoke(apiResponse.Data);
+                    }
+
+                    MessageBox.Show("Cập nhật công việc thành công.");
+                    this.Close();
+                }
+                else
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(responseBody);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Cập nhật công việc thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            finally
             {
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(responseBody);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Cập nhật công việc thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

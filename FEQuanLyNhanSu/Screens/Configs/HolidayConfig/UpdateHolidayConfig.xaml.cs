@@ -75,53 +75,63 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            string name = txtName.Text.Trim();
-            DateTime? startDate = dpStartDate.SelectedDate;
-            DateTime? endDate = dpEndDate.SelectedDate;
-            if (string.IsNullOrEmpty(name))
+            btnUpdate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin");
-                return;
-            }
-
-            var result = new Holiday
-            {
-                HolidayId = _holidayConfigId,
-                name = name,
-                startDate = startDate.HasValue ? DateOnly.FromDateTime(startDate.Value) : default,
-                endDate = endDate.HasValue ? DateOnly.FromDateTime(endDate.Value) : default
-            };
-
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var url = $"{baseUrl}/api/Holiday";
-
-            var json = JsonConvert.SerializeObject(result);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            using var client = CreateAuthorizedClient(token);
-
-            var response = await client.PutAsync(url, content);
-            var responseBody = await response.Content.ReadAsStringAsync();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonResult = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
+                string name = txtName.Text.Trim();
+                DateTime? startDate = dpStartDate.SelectedDate;
+                DateTime? endDate = dpEndDate.SelectedDate;
+                if (string.IsNullOrEmpty(name))
                 {
-                    _onHolidayUpdated?.Invoke(apiResponse.Data);
+                    MessageBox.Show("Vui lòng nhập đầy đủ thông tin");
+                    return;
                 }
 
-                MessageBox.Show("Cập nhật ngày lễ thành công.");
-                this.Close();
+                var result = new Holiday
+                {
+                    HolidayId = _holidayConfigId,
+                    name = name,
+                    startDate = startDate.HasValue ? DateOnly.FromDateTime(startDate.Value) : default,
+                    endDate = endDate.HasValue ? DateOnly.FromDateTime(endDate.Value) : default
+                };
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+                var url = $"{baseUrl}/api/Holiday";
+
+                var json = JsonConvert.SerializeObject(result);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                using var client = CreateAuthorizedClient(token);
+
+                var response = await client.PutAsync(url, content);
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onHolidayUpdated?.Invoke(apiResponse.Data);
+                    }
+
+                    MessageBox.Show("Cập nhật ngày lễ thành công.");
+                    this.Close();
+                }
+                else
+                {
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Cập nhật ngày lễ thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            finally
             {
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Cập nhật ngày lễ thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnUpdate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

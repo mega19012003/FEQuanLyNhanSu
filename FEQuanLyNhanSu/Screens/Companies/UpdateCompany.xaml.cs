@@ -112,6 +112,8 @@ namespace FEQuanLyNhanSu.Screens.Companies
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
+            btnUpdate.IsEnabled = false;
+            btnExit.IsEnabled = false;
             try
             {
                 btnUpdate.IsEnabled = false;
@@ -175,6 +177,7 @@ namespace FEQuanLyNhanSu.Screens.Companies
             finally
             {
                 btnUpdate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

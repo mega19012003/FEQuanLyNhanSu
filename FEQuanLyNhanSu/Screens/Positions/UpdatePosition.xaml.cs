@@ -42,51 +42,60 @@ namespace FEQuanLyNhanSu.Screens.Positions
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            string name = txtName.Text?.Trim();
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                MessageBox.Show("Vui lòng nhập tên chức vụ.");
-                return;
-            }
-
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var query = $"newName={Uri.EscapeDataString(name)}";
-            var url = $"{baseUrl}/api/Position?id={_positionId}&{query}";
-
-            using var client = CreateAuthorizedClient(token);
-
-            var response = await client.PutAsync(url, null);
-
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    MessageBox.Show("Cập nhật chức vụ thành công.");
-            //    _onPositionUpdated?.Invoke();
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Cập nhật chức vụ thất bại.");
-            //}
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<PositionResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
+            btnExit.IsEnabled = false;
+            btnUpdate.IsEnabled = false;
+            try {
+                string name = txtName.Text?.Trim();
+                if (string.IsNullOrWhiteSpace(name))
                 {
-                    _onPositionUpdated?.Invoke(apiResponse.Data);
+                    MessageBox.Show("Vui lòng nhập tên chức vụ.");
+                    return;
                 }
 
-                MessageBox.Show("Cập nhật chức vụ thành công.");
-                this.Close();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var query = $"newName={Uri.EscapeDataString(name)}";
+                var url = $"{baseUrl}/api/Position?id={_positionId}&{query}";
+
+                using var client = CreateAuthorizedClient(token);
+
+                var response = await client.PutAsync(url, null);
+
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    MessageBox.Show("Cập nhật chức vụ thành công.");
+                //    _onPositionUpdated?.Invoke();
+                //    this.Close();
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Cập nhật chức vụ thất bại.");
+                //}
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<PositionResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onPositionUpdated?.Invoke(apiResponse.Data);
+                    }
+
+                    MessageBox.Show("Cập nhật chức vụ thành công.");
+                    this.Close();
+                }
+                else
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show("Cập nhật chức vụ thất bại :{ errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            finally
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show("Cập nhật chức vụ thất bại :{ errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnExit.IsEnabled = true;
+                btnUpdate.IsEnabled = true;
             }
         }
 

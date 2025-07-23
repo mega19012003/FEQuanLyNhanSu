@@ -67,51 +67,61 @@ namespace FEQuanLyNhanSu.Screens.Companies
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-
-            if (string.IsNullOrEmpty(txtName.Text) || string.IsNullOrEmpty(txtAddress.Text) || string.IsNullOrEmpty(_imagePath))
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                MessageBox.Show("Vui lòng điền đầy đủ thông tin.");
-                return;
-            }
+                var token = Application.Current.Properties["Token"]?.ToString();
 
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Company";
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            using var content = new MultipartFormDataContent();
-            content.Add(new StringContent(txtName.Text.Trim()), "Name");
-            content.Add(new StringContent(txtAddress.Text.Trim()), "Address");
-
-            if (!string.IsNullOrEmpty(_imagePath) && File.Exists(_imagePath))
-            {
-                var fileStream = File.OpenRead(_imagePath);
-                var fileContent = new StreamContent(fileStream);
-                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg"); // hoặc tự detect
-                content.Add(fileContent, "LogoUrl", System.IO.Path.GetFileName(_imagePath));
-            }
-
-            var response = await client.PostAsync(baseUrl, content);
-
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode)
-            {
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<CompanyResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
+                if (string.IsNullOrEmpty(txtName.Text) || string.IsNullOrEmpty(txtAddress.Text) || string.IsNullOrEmpty(_imagePath))
                 {
-                    _onCreated?.Invoke(apiResponse.Data);
+                    MessageBox.Show("Vui lòng điền đầy đủ thông tin.");
+                    return;
                 }
 
-                MessageBox.Show("Tạo công ty thành công.");
-                this.Close();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Company";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                using var content = new MultipartFormDataContent();
+                content.Add(new StringContent(txtName.Text.Trim()), "Name");
+                content.Add(new StringContent(txtAddress.Text.Trim()), "Address");
+
+                if (!string.IsNullOrEmpty(_imagePath) && File.Exists(_imagePath))
+                {
+                    var fileStream = File.OpenRead(_imagePath);
+                    var fileContent = new StreamContent(fileStream);
+                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg"); // hoặc tự detect
+                    content.Add(fileContent, "LogoUrl", System.IO.Path.GetFileName(_imagePath));
+                }
+
+                var response = await client.PostAsync(baseUrl, content);
+
+                var json = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<CompanyResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onCreated?.Invoke(apiResponse.Data);
+                    }
+
+                    MessageBox.Show("Tạo công ty thành công.");
+                    this.Close();
+                }
+                else
+                {
+                    var apiResponses = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponses?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Tạo công ty thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            finally
             {
-                var apiResponses = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponses?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Tạo công ty thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
     }

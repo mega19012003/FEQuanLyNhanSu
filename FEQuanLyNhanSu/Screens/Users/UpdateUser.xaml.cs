@@ -107,7 +107,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     txtAddress.Text = user.Address;
                     txtPhoneNo.Text = user.PhoneNumber;
                     cmbRole.Text = user.RoleName;
-                    txtSalary.Text = user.SalaryPerHour?.ToString();
+                    //txtSalary.Text = user.SalaryPerHour?.ToString();
                     txtImage.Text = user.ImageUrl;
                     chkIsActive.IsChecked = user.IsActive;
 
@@ -386,7 +386,6 @@ namespace FEQuanLyNhanSu.Screens.Users
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
 
-                // 🟢 Lấy departmentId nếu có
                 var selectedDepartment = cbDepartment.SelectedItem as DepartmentResultDto;
                 string url;
 

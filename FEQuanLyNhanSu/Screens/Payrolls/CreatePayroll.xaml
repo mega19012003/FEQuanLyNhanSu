@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Payrolls"
         mc:Ignorable="d"
-        Title="CreatePayroll" Height="520" Width="600">
+        Title="CreatePayroll" Height="450" Width="600">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" Content="Thêm chấm công mới" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
 
@@ -47,8 +47,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <!--<RowDefinition Height="Auto"/>-->
+                <!--<RowDefinition Height="Auto"/>-->
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -59,30 +59,30 @@
             </Grid.ColumnDefinitions>
 
             <!--Left-->
-            <Label Grid.Row="0" Grid.Column="0" Content="Payroll Id" FontSize="15"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="Họ tên" FontSize="15"/>
-            <Label Grid.Row="2" Grid.Column="0" Content="Lương" FontSize="15"/>
-            <Label Grid.Row="3" Grid.Column="0" Content="Nội dung" FontSize="15"/>
-            <Label Grid.Row="4" Grid.Column="0" Content="Ngày tạo" FontSize="15"/>
-            <Label Grid.Row="5" Grid.Column="0" Content="Số ngày làm" FontSize="15"/>
+            <!--<Label Grid.Row="0" Grid.Column="0" Content="Payroll Id" FontSize="15"/>-->
+            <Label Grid.Row="0" Grid.Column="0" Content="Họ tên" FontSize="15"/>
+            <!--<Label Grid.Row="2" Grid.Column="0" Content="Lương" FontSize="15"/>-->
+            <Label Grid.Row="1" Grid.Column="0" Content="Nội dung" FontSize="15"/>
+            <Label Grid.Row="2" Grid.Column="0" Content="Ngày tạo" FontSize="15"/>
+            <Label Grid.Row="3" Grid.Column="0" Content="Số ngày làm" FontSize="15"/>
 
             <!--Middle-->
+            <!--<Label Grid.Row="0" Grid.Column="1" Content=":" FontSize="15"/>-->
             <Label Grid.Row="0" Grid.Column="1" Content=":" FontSize="15"/>
+            <!--<Label Grid.Row="2" Grid.Column="1" Content=":" FontSize="15"/>-->
             <Label Grid.Row="1" Grid.Column="1" Content=":" FontSize="15"/>
             <Label Grid.Row="2" Grid.Column="1" Content=":" FontSize="15"/>
             <Label Grid.Row="3" Grid.Column="1" Content=":" FontSize="15"/>
-            <Label Grid.Row="4" Grid.Column="1" Content=":" FontSize="15"/>
-            <Label Grid.Row="5" Grid.Column="1" Content=":" FontSize="15"/>
   
             <!--Right-->
-            <Label Grid.Row="0" Grid.Column="2" x:Name="lblId" Content="....." FontSize="15"/>
-            <Label x:Name="lblCreatedDate" Grid.Row="1" Grid.Column="2" Content="....." FontSize="15"/>
-            <Label x:Name="lblSalary" Grid.Row="2" Grid.Column="2" Content="....." FontSize="15"/>
-            <Label x:Name="lblNote" Grid.Row="3" Grid.Column="2" Content="....." FontSize="15"/>
-            <Label x:Name="lblFullname" Grid.Row="4" Grid.Column="2" Content="....." FontSize="15"/>
-            <Label x:Name="lblDayWorked" Grid.Row="5" Grid.Column="2" Content="......" FontSize="15"/>
+            <!--<Label Grid.Row="0" Grid.Column="2" x:Name="lblId" Content="....." FontSize="15"/>-->
+            <Label x:Name="lblCreatedDate" Grid.Row="0" Grid.Column="2" Content="....." FontSize="15"/>
+            <!--<Label x:Name="lblSalary" Grid.Row="2" Grid.Column="2" Content="....." FontSize="15"/>-->
+            <Label x:Name="lblNote" Grid.Row="1" Grid.Column="2" Content="....." FontSize="15"/>
+            <Label x:Name="lblFullname" Grid.Row="2" Grid.Column="2" Content="....." FontSize="15"/>
+            <Label x:Name="lblDayWorked" Grid.Row="3" Grid.Column="2" Content="......" FontSize="15"/>
 
-            <StackPanel Grid.Row="6" Grid.ColumnSpan="3" Orientation="Horizontal"
+            <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Orientation="Horizontal"
                     HorizontalAlignment="Center" Margin="0,20,0,20">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                     Margin="10,0" FontSize="15" Click="btnExit_Click"/>

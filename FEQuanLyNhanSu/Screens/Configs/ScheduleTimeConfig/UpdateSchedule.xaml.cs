@@ -85,6 +85,8 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
+            btnUpdate.IsEnabled = false;
+            btnExit.IsEnabled = false;
             try
             {
                 var token = Application.Current.Properties["Token"]?.ToString();
@@ -134,6 +136,11 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi: {ex.Message}");
+            }
+            finally
+            {
+                btnUpdate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

@@ -42,67 +42,77 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
 
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
-            string name = txtName.Text?.Trim();
-            if (string.IsNullOrWhiteSpace(name))
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                MessageBox.Show("Vui lòng nhập tên ngày lễ");
-                return;
-            }
-
-            var startDate = dpStartDate.SelectedDate;
-            var endDate = dpEndDate.SelectedDate;
-            var startDateOnly = DateOnly.FromDateTime(startDate.Value);
-            var endDateOnly = DateOnly.FromDateTime(endDate.Value);
-            if (startDate == null || endDate == null)
-            {
-                MessageBox.Show("Vui lòng chọn ngày bắt đầu và kết thúc");
-                return;
-            }
-
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
-            var holiday = new
-            {
-                name = name,
-                startDate = startDateOnly,
-                endDate = endDateOnly
-            };
-
-            var json = JsonConvert.SerializeObject(holiday);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.PostAsync($"{baseUrl}/api/Holiday", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonResult = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
+                string name = txtName.Text?.Trim();
+                if (string.IsNullOrWhiteSpace(name))
                 {
-                    _onHolidayCreated?.Invoke(apiResponse.Data);
+                    MessageBox.Show("Vui lòng nhập tên ngày lễ");
+                    return;
                 }
 
-                MessageBox.Show("Tạo ngày lễ thành công.");
-                this.Close();
+                var startDate = dpStartDate.SelectedDate;
+                var endDate = dpEndDate.SelectedDate;
+                var startDateOnly = DateOnly.FromDateTime(startDate.Value);
+                var endDateOnly = DateOnly.FromDateTime(endDate.Value);
+                if (startDate == null || endDate == null)
+                {
+                    MessageBox.Show("Vui lòng chọn ngày bắt đầu và kết thúc");
+                    return;
+                }
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+
+                var holiday = new
+                {
+                    name = name,
+                    startDate = startDateOnly,
+                    endDate = endDateOnly
+                };
+
+                var json = JsonConvert.SerializeObject(holiday);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.PostAsync($"{baseUrl}/api/Holiday", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onHolidayCreated?.Invoke(apiResponse.Data);
+                    }
+
+                    MessageBox.Show("Tạo ngày lễ thành công.");
+                    this.Close();
+                }
+                else
+                {
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(
+                        jsonResult,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                    );
+
+                    var errorData = apiResponse?.Data?.ToString() ?? apiResponse?.Message ?? "Có lỗi xảy ra";
+
+                    MessageBox.Show($"Tạo ngày lễ thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            finally
             {
-                var jsonResult = await response.Content.ReadAsStringAsync();
-
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<HolidayResponse>(
-                    jsonResult,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                );
-
-                var errorData = apiResponse?.Data?.ToString() ?? apiResponse?.Message ?? "Có lỗi xảy ra";
-
-                MessageBox.Show($"Tạo ngày lễ thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
     }

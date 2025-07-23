@@ -36,7 +36,7 @@ namespace FEQuanLyNhanSu.Services.UserService
             public Guid? PositionId { get; set; }
             public string CompanyName { get; set; }
             public Guid? CompanyId { get; set; }
-            public double? SalaryPerHour { get; set; }
+            //public double? SalaryPerHour { get; set; }
             public bool IsActive { get; set; }
             public string ImageUrl { get; set; }
         }
@@ -54,7 +54,7 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string CompanyName { get; set; }
             public Guid? CompanyId { get; set; }
             public bool IsActive { get; set; }
-            public double? SalaryPerHour { get; set; }
+            //public double? SalaryPerHour { get; set; }
             public string ImageUrl { get; set; }
         }
         public class UserResponse

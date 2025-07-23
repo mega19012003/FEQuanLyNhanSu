@@ -69,7 +69,9 @@ namespace FEQuanLyNhanSu
             try
             {
                 var token = Application.Current.Properties["Token"]?.ToString();
+
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty";
+
                 int pageSize = 20;
                 _paginationHelper = new PaginationHelper<DutyResultDto>(
                     baseUrl,
@@ -82,7 +84,7 @@ namespace FEQuanLyNhanSu
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Có lỗi xảy ra: {ex.Message}\n{ex.StackTrace}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -119,8 +121,17 @@ namespace FEQuanLyNhanSu
                 var json = response.Content.ReadAsStringAsync().Result;
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<CompanyResultDto>>>(json);
                 cbCompany.ItemsSource = result.Data.Items;
+
+                if (result.Data.Items != null && result.Data.Items.Any())
+                {
+                    cbCompany.SelectedItem = result.Data.Items.First();
+                    //await LoadDepartmentByCompanyAsync();
+                    //await LoadPositionByCompanyAsync();
+                    await FilterAsync();
+                }
             }
         }
+        
         private async Task FilterAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -145,22 +156,21 @@ namespace FEQuanLyNhanSu
                     companyId = found.CompanyId;
             }
 
-            var items = await SearchAndFilterCheckinsAsync(baseUrl, token, keyword, day, month, year, companyId);
+            var items = await SearchAndFilterDutiesAsync(baseUrl, token, keyword, day, month, year, companyId);
             DutyDtaGrid.ItemsSource = items;
         }
-
-
-        public static async Task<List<DutyResultDto>> SearchAndFilterCheckinsAsync(string baseUrl, string token, string searchKeyword, int? day, int? month, int? year, Guid? companyId, int pageIndex = 1, int pageSize = 20)
+        public static async Task<List<DutyResultDto>> SearchAndFilterDutiesAsync(string baseUrl, string token, string searchKeyword, int? day, int? month, int? year, Guid? companyId, int pageIndex = 1, int pageSize = 20)
         {
             try
             {
                 var parameters = new List<string>();
                 if (!string.IsNullOrWhiteSpace(searchKeyword))
                     parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
+                if (companyId.HasValue) parameters.Add($"companyId={companyId}");
                 if (day.HasValue) parameters.Add($"Day={day}");
                 if (month.HasValue) parameters.Add($"Month={month}");
                 if (year.HasValue) parameters.Add($"Year={year}");
-                if (companyId.HasValue) parameters.Add($"companyId={companyId}");
+                
                 parameters.Add($"pageIndex={pageIndex}");
                 parameters.Add($"pageSize={pageSize}");
 
@@ -194,7 +204,6 @@ namespace FEQuanLyNhanSu
             }
         }
 
-     
         private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
         {
             try

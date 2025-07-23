@@ -33,30 +33,45 @@ namespace FEQuanLyNhanSu.Helpers
 
         public async Task LoadPageAsync(int page)
         {
-            if (page < 1 || page > _totalPages)
-                return;
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
-
-            string url = $"{_baseUrl}?pageSize={_pageSize}&pageIndex={page}";
-            var response = await client.GetAsync(url);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var errorJson = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (page < 1 || page > _totalPages)
+                    return;
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
+
+                string url = $"{_baseUrl}?pageSize={_pageSize}&pageIndex={page}";
+                var response = await client.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorJson = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+                    var errorData = apiResponse?.Data ?? errorJson ?? "Có lỗi xảy ra";
+                    //MessageBox.Show($"{url}");
+                    //MessageBox.Show($"Lỗi phân trang: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<T>>>(json);
+
+                if (apiResult?.Data == null)
+                {
+                    MessageBox.Show("Không lấy được dữ liệu từ phản hồi API", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                _currentPage = page;
+                _totalPages = (int)Math.Ceiling((double)apiResult.Data.TotalCount / _pageSize);
+                _updateUI(apiResult.Data.Items.ToList());
+                _pageLabel.Content = _currentPage.ToString();
             }
-
-            var json = await response.Content.ReadAsStringAsync();
-            var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<T>>>(json);
-
-            _currentPage = page;
-            _totalPages = (int)Math.Ceiling((double)apiResult.Data.TotalCount / _pageSize);
-            _updateUI(apiResult.Data.Items.ToList());
-            _pageLabel.Content = _currentPage.ToString();
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi exception: {ex.Message}\n{ex.StackTrace}", "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public async Task NextPageAsync()

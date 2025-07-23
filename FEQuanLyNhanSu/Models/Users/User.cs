@@ -27,7 +27,7 @@ namespace FEQuanLyNhanSu.Models.Users
         public Position Position { get; set; }
         public Company Company { get; set; }
         public Guid? companyId { get; set; }
-        public double SalaryPerHour { get; set; }
+        //public double SalaryPerHour { get; set; }
         public bool IsActive { get; set; } 
         public bool IsDeleted { get; set; } 
         public bool isResetPassword { get; set; }

@@ -40,6 +40,8 @@ namespace FEQuanLyNhanSu.Screens.Users
 
         private async void btnChangePass_Click(object sender, RoutedEventArgs e)
         {
+            btnCreate.IsEnabled = false;
+            btnExit.IsEnabled = false;
             try
             {
                 var oldPassword = txtOldPass.Text.Trim();
@@ -88,6 +90,11 @@ namespace FEQuanLyNhanSu.Screens.Users
             catch (Exception ex)
             {
                 MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                btnCreate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
     }

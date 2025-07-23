@@ -35,49 +35,59 @@ namespace FEQuanLyNhanSu.Screens.Departments
 
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            var name = txtName.Text?.Trim();
-            if (string.IsNullOrEmpty(name))
+            btnUpdate.IsEnabled = false;
+            btnExit.IsEnabled = false;
+            try
             {
-                MessageBox.Show("Tên phòng ban không được để trống.");
-                return;
-            }
-
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var query = $"newName={Uri.EscapeDataString(name)}";
-            var url = $"{baseUrl}/api/Department?id={_departmentId}&{query}";
-
-            using var client = CreateAuthorizedClient(token);
-            var response = await client.PutAsync(url, null);
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    MessageBox.Show("Cập nhật phòng ban thành công.");
-            //    _onDepartmentUpdated?.Invoke();
-            //    this.Close();
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Cập nhật phòng ban thất bại. Vui lòng thử lại sau.");
-            //}
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DepartmentResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (apiResponse?.Data != null)
+                var name = txtName.Text?.Trim();
+                if (string.IsNullOrEmpty(name))
                 {
-                    _onDepartmentUpdated?.Invoke(apiResponse.Data);
+                    MessageBox.Show("Tên phòng ban không được để trống.");
+                    return;
                 }
 
-                MessageBox.Show("Cập nhật phòng ban thành công.");
-                this.Close();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var query = $"newName={Uri.EscapeDataString(name)}";
+                var url = $"{baseUrl}/api/Department?id={_departmentId}&{query}";
+
+                using var client = CreateAuthorizedClient(token);
+                var response = await client.PutAsync(url, null);
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    MessageBox.Show("Cập nhật phòng ban thành công.");
+                //    _onDepartmentUpdated?.Invoke();
+                //    this.Close();
+                //}
+                //else
+                //{
+                //    MessageBox.Show("Cập nhật phòng ban thất bại. Vui lòng thử lại sau.");
+                //}
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DepartmentResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (apiResponse?.Data != null)
+                    {
+                        _onDepartmentUpdated?.Invoke(apiResponse.Data);
+                    }
+
+                    MessageBox.Show("Cập nhật phòng ban thành công.");
+                    this.Close();
+                }
+                else
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Cập nhật phòng ban thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            finally
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Cập nhật phòng ban thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                btnUpdate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 

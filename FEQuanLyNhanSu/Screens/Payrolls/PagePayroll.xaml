@@ -4,35 +4,94 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:FEQuanLyNhanSu"
+       xmlns:helpers="clr-namespace:FEQuanLyNhanSu.Helpers"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PagePayroll">
-
+    <Page.Resources>
+        <ObjectDataProvider x:Key="AppStateProvider" 
+                        ObjectType="{x:Type helpers:AppState}" 
+                        MethodName="get_CurrentRole" />
+        <helpers:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter"/>
+    </Page.Resources>
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock x:Name="lblTitle" Text="Trang quản lý chấm công"
          FontSize="24"
          HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="PayrollDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+        <!--<DataGrid x:Name="PayrollDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
 
                 <DataGridTemplateColumn x:Name="DtaGridAction" Header="Hành động">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>-->
+                                --><!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>--><!--
                                 <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding Id}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />
+                --><!--<DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />--><!--
                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Lương 1 tháng" Binding="{Binding Salary}" Width="*" />
+                --><!--<DataGridTextColumn Header="Lương 1 tháng" Binding="{Binding Salary}" Width="*" />--><!--
                 <DataGridTextColumn Header="Ngày chấm công" Binding="{Binding CreatedDate}" Width="*" />
                 <DataGridTextColumn Header="Nội dung" Binding="{Binding Note}" Width="*" />
                 <DataGridTextColumn Header="Số ngày đi làm" Binding="{Binding DaysWorked}" Width="*" />
             </DataGrid.Columns>
+        </DataGrid>-->
+        <DataGrid x:Name="PayrollDtaGrid"
+              Margin="20,100,20,50"
+              FontSize="15"
+              IsReadOnly="True"
+              AutoGenerateColumns="False"
+              ColumnWidth="*"
+              CanUserAddRows="False"
+              RowDetailsVisibilityMode="VisibleWhenSelected">
+            <!-- Cột thông tin người dùng -->
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Công ty" Binding="{Binding CompanyName}" />
+                <DataGridTextColumn Header="Họ tên" Binding="{Binding Fullname}" />
+                <DataGridTextColumn x:Name="DtaDridColDepartment" Header="Phòng ban" Binding="{Binding DepartmentName}" />
+                <DataGridTextColumn Header="Chức vụ" Binding="{Binding PositionName}" />
+            </DataGrid.Columns>
+
+            <!-- Phần chi tiết khi click vào 1 user -->
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <DataGrid ItemsSource="{Binding Checkins}"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              HeadersVisibility="Column"
+              FontSize="14"
+              RowHeaderWidth="0"
+              Margin="0"
+              HorizontalAlignment="Stretch"
+              ColumnWidth="*"
+              MinHeight="100"
+              Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Hành động" Width="100"  
+                                            Visibility="{Binding Source={StaticResource AppStateProvider},
+                                            Converter={StaticResource RoleToVisibilityConverter},
+                                            ConverterParameter='SystemAdmin,Employee'}">           
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding CheckinId}"/>-->
+                                            <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding CheckinId}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="Ngày chấm công" Binding="{Binding CreatedDate}" Width="*" />
+                            <DataGridTextColumn Header="Nội dung" Binding="{Binding Note}" Width="*" />
+                            <DataGridTextColumn Header="Số ngày đi làm" Binding="{Binding DaysWorked}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
         </DataGrid>
         <Button x:Name="AddPayrollBtn" Content="Thêm chấm công" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPayroll" FontWeight="Bold"/>
         <!--<Button x:Name="AddAllPayrollBtn" Content="Chấm công tất cả" HorizontalAlignment="Left" Height="35" Margin="200,59,0,0" VerticalAlignment="Top" Width="170" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPayrollAll" FontWeight="Bold"/>-->
@@ -56,17 +115,32 @@
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0" >
             <ComboBox x:Name="cbCompany" Width="200" Height="41" Margin="5,0"
-                      FontSize="15" Padding="10,0"
-                      IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
-                      KeyUp="cbCompany_KeyUp"
-                      DisplayMemberPath="Name"
-                      SelectedValuePath="CompanyId"
-                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                      SelectionChanged="cbCompany_SelectionChanged" Text="Nhập tên công ty"/>
-            <Grid HorizontalAlignment="Center" Width="200">
-                <ComboBox x:Name="cbDay" HorizontalAlignment="Left" Margin="0,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbDay_SelectionChanged"/>
-                <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="60,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
-                <ComboBox x:Name="cbYear" HorizontalAlignment="Left" Margin="120,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbYear_SelectionChanged"/>
+                  FontSize="15" Padding="10,0"
+                  IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+                  KeyUp="cbCompany_KeyUp"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="CompanyId"
+                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                  SelectionChanged="cbCompany_SelectionChanged" Text="Nhập tên công ty"/>
+            <ComboBox x:Name="cbDepartment" Width="200" Height="41" Margin="5,0"
+                  FontSize="15" Padding="10,0"
+                  IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+                  KeyUp="cbDepartment_KeyUp"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="DepartmentId"
+                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                  SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban"/>
+            <ComboBox x:Name="cbPosition" Width="200" Height="41" Margin="5,0"
+                  FontSize="15" Padding="10,0"
+                  IsEditable="True" StaysOpenOnEdit="True" IsTextSearchEnabled="False"
+                  KeyUp="cbPosition_KeyUp"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="PositionId"
+                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                  SelectionChanged="cbPosition_SelectionChanged" Text="Nhập tên chức vụ"/>
+            <Grid HorizontalAlignment="Center" Width="120">
+                <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="0,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
+                <ComboBox x:Name="cbYear" HorizontalAlignment="Left" Margin="60,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbYear_SelectionChanged"/>
             </Grid>
         </StackPanel>
     </Grid>

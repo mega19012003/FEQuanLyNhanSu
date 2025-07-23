@@ -110,6 +110,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             try
             {
                 btnUpdate.IsEnabled = false;
+                btnExit.IsEnabled = false;
 
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
@@ -166,6 +167,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             finally
             {
                 btnUpdate.IsEnabled = true;
+                btnExit.IsEnabled = true;
             }
         }
 
