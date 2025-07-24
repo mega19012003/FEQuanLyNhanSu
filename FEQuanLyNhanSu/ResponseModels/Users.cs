@@ -18,7 +18,6 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string CompanyName { get; set; }
             public string DepartmentName { get; set; }
             public string PositionName { get; set; }
-            public double? SalaryPerHour { get; set; }
             public bool IsActive { get; set; } 
             public string ImageUrl { get; set; }
             public int CompletedDuties { get; set; }

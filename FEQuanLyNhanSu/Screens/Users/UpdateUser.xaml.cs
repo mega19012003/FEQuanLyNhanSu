@@ -472,14 +472,14 @@ namespace FEQuanLyNhanSu.Screens.Users
                     MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
                     return;
                 }
-                if (!string.IsNullOrWhiteSpace(txtSalary.Text))
-                {
-                    if (!int.TryParse(txtSalary.Text, out var salary) || salary < 0)
-                    {
-                        MessageBox.Show("Vui lòng nhập lương cơ bản hợp lệ.");
-                        return;
-                    }
-                }
+                //if (!string.IsNullOrWhiteSpace(txtSalary.Text))
+                //{
+                //    if (!int.TryParse(txtSalary.Text, out var salary) || salary < 0)
+                //    {
+                //        MessageBox.Show("Vui lòng nhập lương cơ bản hợp lệ.");
+                //        return;
+                //    }
+                //}
 
                 if (!string.IsNullOrWhiteSpace(txtPhoneNo.Text))
                 {
@@ -497,7 +497,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     { new StringContent(txtPhoneNo.Text), "PhoneNumber" },
                     { new StringContent(txtAddress.Text), "Address" },
                     { new StringContent(roleType.ToString()), "Role" },
-                    { new StringContent(txtSalary.Text), "SalaryPerHour" },
+                    //{ new StringContent(txtSalary.Text), "SalaryPerHour" },
                     { new StringContent(txtImage.Text), "ImageUrl" },
                     { new StringContent(chkIsActive.IsChecked == true ? "true" : "false"), "IsActive" } 
                 };
