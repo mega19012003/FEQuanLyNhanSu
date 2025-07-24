@@ -1,4 +1,5 @@
-﻿using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
+﻿using System.Collections.ObjectModel;
+using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
 using static FEQuanLyNhanSu.Services.Checkins;
 
 namespace FEQuanLyNhanSu.ResponseModels
@@ -8,6 +9,7 @@ namespace FEQuanLyNhanSu.ResponseModels
         public class PayrollResultDto
         {
             public Guid Id { get; set; }
+            public Guid UserId { get; set; }
             public string Name { get; set; }
             //public double Salary { get; set; }
             public DateTime CreatedDate { get; set; }
@@ -27,7 +29,7 @@ namespace FEQuanLyNhanSu.ResponseModels
             public string? PhoneNumber { get; set; }
             public string? Address { get; set; }
             public string ImageUrl { get; set; }
-            public List<PayrollResultDto> Payrolls { get; set; } = new List<PayrollResultDto>();
+            public ObservableCollection<PayrollResultDto> Payrolls { get; set; } = new ObservableCollection<PayrollResultDto>();
         }
     }
 }

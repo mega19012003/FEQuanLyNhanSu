@@ -50,7 +50,7 @@ namespace FEQuanLyNhanSu.Helpers
                     var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
                     var errorData = apiResponse?.Data ?? errorJson ?? "Có lỗi xảy ra";
                     //MessageBox.Show($"{url}");
-                    //MessageBox.Show($"Lỗi phân trang: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Lỗi phân trang: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 

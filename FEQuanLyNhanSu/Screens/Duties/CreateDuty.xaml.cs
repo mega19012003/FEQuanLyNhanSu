@@ -46,15 +46,17 @@ namespace FEQuanLyNhanSu.Screens.Duties
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
+
+            HttpResponseMessage response;
+
             if (string.IsNullOrEmpty(keyword))
             {
-                await LoadUsers();
-                cbEmployee.SelectedItem = null; 
-                cbEmployee.IsDropDownOpen = true; 
+                response = await client.GetAsync(baseUrl); // không có query Search
             }
             else
             {
-                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+               /* var*/ 
+                response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
@@ -126,7 +128,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
                     {
                         new {
                             userId = selectedUser.UserId,
-                            description = txtDescription.Text?.Trim()
+                            description = txtDescription.Text?.Trim(),
                         }
                     }
                 };
@@ -143,16 +145,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
 
                 var response = await client.PostAsync($"{baseUrl}/api/Duty", content);
 
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    MessageBox.Show("Tạo công việc thành công!");
-                //    this.Close(); 
-                //}
-                //else
-                //{
-                //    var error = await response.Content.ReadAsStringAsync();
-                //    MessageBox.Show($"Tạo thất bại: {error}");
-                //}
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResult = await response.Content.ReadAsStringAsync();

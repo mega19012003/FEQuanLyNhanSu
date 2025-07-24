@@ -36,8 +36,18 @@
                       StaysOpenOnEdit="True"
                       IsTextSearchEnabled="False"
                       KeyUp="cbEmployee_KeyUp"
-                      DisplayMemberPath="Fullname"
-                      SelectedValuePath="UserId" VerticalContentAlignment="Center"/>
+                      DisplayMemberPath="{x:Null}"  
+                            SelectedValuePath="UserId"
+                      VerticalContentAlignment="Center">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <Image Source="{Binding ImageUrl}" Width="30" Height="30" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding Fullname}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
             <TextBox Grid.Row="1" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"

@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using static FEQuanLyNhanSu.ResponseModels.Companies;
 using static FEQuanLyNhanSu.ResponseModels.Departments;
@@ -26,9 +27,20 @@ namespace FEQuanLyNhanSu
     public partial class PageDuty : Page
     {
         private PaginationHelper<DutyResultDto> _paginationHelper;
+        private DispatcherTimer _debounceTimer;
+
         public PageDuty()
         {
             InitializeComponent();
+            _debounceTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(600)
+            };
+            _debounceTimer.Tick += async (s, e) =>
+            {
+                _debounceTimer.Stop(); // Dừng timer để tránh gọi lặp
+                await FilterAsync();
+            };
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadDuty();
             LoadDateComboboxes();
@@ -249,11 +261,17 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tìm kiếm công ty: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
-        private async void cbDay_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
-        private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
-        private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
-        private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
+        private void cbDay_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
+        private void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
+        private void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
+        private void txtTextChanged(object sender, TextChangedEventArgs e) => _debounceTimerRestart();
+        private void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
+
+        private void _debounceTimerRestart()
+        {
+            _debounceTimer.Stop();
+            _debounceTimer.Start();
+        }
 
 
         /// Pagination
@@ -365,7 +383,6 @@ namespace FEQuanLyNhanSu
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Xóa công việc thành công.");
-                LoadDuty();
             }
             else
             {
@@ -452,7 +469,7 @@ namespace FEQuanLyNhanSu
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Xóa chi tiết công việc thành công.");
-                LoadDuty();
+                //LoadDuty();
             }
             else
             {

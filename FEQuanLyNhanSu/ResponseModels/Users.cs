@@ -23,6 +23,11 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string ImageUrl { get; set; }
             public int CompletedDuties { get; set; }
             public int InProgressDuties { get; set; }
+            public override string ToString()
+            {
+                return Fullname;
+            }
+
         }
         public class UserResultDetailDto
         {

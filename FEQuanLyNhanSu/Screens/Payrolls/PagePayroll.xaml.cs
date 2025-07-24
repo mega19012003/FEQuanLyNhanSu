@@ -582,24 +582,33 @@ namespace FEQuanLyNhanSu
         private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
 
-
-        private void OnPayrollCreated(Payrolls.PayrollResultDto newDept)
+        private void OnPayrollCreated(Payrolls.PayrollResultDto newPayroll)
         {
-            if (newDept != null)
+            if (newPayroll != null)
             {
-                var list = PayrollDtaGrid.ItemsSource as List<Payrolls.PayrollResultDto> ?? new List<Payrolls.PayrollResultDto>();
-                list.Insert(0, newDept);
-                PayrollDtaGrid.ItemsSource = null;
-                PayrollDtaGrid.ItemsSource = list;
+                var list = PayrollDtaGrid.ItemsSource as List<Payrolls.UserWithPayrollDto>;
+                if (list == null) return;
 
-                PayrollDtaGrid.SelectedItem = newDept;
-                PayrollDtaGrid.ScrollIntoView(newDept);
+                var user = list.FirstOrDefault(u => u.UserId == newPayroll.UserId);
+                if (user == null) return;
+
+                // Xóa bản cũ nếu cùng tháng/năm (nếu là cập nhật)
+                var existing = user.Payrolls.FirstOrDefault(p =>
+                    p.CreatedDate.Month == newPayroll.CreatedDate.Month &&
+                    p.CreatedDate.Year == newPayroll.CreatedDate.Year);
+
+                if (existing != null)
+                    user.Payrolls.Remove(existing);
+
+                user.Payrolls.Insert(0, newPayroll); // Thêm payroll mới vào đầu danh sách (của user đó)
+
+                PayrollDtaGrid.Items.Refresh(); // Cập nhật hiển thị
             }
         }
         private void AddPayroll(object sender, RoutedEventArgs e)
         {
             var window = new CreatePayroll(OnPayrollCreated);
-            window.Show();
+            window.ShowDialog();
         }
 
         private async void btnDelete_Click(object sender, RoutedEventArgs e)

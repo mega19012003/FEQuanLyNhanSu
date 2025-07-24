@@ -1,6 +1,7 @@
 ﻿using FEQuanLyNhanSu.Enums;
 using FEQuanLyNhanSu.Models;
 using System;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
 
@@ -11,6 +12,7 @@ namespace FEQuanLyNhanSu.Services
         public class CheckinResultDto
         {
             public Guid CheckinId { get; set; }
+            public Guid UserId { get; set; }
             public string Name { get; set; }
             public DateTime CheckinTime { get; set; }
             public DateTime CheckoutTime { get; set; }
@@ -32,7 +34,7 @@ namespace FEQuanLyNhanSu.Services
             public string? Address { get; set; }
             public string ImageUrl { get; set; }
 
-            public List<CheckinResultDto> Checkins { get; set; } = new List<CheckinResultDto>();
+            public ObservableCollection<CheckinResultDto> Checkins { get; set; } = new ObservableCollection<CheckinResultDto>();
         }
     }
 }

@@ -89,8 +89,21 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<ApiResponse<DutyDetailResultDto>>(json);
 
-                cbEmployee.Text = result.Data.Name;
+                //cbEmployee.Text = result.Data.Name;
                 txtDescription.Text = result.Data.Description;
+
+                await LoadUsers();  //  chờ trước khi set SelectedItem
+
+                var userList = cbEmployee.ItemsSource as List<UserResultDto>;
+                var selectedUser = userList?.FirstOrDefault(u => u.UserId == result.Data.UserId);
+                if (selectedUser != null)
+                {
+                    cbEmployee.SelectedItem = selectedUser;
+                }
+                else
+                {
+                    cbEmployee.Text = result.Data.Name; // fallback nếu user ko tìm thấy
+                }
             }
             else
             {

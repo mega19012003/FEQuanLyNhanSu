@@ -10,7 +10,6 @@ using EmployeeAPI.Models;
 
 namespace FEQuanLyNhanSu.Models.Users
 {
-    [Index(nameof(Username), IsUnique = true)]
     public class User //: BaseEntity
     {
         [Key]

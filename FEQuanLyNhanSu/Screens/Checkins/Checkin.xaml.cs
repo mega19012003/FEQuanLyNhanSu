@@ -150,15 +150,15 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
+                HttpResponseMessage response;
+
                 if (string.IsNullOrEmpty(keyword))
                 {
-                    await LoadUsers();
-                    cbEmployee.SelectedItem = null;
-                    cbEmployee.IsDropDownOpen = true;
+                    response = await client.GetAsync(baseUrl); // không có query Search
                 }
                 else
                 {
-                    var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                    /*var */response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync();

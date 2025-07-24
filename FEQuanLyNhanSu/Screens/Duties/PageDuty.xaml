@@ -42,6 +42,19 @@
                 <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}" Width="*" />
                 <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}" Width="*" />
                 <DataGridTextColumn Header="Người tạo" Binding="{Binding AssignedBy}" Width="*" />
+                <DataGridTemplateColumn Header="Ảnh" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Width="60" Height="60" Stretch="UniformToFill">
+                                <Image.Source>
+                                    <Binding Path="AssignImageUrl" 
+                                         TargetNullValue="pack://application:,,,/Assets/none.jpg"
+                                         FallbackValue="pack://application:,,,/Assets/user.png"/>
+                                </Image.Source>
+                            </Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridCheckBoxColumn Header="Đã hoàn thành" Binding="{Binding IsCompleted}" Width="*" />
             </DataGrid.Columns>
  
@@ -65,6 +78,19 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
+                                <DataGridTemplateColumn Header="Ảnh" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Width="60" Height="60" Stretch="UniformToFill">
+                                                <Image.Source>
+                                                    <Binding Path="UserImageUrl" 
+                                                         TargetNullValue="pack://application:,,,/Assets/none.jpg"
+                                                         FallbackValue="pack://application:,,,/Assets/user.png"/>
+                                                </Image.Source>
+                                            </Image>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTemplateColumn Header="Mô tả" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>

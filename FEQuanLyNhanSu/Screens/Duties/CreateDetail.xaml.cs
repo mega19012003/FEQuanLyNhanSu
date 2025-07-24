@@ -42,12 +42,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
         {
             string keyword = cbEmployee.Text.Trim();
-            if (string.IsNullOrEmpty(keyword))
-            {
-                cbEmployee.ItemsSource = null;
-                return;
-            }
-
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
 
@@ -55,7 +49,19 @@ namespace FEQuanLyNhanSu.Screens.Duties
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            //var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            HttpResponseMessage response;
+
+            if (string.IsNullOrEmpty(keyword))
+            {
+                response = await client.GetAsync(baseUrl); // không có query Search
+            }
+            else
+            {
+                response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            }
+
+
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
@@ -172,26 +178,13 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Tạo thất bại: {error}");
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    var apiResponseError = JsonConvert.DeserializeObject<ApiResponse<string>>(jsonResult);
+                    var errorData = apiResponseError?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Tạo chi tiết công việc thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //var error = await response.Content.ReadAsStringAsync();
+                    //MessageBox.Show($"Tạo thất bại: {error}");
                 }
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    var jsonResult = await response.Content.ReadAsStringAsync();
-                //    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DetailResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                //    if (apiResponse?.Data != null)
-                //    {
-                //        _onDetailUpdated?.Invoke(apiResponse.Data);
-                //    }
-
-                //    MessageBox.Show("Tạo công việc thành công.");
-                //    this.Close();
-                //}
-                //else
-                //{
-                //    MessageBox.Show("Tạo công việc thất bại.");
-                //}
             }
             catch (Exception ex)
             {

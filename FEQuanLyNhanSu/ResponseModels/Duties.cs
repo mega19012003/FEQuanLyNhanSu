@@ -1,4 +1,5 @@
 ﻿using FEQuanLyNhanSu.Models;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
@@ -15,9 +16,10 @@ namespace FEQuanLyNhanSu.ResponseModels
             public DateOnly EndDate { get; set; }
             public Guid AssignedById { get; set; }
             public string AssignedBy { get; set; }
+            public string AssignImageUrl { get; set; }
             public bool IsCompleted { get; set; }
             public bool IsDeleted { get; set; }
-            public List<DutyDetailResultDto> DutyDetails { get; set; } = new List<DutyDetailResultDto>();
+            public ObservableCollection<DutyDetailResultDto> DutyDetails { get; set; } = new ObservableCollection<DutyDetailResultDto>();
             public Guid CompanyId { get; set; }
             public string CompanyName { get; set; }
         }
@@ -26,6 +28,7 @@ namespace FEQuanLyNhanSu.ResponseModels
             public Guid DutyDetailId { get; set; }
             public Guid UserId { get; set; }
             public string Name { get; set; }
+            public string UserImageUrl { get; set; }
             public bool IsCompleted { get; set; }
             public string Description { get; set; }
         }

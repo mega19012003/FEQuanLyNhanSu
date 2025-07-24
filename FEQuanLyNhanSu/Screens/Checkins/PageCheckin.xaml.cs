@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -38,19 +39,22 @@ namespace FEQuanLyNhanSu
     public partial class PageCheckin : Page
     {
         private PaginationHelper<Checkins.UserWithCheckinsDto> _paginationHelper;
+        public ObservableCollection<CheckinResultDto> Checkins { get; set; } = new();
+        public ObservableCollection<UserWithCheckinsDto> UserList { get; set; } = new();
         public PageCheckin()
         {
             InitializeComponent();
+            CheckinDtaGrid.ItemsSource = UserList;
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadDateComboboxes();
         }
+
 
         private void HandleUI(string role)
         {
             switch (role)
             {
                 case "SystemAdmin":
-                    //DtaGridAction.Visibility = Visibility.Collapsed;
                     AddCheckinBtn.Visibility = Visibility.Collapsed;
                     AddCheckouBtn.Visibility = Visibility.Collapsed;
                     _ = LoadUserWithCheckin();
@@ -72,7 +76,6 @@ namespace FEQuanLyNhanSu
                     break;
                 case "Employee":
                     _ = LoadEmployeeWithCheckin();
-                    //DtaGridAction.Visibility = Visibility.Collapsed;
                     lblTitle.Text = "Chấm công";
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
@@ -582,15 +585,14 @@ namespace FEQuanLyNhanSu
 
         private void OnCheckinCreated(Checkins.CheckinResultDto newDept)
         {
-            if (newDept != null)
-            {
-                var list = CheckinDtaGrid.ItemsSource as List<Checkins.CheckinResultDto> ?? new List<Checkins.CheckinResultDto>();
-                list.Insert(0, newDept);
-                CheckinDtaGrid.ItemsSource = null;
-                CheckinDtaGrid.ItemsSource = list;
+            var list = CheckinDtaGrid.ItemsSource as List<UserWithCheckinsDto>;
+            if (list == null) return;
 
-                CheckinDtaGrid.SelectedItem = newDept;
-                CheckinDtaGrid.ScrollIntoView(newDept);
+            var user = list.FirstOrDefault(u => u.UserId == newDept.UserId);
+            if (user != null)
+            {
+                user.Checkins.Insert(0, newDept); // Thêm checkin mới vào đầu danh sách
+                CheckinDtaGrid.Items.Refresh();   // Cập nhật lại UI
             }
         }
         private void OnCheckinUpdated(Checkins.CheckinResultDto updatedDept)
@@ -614,12 +616,24 @@ namespace FEQuanLyNhanSu
                 CheckinDtaGrid.ScrollIntoView(updatedDept);
             }
         }
-        private void AddCheckinBtn_Click(object sender, RoutedEventArgs e)
+        private async void AddCheckinBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var window = new Checkin(OnCheckinCreated);
-                window.Show();
+                var window = new Checkin(checkin =>
+                {
+                    var list = CheckinDtaGrid.ItemsSource as List<UserWithCheckinsDto>;
+                    if (list == null) return;
+
+                    var user = list.FirstOrDefault(u => u.UserId == checkin.UserId);
+                    if (user != null)
+                    {
+                        user.Checkins.Insert(0, checkin); // chỉ thêm dữ liệu, không đẩy user lên đầu
+                        CheckinDtaGrid.Items.Refresh();
+                    }
+                });
+
+                window.ShowDialog();
             }
             catch (Exception ex)
             {
@@ -628,8 +642,30 @@ namespace FEQuanLyNhanSu
         }
         private void AddCheckouBtn_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Checkout(OnCheckinUpdated);
-            window.Show();
+            var window = new Checkout(checkout =>
+            {
+                var list = CheckinDtaGrid.ItemsSource as List<UserWithCheckinsDto>;
+                if (list == null) return;
+
+                var user = list.FirstOrDefault(u => u.UserId == checkout.UserId);
+                if (user != null)
+                {
+                    // Tìm bản ghi checkin cũ trong danh sách
+                    var existing = user.Checkins.FirstOrDefault(c => c.CheckinId == checkout.CheckinId);
+                    if (existing != null)
+                    {
+                        user.Checkins.Remove(existing); // Xóa dòng cũ
+                    }
+
+                    // Thêm dòng mới (đã có thông tin checkout)
+                    user.Checkins.Insert(0, checkout);
+
+                    // Làm mới UI
+                    CheckinDtaGrid.Items.Refresh();
+                }
+            });
+
+            window.ShowDialog();
         }
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {

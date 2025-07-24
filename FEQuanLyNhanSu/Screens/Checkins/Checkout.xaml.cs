@@ -69,7 +69,18 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            //var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            HttpResponseMessage response;
+
+            if (string.IsNullOrEmpty(keyword))
+            {
+                response = await client.GetAsync(baseUrl); // không có query Search
+            }
+            else
+            {
+                response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            }
+
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
@@ -146,6 +157,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                         //lblSalaryPerDay.Content = apiResponse.Data.SalaryPerDay.ToString("N0");
 
                         _onCheckoutCreated?.Invoke(apiResponse.Data);
+                       
                         MessageBox.Show("Checkin thành công.");
                     }
                     else
