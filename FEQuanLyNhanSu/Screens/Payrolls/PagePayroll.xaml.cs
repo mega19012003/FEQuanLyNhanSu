@@ -592,7 +592,7 @@ namespace FEQuanLyNhanSu
                 var user = list.FirstOrDefault(u => u.UserId == newPayroll.UserId);
                 if (user == null) return;
 
-                // Xóa bản cũ nếu cùng tháng/năm (nếu là cập nhật)
+                // Xóa bản cũ nếu cùng tháng/năm
                 var existing = user.Payrolls.FirstOrDefault(p =>
                     p.CreatedDate.Month == newPayroll.CreatedDate.Month &&
                     p.CreatedDate.Year == newPayroll.CreatedDate.Year);
@@ -600,9 +600,14 @@ namespace FEQuanLyNhanSu
                 if (existing != null)
                     user.Payrolls.Remove(existing);
 
-                user.Payrolls.Insert(0, newPayroll); // Thêm payroll mới vào đầu danh sách (của user đó)
+                user.Payrolls.Insert(0, newPayroll); // Thêm payroll mới vào đầu danh sách của user
 
-                PayrollDtaGrid.Items.Refresh(); // Cập nhật hiển thị
+                // Đẩy user lên đầu danh sách
+                list.Remove(user);
+                list.Insert(0, user);
+
+                PayrollDtaGrid.ItemsSource = null;
+                PayrollDtaGrid.ItemsSource = list; // reset lại ItemsSource để update UI
             }
         }
         private void AddPayroll(object sender, RoutedEventArgs e)

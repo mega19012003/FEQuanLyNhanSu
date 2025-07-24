@@ -628,8 +628,15 @@ namespace FEQuanLyNhanSu
                     var user = list.FirstOrDefault(u => u.UserId == checkin.UserId);
                     if (user != null)
                     {
-                        user.Checkins.Insert(0, checkin); // chỉ thêm dữ liệu, không đẩy user lên đầu
-                        CheckinDtaGrid.Items.Refresh();
+                        user.Checkins.Insert(0, checkin); // Thêm check-in mới
+
+                        // Đẩy user lên đầu danh sách
+                        list.Remove(user);
+                        list.Insert(0, user);
+
+                        // Cập nhật lại DataGrid
+                        CheckinDtaGrid.ItemsSource = null;
+                        CheckinDtaGrid.ItemsSource = list;
                     }
                 });
 
