@@ -56,11 +56,6 @@ namespace FEQuanLyNhanSu.Screens.Checkins
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
         {
             string keyword = cbEmployee.Text.Trim();
-            if (string.IsNullOrEmpty(keyword))
-            {
-                cbEmployee.ItemsSource = null;
-                return;
-            }
 
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
@@ -75,22 +70,22 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             if (string.IsNullOrEmpty(keyword))
             {
                 response = await client.GetAsync(baseUrl); // không có query Search
-            }
-            else
-            {
-                response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
-            }
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
-                cbEmployee.ItemsSource = result.Data.Items;
                 cbEmployee.IsDropDownOpen = true;
             }
             else
             {
-                cbEmployee.ItemsSource = null;
+                response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
+                    cbEmployee.ItemsSource = result.Data.Items;
+                    //cbEmployee.IsDropDownOpen = true;
+                }
+                else
+                {
+                    cbEmployee.ItemsSource = null;
+                }
             }
         }
 

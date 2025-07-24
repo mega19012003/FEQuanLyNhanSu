@@ -155,6 +155,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 if (string.IsNullOrEmpty(keyword))
                 {
                     response = await client.GetAsync(baseUrl); // không có query Search
+                    cbEmployee.IsDropDownOpen = true;
                 }
                 else
                 {

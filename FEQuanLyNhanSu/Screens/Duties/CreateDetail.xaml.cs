@@ -55,6 +55,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             if (string.IsNullOrEmpty(keyword))
             {
                 response = await client.GetAsync(baseUrl); // không có query Search
+                cbEmployee.IsDropDownOpen = true;
             }
             else
             {
@@ -67,7 +68,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
                 cbEmployee.ItemsSource = result.Data.Items;
-                cbEmployee.IsDropDownOpen = true;
+                //cbEmployee.IsDropDownOpen = true;
             }
             else
             {

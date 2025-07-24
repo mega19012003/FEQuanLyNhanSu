@@ -52,6 +52,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             if (string.IsNullOrEmpty(keyword))
             {
                 response = await client.GetAsync(baseUrl); // không có query Search
+                cbEmployee.IsDropDownOpen = true;
             }
             else
             {

@@ -40,11 +40,6 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
         {
             string keyword = cbEmployee.Text.Trim();
-            if (string.IsNullOrEmpty(keyword))
-            {
-                cbEmployee.ItemsSource = null;
-                return;
-            }
 
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
@@ -53,7 +48,19 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            //var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            HttpResponseMessage response;
+
+            if (string.IsNullOrEmpty(keyword))
+            {
+                response = await client.GetAsync(baseUrl); // không có query Search
+                cbEmployee.IsDropDownOpen = true;
+            }
+            else
+            {
+                response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            }
+
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
@@ -77,17 +84,7 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            //var response = await client.GetAsync(baseUrl);
-            HttpResponseMessage response;
-
-            if (string.IsNullOrEmpty(keyword))
-            {
-                response = await client.GetAsync(baseUrl); // không có query Search
-            }
-            else
-            {
-                response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
-            }
+            var response = await client.GetAsync(baseUrl);
 
             if (response.IsSuccessStatusCode)
             {
@@ -95,6 +92,7 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
 
                 cbEmployee.ItemsSource = result.Data.Items;
+                cbEmployee.IsDropDownOpen = true;
             }
             else
             {
