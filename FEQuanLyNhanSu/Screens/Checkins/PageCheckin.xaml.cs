@@ -222,7 +222,7 @@ namespace FEQuanLyNhanSu
         private async Task LoadEmployeeWithCheckin()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/Checkin";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin";
             int pageSize = 20;
 
             _paginationHelper = new PaginationHelper<Checkins.UserWithCheckinsDto>(
