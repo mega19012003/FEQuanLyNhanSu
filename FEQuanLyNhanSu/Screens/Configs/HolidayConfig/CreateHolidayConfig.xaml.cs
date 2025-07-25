@@ -32,14 +32,12 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             InitializeComponent();
             _onHolidayCreated = onCreated;
         }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if(MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
             this.Close();
         }
-
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;

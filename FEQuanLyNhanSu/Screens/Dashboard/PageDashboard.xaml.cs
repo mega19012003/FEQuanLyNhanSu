@@ -25,7 +25,6 @@ namespace FEQuanLyNhanSu.Screens.Dashboard
             this.DataContext = this;
             LoadDashboard();
         }
-
         private void HandleUI(string role)
         {
             switch (role)
@@ -39,7 +38,6 @@ namespace FEQuanLyNhanSu.Screens.Dashboard
                     break;
             }
         }
-
         private async void LoadDashboard()
         {
             try
@@ -76,7 +74,6 @@ namespace FEQuanLyNhanSu.Screens.Dashboard
                 MessageBox.Show($"Lỗi: {ex.Message}");
             }
         }
-
     }
 }
 

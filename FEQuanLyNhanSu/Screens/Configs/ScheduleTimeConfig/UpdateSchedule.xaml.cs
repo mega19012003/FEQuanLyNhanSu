@@ -36,7 +36,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
             _currentScheduleTime = currentScheduleTime;
             LoadScheduleTime();
         }
-
         public async void LoadScheduleTime()
         {
             try
@@ -82,7 +81,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                 MessageBox.Show($"Lỗi khi tải cấu hình thời gian: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             btnUpdate.IsEnabled = false;
@@ -143,8 +141,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig
                 btnExit.IsEnabled = true;
             }
         }
-
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)

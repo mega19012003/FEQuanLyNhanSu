@@ -94,7 +94,6 @@ namespace FEQuanLyNhanSu.Screens.Users
                 MessageBox.Show($"Lỗi: {ex.Message}");
             }
         }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
@@ -103,7 +102,6 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
             this.Close();
         }
-
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
 
@@ -170,7 +168,6 @@ namespace FEQuanLyNhanSu.Screens.Users
                 btnExit.IsEnabled = true;
             }
         }
-
         private void btnSelectImage_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog { Title = "Chọn ảnh", Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp" };

@@ -33,7 +33,6 @@ namespace FEQuanLyNhanSu.Screens.Configs
             InitializeComponent();
             _onIPConfigCreated = onCreated;
         }
-
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;
@@ -99,8 +98,6 @@ namespace FEQuanLyNhanSu.Screens.Configs
                 btnExit.IsEnabled = true;
             }
         }
-
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)

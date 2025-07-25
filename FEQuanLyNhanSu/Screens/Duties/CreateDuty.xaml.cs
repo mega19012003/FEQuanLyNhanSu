@@ -32,10 +32,34 @@ namespace FEQuanLyNhanSu.Screens.Duties
         public CreateDuty(Action<DutyResultDto> onDutyCreated)
         {
             InitializeComponent();
-            LoadUsers();
+            _ = LoadUsers();
             _onDutyCreated = onDutyCreated;
         }
+        private async Task LoadUsers()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
 
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync(baseUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
+
+                cbEmployee.ItemsSource = result.Data.Items;
+            }
+            else
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
         {
             string keyword = cbEmployee.Text.Trim();
@@ -72,33 +96,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 }
             }
         }
-
-        private async Task LoadUsers()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.GetAsync(baseUrl);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
-
-                cbEmployee.ItemsSource = result.Data.Items;
-            }
-            else
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;
@@ -177,7 +174,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 btnExit.IsEnabled = true;
             }
         }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)

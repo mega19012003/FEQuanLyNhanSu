@@ -58,66 +58,6 @@ namespace FEQuanLyNhanSu
                     break;
             }
         }
-
-
-        // btnAdd_Click
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
-        {
-            var window = new CreateDepartment(OnDepartmentCreated);
-            window.Show();
-        }
-        private void OnDepartmentCreated(Departments.DepartmentResultDto newComp)
-        {
-            if (newComp != null)
-            {
-                var list = DprtmtDtaGrid.ItemsSource as List<Departments.DepartmentResultDto> ?? new List<Departments.DepartmentResultDto>();
-                list.Insert(0, newComp); 
-                DprtmtDtaGrid.ItemsSource = null;
-                DprtmtDtaGrid.ItemsSource = list;
-
-                DprtmtDtaGrid.SelectedItem = newComp;
-                DprtmtDtaGrid.ScrollIntoView(newComp);
-            }
-        }
-
-
-        //Update
-        private void OnDepartmentUpdated(Departments.DepartmentResultDto updatedComp)
-        {
-            if (updatedComp != null)
-            {
-                var list = DprtmtDtaGrid.ItemsSource as List<Departments.DepartmentResultDto> ?? new List<Departments.DepartmentResultDto>();
-
-                // Xoá phòng ban cũ có cùng Id
-                var existing = list.FirstOrDefault(d => d.DepartmentId == updatedComp.DepartmentId);
-                if (existing != null)
-                {
-                    list.Remove(existing);
-                }
-
-                // Thêm mới lên đầu
-                list.Insert(0, updatedComp);
-
-                // Cập nhật lại ItemsSource
-                DprtmtDtaGrid.ItemsSource = null;
-                DprtmtDtaGrid.ItemsSource = list;
-
-                // Highlight dòng vừa update
-                DprtmtDtaGrid.SelectedItem = updatedComp;
-                DprtmtDtaGrid.ScrollIntoView(updatedComp);
-            }
-        }
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            if (button?.Tag is Guid DepartmentId)
-            {
-                var editWindow = new UpdateDepartment(DepartmentId, OnDepartmentUpdated);
-                editWindow.ShowDialog();
-            }
-        }
-
-
         //Load Department List
         private void LoadDepartment()
         {
@@ -164,8 +104,60 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
+        // btnAdd_Click
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new CreateDepartment(OnDepartmentCreated);
+            window.Show();
+        }
+        private void OnDepartmentCreated(Departments.DepartmentResultDto newComp)
+        {
+            if (newComp != null)
+            {
+                var list = DprtmtDtaGrid.ItemsSource as List<Departments.DepartmentResultDto> ?? new List<Departments.DepartmentResultDto>();
+                list.Insert(0, newComp); 
+                DprtmtDtaGrid.ItemsSource = null;
+                DprtmtDtaGrid.ItemsSource = list;
 
+                DprtmtDtaGrid.SelectedItem = newComp;
+                DprtmtDtaGrid.ScrollIntoView(newComp);
+            }
+        }
+        //Update
+        private void OnDepartmentUpdated(Departments.DepartmentResultDto updatedComp)
+        {
+            if (updatedComp != null)
+            {
+                var list = DprtmtDtaGrid.ItemsSource as List<Departments.DepartmentResultDto> ?? new List<Departments.DepartmentResultDto>();
 
+                // Xoá phòng ban cũ có cùng Id
+                var existing = list.FirstOrDefault(d => d.DepartmentId == updatedComp.DepartmentId);
+                if (existing != null)
+                {
+                    list.Remove(existing);
+                }
+
+                // Thêm mới lên đầu
+                list.Insert(0, updatedComp);
+
+                // Cập nhật lại ItemsSource
+                DprtmtDtaGrid.ItemsSource = null;
+                DprtmtDtaGrid.ItemsSource = list;
+
+                // Highlight dòng vừa update
+                DprtmtDtaGrid.SelectedItem = updatedComp;
+                DprtmtDtaGrid.ScrollIntoView(updatedComp);
+            }
+        }
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Guid DepartmentId)
+            {
+                var editWindow = new UpdateDepartment(DepartmentId, OnDepartmentUpdated);
+                editWindow.ShowDialog();
+            }
+        }
         //Search
         private async Task FilterAsync()
         {
@@ -287,8 +279,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tìm kiếm chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
         //Delete
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
@@ -322,8 +312,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Không thể xóa phòng ban: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
         //Pagination
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {

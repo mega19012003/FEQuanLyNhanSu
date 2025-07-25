@@ -36,8 +36,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
             InitializeComponent();
             _onCreated = onCreated;
         }
-
-
         private void btnSelectImage_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog { Title = "Chọn ảnh", Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp" };
@@ -55,16 +53,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 _imagePath = dialog.FileName;
             }
         }
-
-        private void btnExit_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            {
-                return;
-            }
-            this.Close();
-        }
-
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;
@@ -123,6 +111,14 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 btnCreate.IsEnabled = true;
                 btnExit.IsEnabled = true;
             }
+        }
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            {
+                return;
+            }
+            this.Close();
         }
     }
 }

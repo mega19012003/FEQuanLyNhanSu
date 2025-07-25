@@ -36,14 +36,12 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
             _onHolidayUpdated = onUpdated;
             LoadHolidayConfig();
         }
-
         private HttpClient CreateAuthorizedClient(string token)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             return client;
         }
-
         private async void LoadHolidayConfig()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -72,7 +70,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
                 MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             btnUpdate.IsEnabled = false;
@@ -134,7 +131,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.HolidayConfig
                 btnExit.IsEnabled = true;
             }
         }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)

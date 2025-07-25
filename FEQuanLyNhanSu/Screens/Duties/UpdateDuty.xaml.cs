@@ -36,7 +36,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             InitializeComponent();
             _dutyId = dutyId;
             _onDutyUpdated = onDutyUpdated;
-            LoadDutyAsync();
+            _ = LoadDutyAsync();
         }
 
         private HttpClient CreateAuthorizedClient(string token)
@@ -75,7 +75,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
             }
 
         }
-
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;
@@ -138,7 +137,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 btnExit.IsEnabled = true;
             }
         }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)

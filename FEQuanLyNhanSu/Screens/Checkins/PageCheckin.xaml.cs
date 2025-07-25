@@ -39,7 +39,7 @@ namespace FEQuanLyNhanSu
     public partial class PageCheckin : Page
     {
         private PaginationHelper<Checkins.UserWithCheckinsDto> _paginationHelper;
-        public ObservableCollection<CheckinResultDto> Checkins { get; set; } = new();
+        //public ObservableCollection<CheckinResultDto> Checkins { get; set; } = new();
         public ObservableCollection<UserWithCheckinsDto> UserList { get; set; } = new();
         public PageCheckin()
         {
@@ -48,7 +48,6 @@ namespace FEQuanLyNhanSu
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadDateComboboxes();
         }
-
 
         private void HandleUI(string role)
         {
@@ -387,39 +386,39 @@ namespace FEQuanLyNhanSu
                 cbDepartment.ItemsSource = null;
             }
         }
-        private async Task LoadPositionByCompanyAsync()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+        //private async Task LoadPositionByCompanyAsync()
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
 
-            Guid? companyId = null;
-            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
-                companyId = selectedComp.CompanyId;
+        //    Guid? companyId = null;
+        //    if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
+        //        companyId = selectedComp.CompanyId;
 
-            string url = baseUrl;
-            if (companyId.HasValue)
-            {
-                url += $"?companyId={companyId.Value}";
-            }
+        //    string url = baseUrl;
+        //    if (companyId.HasValue)
+        //    {
+        //        url += $"?companyId={companyId.Value}";
+        //    }
 
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        //    using var client = new HttpClient();
+        //    client.DefaultRequestHeaders.Authorization =
+        //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                cbPosition.ItemsSource = result?.Data?.Items;
-                if (result?.Data?.Items?.Any() == true)
-                    cbPosition.SelectedItem = result.Data.Items.First();
-            }
-            else
-            {
-                cbPosition.ItemsSource = null;
-            }
-        }
+        //    var response = await client.GetAsync(url);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var json = await response.Content.ReadAsStringAsync();
+        //        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+        //        cbPosition.ItemsSource = result?.Data?.Items;
+        //        if (result?.Data?.Items?.Any() == true)
+        //            cbPosition.SelectedItem = result.Data.Items.First();
+        //    }
+        //    else
+        //    {
+        //        cbPosition.ItemsSource = null;
+        //    }
+        //}
         private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
         {
             try
@@ -583,18 +582,18 @@ namespace FEQuanLyNhanSu
         private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
 
-        private void OnCheckinCreated(Checkins.CheckinResultDto newDept)
-        {
-            var list = CheckinDtaGrid.ItemsSource as List<UserWithCheckinsDto>;
-            if (list == null) return;
+        //private void OnCheckinCreated(Checkins.CheckinResultDto newDept)
+        //{
+        //    var list = CheckinDtaGrid.ItemsSource as List<UserWithCheckinsDto>;
+        //    if (list == null) return;
 
-            var user = list.FirstOrDefault(u => u.UserId == newDept.UserId);
-            if (user != null)
-            {
-                user.Checkins.Insert(0, newDept); // Thêm checkin mới vào đầu danh sách
-                CheckinDtaGrid.Items.Refresh();   // Cập nhật lại UI
-            }
-        }
+        //    var user = list.FirstOrDefault(u => u.UserId == newDept.UserId);
+        //    if (user != null)
+        //    {
+        //        user.Checkins.Insert(0, newDept); // Thêm checkin mới vào đầu danh sách
+        //        CheckinDtaGrid.Items.Refresh();   // Cập nhật lại UI
+        //    }
+        //}
         private void OnCheckinUpdated(Checkins.CheckinResultDto updatedDept)
         {
             if (updatedDept != null)

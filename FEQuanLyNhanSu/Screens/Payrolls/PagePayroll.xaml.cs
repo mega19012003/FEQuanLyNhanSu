@@ -233,7 +233,6 @@ namespace FEQuanLyNhanSu
             cbMonth.SelectedIndex = DateTime.Now.Month;
             cbYear.SelectedIndex = years.IndexOf(currentYear.ToString());
         }
-        
         private async Task FilterAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -304,7 +303,6 @@ namespace FEQuanLyNhanSu
                 return new List<UserWithPayrollDto>();
             }
         }
-
         private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await LoadDepartmentByCompanyAsync();

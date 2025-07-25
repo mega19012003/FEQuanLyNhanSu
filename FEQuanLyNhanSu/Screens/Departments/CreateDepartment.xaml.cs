@@ -31,8 +31,6 @@ namespace FEQuanLyNhanSu.Screens.Departments
             InitializeComponent();
             _onDepartmentCreated = onCreated;
         }
-
-
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;
@@ -96,7 +94,6 @@ namespace FEQuanLyNhanSu.Screens.Departments
                 btnExit.IsEnabled = true;
             }
         }
-
         //Exit
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {

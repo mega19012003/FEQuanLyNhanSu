@@ -26,22 +26,104 @@ namespace FEQuanLyNhanSu.Screens.Positions
         {
             InitializeComponent();
             _onPositionCreated = onCreated;
-
             Authorize(Application.Current.Properties["UserRole"]?.ToString());
-            //if (role == "Manager")
-            //{
-            //    cmbDepartment.Visibility = Visibility.Collapsed;
-            //    txtDepartment.Visibility = Visibility.Hidden;
-            //}
-            //else if (role == "Administrator")
-            //{
-            //    // Chỉ Admin mới được gọi API lấy danh sách phòng ban
-            //    _ = LoadDepartmentsAsync();
-            //}
-
             HandleManagerUI();
         }
+        private void HandleManagerUI()
+        {
+            var role = Application.Current.Properties["UserRole"]?.ToString();
+            if (role == "Manager")
+            {
+                cbDepartment.Visibility = Visibility.Collapsed;
+            }
+        }
+        private void Authorize(string role)
+        {
+            if (role == "Manager")
+            {
+                cbDepartment.Visibility = Visibility.Collapsed;
+                txtDepartment.Visibility = Visibility.Hidden;
+            }
+            else if (role == "Administrator")
+            {
+                // Chỉ Admin mới được gọi API lấy danh sách phòng ban
+                _ = LoadDepartmentsAsync();
+            }
+        }
+        private async Task LoadDepartmentsAsync()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
 
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var url = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+                var response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+
+                    cbDepartment.ItemsSource = apiResult.Data.Items;
+                    cbDepartment.DisplayMemberPath = "Name";
+                    cbDepartment.SelectedValuePath = "DepartmentId";
+                }
+                else
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Không thể tải danh sách phòng ban: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+        private async void cbDepartment_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                //var comboBox = sender as ComboBox;
+                //if (comboBox?.Text == null)
+                //{
+                //    cbDepartment.ItemsSource = null;
+                //    return;
+                //}
+
+                //var keyword = comboBox.Text.Trim();
+                //if (keyword == "")
+                //{
+                //    cbDepartment.ItemsSource = null;
+                //    return;
+                //}
+                var keyword = cbDepartment.Text.Trim();
+
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                    cbDepartment.ItemsSource = result.Data.Items;
+                    cbDepartment.IsDropDownOpen = true;
+                }
+                else
+                {
+                    cbDepartment.ItemsSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             btnExit.IsEnabled = false;
@@ -118,112 +200,12 @@ namespace FEQuanLyNhanSu.Screens.Positions
                 btnExit.IsEnabled = true;
             }
         }
-
-        private void Authorize(string role)
-        {
-            if (role == "Manager")
-            {
-                cbDepartment.Visibility = Visibility.Collapsed;
-                txtDepartment.Visibility = Visibility.Hidden;
-            }
-            else if (role == "Administrator")
-            {
-                // Chỉ Admin mới được gọi API lấy danh sách phòng ban
-                _ = LoadDepartmentsAsync();
-            }
-        }
-
-        private void HandleManagerUI()
-        {
-            var role = Application.Current.Properties["UserRole"]?.ToString();
-            if (role == "Manager")
-            {
-                cbDepartment.Visibility = Visibility.Collapsed;
-            }
-        }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return;
 
             this.Close();
-        }
-
-        private async void cbDepartment_KeyUp(object sender, KeyEventArgs e)
-        {
-            try
-            {
-                //var comboBox = sender as ComboBox;
-                //if (comboBox?.Text == null)
-                //{
-                //    cbDepartment.ItemsSource = null;
-                //    return;
-                //}
-
-                //var keyword = comboBox.Text.Trim();
-                //if (keyword == "")
-                //{
-                //    cbDepartment.ItemsSource = null;
-                //    return;
-                //}
-                var keyword = cbDepartment.Text.Trim();
-
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
-
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                    cbDepartment.ItemsSource = result.Data.Items;
-                    cbDepartment.IsDropDownOpen = true;
-                }
-                else
-                {
-                    cbDepartment.ItemsSource = null;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private async Task LoadDepartmentsAsync()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var url = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
-                var response = await client.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-
-                    cbDepartment.ItemsSource = apiResult.Data.Items;
-                    cbDepartment.DisplayMemberPath = "Name";
-                    cbDepartment.SelectedValuePath = "DepartmentId";
-                }
-                else
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                    MessageBox.Show($"Không thể tải danh sách phòng ban: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
         }
     }
 }

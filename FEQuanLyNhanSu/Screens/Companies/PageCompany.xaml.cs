@@ -31,15 +31,12 @@ namespace FEQuanLyNhanSu.Screens.Companies
             InitializeComponent();
             LoadCompany();
         }
-
-
         // btnAdd_Click
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             var window = new CreateCompany(OnCompanyCreated);
             window.Show();
         }
-
         private void OnCompanyCreated(CompanyResultDto newComp)
         {
             if (newComp != null)
@@ -53,7 +50,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 CompDtaGrid.ScrollIntoView(newComp);
             }
         }
-
         private void OnCompanyUpdated(CompanyResultDto UpdatedComp)
         {
             if (UpdatedComp != null)
@@ -85,7 +81,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 editWindow.ShowDialog();
             }
         }
-
         //Load Company List
         private void LoadCompany()
         {
@@ -109,7 +104,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 MessageBox.Show($"Lỗi khi tải dữ liệu phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         //Search
         private async void txtTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -124,9 +118,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 CompDtaGrid.ItemsSource = result;
             }
         }
-
-
-
         //Delete
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
@@ -159,7 +150,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 MessageBox.Show($"Không thể xóa phòng ban: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         //Pagination
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {

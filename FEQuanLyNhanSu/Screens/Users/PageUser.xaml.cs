@@ -72,8 +72,7 @@ namespace FEQuanLyNhanSu
                     break;
             }
         }
-
-
+        
         private void LoadDateComboboxes()
         {
 
@@ -358,12 +357,10 @@ namespace FEQuanLyNhanSu
                 return new List<UserResultDto>();
             }
         }
-        
         private async void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             await FilterAsync();
         }
-        
         private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await LoadDepartmentByCompanyAsync();
@@ -375,7 +372,6 @@ namespace FEQuanLyNhanSu
             await LoadPositionsByDepartmentAsync();
             await FilterAsync();
         }
-        
         private async void cbPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await FilterAsync();
@@ -480,6 +476,7 @@ namespace FEQuanLyNhanSu
                 cbPosition.ItemsSource = null;
             }
         }      
+        
         private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
         {
             try
@@ -520,7 +517,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        
         private async void cbDepartment_KeyUp(object sender, KeyEventArgs e)
         {
             try
@@ -571,7 +567,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        
         private async void cbPosition_KeyUp(object sender, KeyEventArgs e)
         {
             try
@@ -641,8 +636,6 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        
-        
         private void OnUserCreated(Users.UserResultDto newDept)
         {
             if (newDept != null)
@@ -656,7 +649,6 @@ namespace FEQuanLyNhanSu
                 UserDtaGrid.ScrollIntoView(newDept);
             }
         }
-        
         private void OnUserUpdated(Users.UserResultDto updatedUser)
         {
             if (updatedUser != null)
@@ -745,7 +737,6 @@ namespace FEQuanLyNhanSu
         }
 
         /// Delete 
-        
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -758,7 +749,6 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-        
         private async Task DeleteUserAsync(Guid userId)
         {
             try
@@ -792,17 +782,14 @@ namespace FEQuanLyNhanSu
         }
 
         /// Pagination
-        
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.PrevPageAsync();
         }
-        
         private async void btnNextPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.NextPageAsync();
         }
-
         private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
     }
 }

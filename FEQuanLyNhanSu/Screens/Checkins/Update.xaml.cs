@@ -40,13 +40,17 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             _checkinId = checkinId;
             _ = LoadDataAsync();
         }
-
+        private HttpClient CreateAuthorizedClient(string token)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return client;
+        }
         private async Task LoadDataAsync()
         {
             await LoadLogStatusesAsync();
             await LoadCheckinAsync();
         }
-
         private async Task LoadLogStatusesAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -73,7 +77,6 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 MessageBox.Show("Không thể tải LogStatus", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private async Task LoadCheckinAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -105,24 +108,6 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 MessageBox.Show($"Không thể tải thông tin checkin: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
-        private void btnExit_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            {
-                return;
-            }
-            this.Close();
-        }
-
-        private HttpClient CreateAuthorizedClient(string token)
-        {
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            return client;
-        }
-
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
 
@@ -192,53 +177,13 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 btnExit.IsEnabled = true;
             }
         }
-
-        //private async void btnUpdate_Click(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-        //        var token = Application.Current.Properties["Token"]?.ToString();
-        //        var url = $"{baseUrl}/api/Checkin";
-
-        //        using var client = CreateAuthorizedClient(token);
-
-        //        var request = new CheckinResultDto
-        //        {
-        //            CheckinId = _checkinId,
-        //            LogStatus = (int?)cbChkinMor.SelectedValue ?? 0,
-        //        };
-
-        //        var json = System.Text.Json.JsonSerializer.Serialize(request);
-        //        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        //        var response = await client.PutAsync(url, content);
-        //        var responseJson = await response.Content.ReadAsStringAsync();
-
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            var apiResponse = System.Text.Json.JsonSerializer.Deserialize<CheckinResponse>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-        //            if (apiResponse?.Data != null)
-        //            {
-        //                _onUpdated?.Invoke(apiResponse.Data);
-        //            }
-
-        //            MessageBox.Show("Cập nhật checkin thành công.");
-        //            this.Close();
-        //        }
-        //        else
-        //        {
-        //            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(responseJson);
-        //            var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-        //            MessageBox.Show($"Cập nhật checkin thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Đã xảy ra lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-        //    }
-        //}
-
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            {
+                return;
+            }
+            this.Close();
+        }
     }
 }

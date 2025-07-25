@@ -44,14 +44,12 @@ namespace FEQuanLyNhanSu.Screens.Companies
             _onUpdated = onUpdated;
             LoadComapany();
         }
-
         private HttpClient CreateAuthorizedClient(string token)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
         }
-
         private async void LoadComapany()
         {
             try
@@ -100,7 +98,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 MessageBox.Show($"Lỗi: {ex.Message}");
             }
         }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
@@ -109,7 +106,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
             }
             this.Close();
         }
-
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             btnUpdate.IsEnabled = false;
@@ -180,7 +176,6 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 btnExit.IsEnabled = true;
             }
         }
-
         private void btnSelectImage_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog { Title = "Chọn ảnh", Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.bmp" };

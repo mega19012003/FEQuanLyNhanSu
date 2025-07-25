@@ -34,14 +34,12 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
             _onLogStatusUpdated = onCreated;
             _ = LoadLogStatusAsync();
         }
-
         private HttpClient CreateAuthorizedClient(string token)
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
         }
-
         private async Task LoadLogStatusAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -68,7 +66,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
                 MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             btnUpdate.IsEnabled = false;
@@ -139,7 +136,6 @@ namespace FEQuanLyNhanSu.Screens.Configs.LogStatusConfig
                 btnExit.IsEnabled = true;
             }
         }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)

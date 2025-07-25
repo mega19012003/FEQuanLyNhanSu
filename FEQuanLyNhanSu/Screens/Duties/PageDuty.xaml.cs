@@ -75,7 +75,6 @@ namespace FEQuanLyNhanSu
                     break;
             }
         }
-
         /// Load duty
         private void LoadDuty()
         {
@@ -100,7 +99,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Có lỗi xảy ra: {ex.Message}\n{ex.StackTrace}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         /// Search
         private void LoadDateComboboxes()
         {
@@ -218,7 +216,6 @@ namespace FEQuanLyNhanSu
                 return new List<DutyResultDto>();
             }
         }
-
         private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
         {
             try
@@ -273,7 +270,6 @@ namespace FEQuanLyNhanSu
             _debounceTimer.Start();
         }
 
-
         /// Pagination
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {
@@ -285,10 +281,8 @@ namespace FEQuanLyNhanSu
 
         }
 
-
         /// ///////////////////////////////////////
         /// /////////////////////////////////////// Duty 
-
         private void OnDutyCreated(Duties.DutyResultDto newDept)
         {
             if (newDept != null)
@@ -302,7 +296,6 @@ namespace FEQuanLyNhanSu
                 DutyDtaGrid.ScrollIntoView(newDept);
             }
         }
-
         private void OnDutyUpdated(Duties.DutyResultDto updatedDept)
         {
             if (updatedDept != null)
@@ -324,14 +317,12 @@ namespace FEQuanLyNhanSu
                 DutyDtaGrid.ScrollIntoView(updatedDept);
             }
         }
-
         /// Create
         private void AdDutyBtn_Click(object sender, RoutedEventArgs e)
         {
             var window = new CreateDuty(OnDutyCreated);
             window.Show();
         }
-
         /// Update
         private void btnDutyUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -341,7 +332,6 @@ namespace FEQuanLyNhanSu
                 window.Show();
             }
         }
-
         /// Delete
         private void btnDutyDelete_Click(object sender, RoutedEventArgs e)
         {
@@ -392,11 +382,8 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Không thể xóa công việc: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
         /// ///////////////////////////////////////
         /// /////////////////////////////////////// Duty Detail 
-
         /// Create Detail
         private void btnAddDetail_Click(object sender, RoutedEventArgs e)
         {
@@ -411,7 +398,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show("Vui lòng chọn một chức vụ để thêm chi tiết.");
             }
         }
-
         /// Update Detail
         private void btnUpdateDetail_Click(object sender, RoutedEventArgs e)
         {
@@ -430,7 +416,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show("Không lấy được ID chi tiết công việc cần sửa.");
             }
         }
-
         /// Delete Detail
         private void btnDeleteDetail_Click(object sender, RoutedEventArgs e)
         {
@@ -480,7 +465,6 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Không thể xóa chi tiết công việc: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         /// Done Task
         private void btnDoneTask_Click(object sender, RoutedEventArgs e)
         {

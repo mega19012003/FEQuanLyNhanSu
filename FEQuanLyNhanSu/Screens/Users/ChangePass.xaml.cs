@@ -37,7 +37,6 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
             this.Close();
         }
-
         private async void btnChangePass_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;

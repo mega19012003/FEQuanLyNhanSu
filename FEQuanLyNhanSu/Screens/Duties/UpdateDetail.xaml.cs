@@ -34,21 +34,20 @@ namespace FEQuanLyNhanSu.Screens.Duties
         public UpdateDetail(Guid detailId, Action onDetailUpdated)
         {
             InitializeComponent();
-            LoadUsers();
+            _ = LoadUsers();
             _detailId = detailId;
             _onDetailUpdated = onDetailUpdated;
             _ = LoadDetailAsync();
         }
 
-        private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
+        private HttpClient CreateAuthorizedClient(string token)
         {
-            string keyword = cbEmployee.Text.Trim();
-            if (string.IsNullOrEmpty(keyword))
-            {
-                cbEmployee.ItemsSource = null;
-                return;
-            }
-
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return client;
+        }
+        private async Task LoadUsers()
+        {
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
 
@@ -56,24 +55,21 @@ namespace FEQuanLyNhanSu.Screens.Duties
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+            var response = await client.GetAsync(baseUrl);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
+
                 cbEmployee.ItemsSource = result.Data.Items;
-                cbEmployee.IsDropDownOpen = true;
             }
             else
             {
-                cbEmployee.ItemsSource = null;
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-        private HttpClient CreateAuthorizedClient(string token)
-        {
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            return client;
         }
         private async Task LoadDetailAsync()
         {
@@ -113,8 +109,15 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 MessageBox.Show($"Không thể tải chi tiết thông tin chức vụ. Lỗi: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private async Task LoadUsers()
+        private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
         {
+            string keyword = cbEmployee.Text.Trim();
+            if (string.IsNullOrEmpty(keyword))
+            {
+                cbEmployee.ItemsSource = null;
+                return;
+            }
+
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
 
@@ -122,23 +125,19 @@ namespace FEQuanLyNhanSu.Screens.Duties
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await client.GetAsync(baseUrl);
+            var response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
-
                 cbEmployee.ItemsSource = result.Data.Items;
+                cbEmployee.IsDropDownOpen = true;
             }
             else
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                cbEmployee.ItemsSource = null;
             }
         }
-
         // Update
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -189,7 +188,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 btnExit.IsEnabled = true;
             }
         }
-
         // Exit
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {

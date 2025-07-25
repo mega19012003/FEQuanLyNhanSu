@@ -38,8 +38,40 @@ namespace FEQuanLyNhanSu.Screens.Positions
             _onPositionUpdated = onUpdated;
             _ = LoadPositionAsync();
         }
+        private async Task LoadPositionAsync()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var url = $"{baseUrl}/api/Position/{_positionId}";
 
+            //using var client = new HttpClient();
+            //client.DefaultRequestHeaders.Authorization =
+            //    new AuthenticationHeaderValue("Bearer", token);
+            using var client = CreateAuthorizedClient(token);
 
+            var response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ApiResponse<PositionResultDto>>(json);
+
+                txtName.Text = result.Data.Name;
+
+            }
+            else
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private HttpClient CreateAuthorizedClient(string token)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return client;
+        }
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             btnExit.IsEnabled = false;
@@ -98,44 +130,6 @@ namespace FEQuanLyNhanSu.Screens.Positions
                 btnUpdate.IsEnabled = true;
             }
         }
-
-        private HttpClient CreateAuthorizedClient(string token)
-        {
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            return client;
-        }
-
-        private async Task LoadPositionAsync()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var url = $"{baseUrl}/api/Position/{_positionId}";
-
-            //using var client = new HttpClient();
-            //client.DefaultRequestHeaders.Authorization =
-            //    new AuthenticationHeaderValue("Bearer", token);
-            using var client = CreateAuthorizedClient(token);
-
-            var response = await client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<PositionResultDto>>(json);
-
-                txtName.Text = result.Data.Name;
-
-            }
-            else
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)

@@ -35,7 +35,6 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
         }
 
-
         private async Task HandleUI(string userRole)
         {
             switch (userRole)
@@ -58,8 +57,74 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                     break;
             }
         }
+        private async Task LoadUsers()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
 
-       
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync(baseUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
+
+                cbEmployee.ItemsSource = result.Data.Items;
+                cbEmployee.SelectedItem = null;
+                cbEmployee.IsDropDownOpen = true;
+            }
+            else
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show("Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                string keyword = cbEmployee.Text.Trim();
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                HttpResponseMessage response;
+
+                if (string.IsNullOrEmpty(keyword))
+                {
+                    response = await client.GetAsync(baseUrl); // không có query Search
+                    cbEmployee.IsDropDownOpen = true;
+                }
+                else
+                {
+                    /*var */response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
+                        cbEmployee.ItemsSource = result?.Data?.Items;
+                        cbEmployee.SelectedItem = null;
+                        cbEmployee.IsDropDownOpen = true;
+                    }
+                    else
+                    {
+                        cbEmployee.ItemsSource = null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tìm kiếm nhân viên: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;
@@ -137,78 +202,6 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 btnExit.IsEnabled = true;
             }
         }
-
-        private async void cbEmployee_KeyUp(object sender, KeyEventArgs e)
-        {
-            try
-            {
-                string keyword = cbEmployee.Text.Trim();
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
-
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                HttpResponseMessage response;
-
-                if (string.IsNullOrEmpty(keyword))
-                {
-                    response = await client.GetAsync(baseUrl); // không có query Search
-                    cbEmployee.IsDropDownOpen = true;
-                }
-                else
-                {
-                    /*var */response = await client.GetAsync($"{baseUrl}?Search={Uri.EscapeDataString(keyword)}");
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
-                        cbEmployee.ItemsSource = result?.Data?.Items;
-                        cbEmployee.SelectedItem = null;
-                        cbEmployee.IsDropDownOpen = true;
-                    }
-                    else
-                    {
-                        cbEmployee.ItemsSource = null;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tìm kiếm nhân viên: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-
-        private async Task LoadUsers()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.GetAsync(baseUrl);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
-
-                cbEmployee.ItemsSource = result.Data.Items;
-                cbEmployee.SelectedItem = null;
-                cbEmployee.IsDropDownOpen = true;
-            }
-            else
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show("Không thể tải danh sách nhân viên: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)

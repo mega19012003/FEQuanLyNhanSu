@@ -124,7 +124,6 @@ namespace FEQuanLyNhanSu
                     break;
             }
         }
-
         // LOAD DATABASE
         /// ///////////////////////////////////////////
         private async void LoadLogStatus()
@@ -289,8 +288,6 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-
-
         // IP CONFIG
         /// ///////////////////////////////////////////
         private void OnIPCreated(IPResultDto newDept)
@@ -353,8 +350,6 @@ namespace FEQuanLyNhanSu
         {
             await _ipPaginationHelper.PrevPageAsync();
         }
-
-
         // LOGSTATUS CONFIG
         /// ///////////////////////////////////////////
         private void btnUpdateStatus_Click(object sender, RoutedEventArgs e)
@@ -375,8 +370,6 @@ namespace FEQuanLyNhanSu
         {
             await _logStatusPaginationHelper.PrevPageAsync();
         }
-
-
         // HOLIDAY CONFIG
         /// ///////////////////////////////////////////
         private void OnHolidayCreated(Holidays.HolidayResultDto newDept)
@@ -467,8 +460,6 @@ namespace FEQuanLyNhanSu
         {
             await _holidayPaginationHelper.PrevPageAsync();
         }
-
-
         //////////////////////////////////////////////// Schedule
         private void btnUpdateWorkTime_Click(object sender, RoutedEventArgs e)
         {
@@ -484,8 +475,6 @@ namespace FEQuanLyNhanSu
         {
             await _holidayPaginationHelper.PrevPageAsync();
         }
-
-
         //////////////////////////////////////////////// search
         private async Task FilterAsync<TDto>(string apiPath, TextBox? searchTextBox, ComboBox companyComboBox, DataGrid targetDataGrid)
         {
@@ -555,7 +544,6 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-
         private async Task FilterLogStatusAsync()
         {
             await FilterAsync<LogStatusConfigs.LogStatusDto>("/api/LogStatusConfig", txtSearchLog, cbCompanyStatus, LogDtaGrid);
@@ -572,7 +560,6 @@ namespace FEQuanLyNhanSu
         {
             await FilterAsync<IPResultDto>("/api/AllowedIP", txtSearchAllowedIP, cbCompanyAllowedIP, AllowedIPDtaGrid);
         }
-
         // LogStatus
         private async void txtTextChangedLog(object sender, TextChangedEventArgs e) => await FilterLogStatusAsync();
         private async void cbCompanyStatus_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterLogStatusAsync();
@@ -584,7 +571,6 @@ namespace FEQuanLyNhanSu
         // IP
         private async void txtTextChangedIP(object sender, TextChangedEventArgs e) => await FilterIPAsync();
         private async void cbCompanyIP_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterIPAsync();
-
         // Key up
         private async void cbCompanyStatus_KeyUp(object sender, KeyEventArgs e)
         {

@@ -421,7 +421,6 @@ namespace FEQuanLyNhanSu.Screens.Users
             }
         }
 
-
         private HttpClient CreateAuthorizedClient(string token)
         {
             var client = new HttpClient();
@@ -555,6 +554,5 @@ namespace FEQuanLyNhanSu.Screens.Users
                 btnExit.IsEnabled = true;
             }
         }
-       
     }
 }

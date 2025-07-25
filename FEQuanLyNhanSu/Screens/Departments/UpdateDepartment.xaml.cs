@@ -32,7 +32,38 @@ namespace FEQuanLyNhanSu.Screens.Departments
             _onDepartmentUpdated = onUpdated;
             _ = LoadDepartmentAsync();
         }
+        private HttpClient CreateAuthorizedClient(string token)
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return client;
+        }
+        private async Task LoadDepartmentAsync()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var url = $"{baseUrl}/api/Department/{_departmentId}";
 
+            using var client = CreateAuthorizedClient(token);
+
+            var response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ApiResponse<DepartmentResultDto>>(json);
+
+                txtName.Text = result.Data.Name;
+
+            }
+            else
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
         private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             btnUpdate.IsEnabled = false;
@@ -90,34 +121,6 @@ namespace FEQuanLyNhanSu.Screens.Departments
                 btnExit.IsEnabled = true;
             }
         }
-
-        private async Task LoadDepartmentAsync()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-            var url = $"{baseUrl}/api/Department/{_departmentId}";
-
-            using var client = CreateAuthorizedClient(token);
-
-            var response = await client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<ApiResponse<DepartmentResultDto>>(json);
-
-                txtName.Text = result.Data.Name;
-
-            }
-            else
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Không thể tải thông tin chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-        }
-
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn muốn thoát không?", "Xác nhận thoát", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
@@ -125,13 +128,6 @@ namespace FEQuanLyNhanSu.Screens.Departments
                 return;
             }
             this.Close();
-        }
-
-        private HttpClient CreateAuthorizedClient(string token)
-        {
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            return client;
         }
     }
 }

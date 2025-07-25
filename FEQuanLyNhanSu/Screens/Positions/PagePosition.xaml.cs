@@ -114,11 +114,6 @@ namespace FEQuanLyNhanSu
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
             var response = await client.GetAsync(baseUrl);
-
-            //using var client = new HttpClient();
-            //client.DefaultRequestHeaders.Authorization =
-            //    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            //var response = client.GetAsync(baseUrl).Result;
             if (response.IsSuccessStatusCode)
             {
                 var json = response.Content.ReadAsStringAsync().Result;
@@ -145,45 +140,14 @@ namespace FEQuanLyNhanSu
                 new AuthenticationHeaderValue("Bearer", token);
             var response = await client.GetAsync(baseUrl);
 
-            //using var client = new HttpClient();
-            //client.DefaultRequestHeaders.Authorization =
-            //    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            //var response = client.GetAsync(baseUrl).Result;
+          
             if (response.IsSuccessStatusCode)
             {
                 var json = response.Content.ReadAsStringAsync().Result;
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
                 cbDepartment.ItemsSource = result.Data.Items;
-
-                //if (result.Data.Items != null && result.Data.Items.Any())
-                //{
-                //    cbDepartment.SelectedItem = result.Data.Items.First();
-                //    await LoadPositionsByDepartmentAsync();
-                //    await FilterAsync();
-                //}
             }
         }
-        //private async Task LoadDepartmentByCompanyAsync(Guid companyId)
-        //{
-        //    var token = Application.Current.Properties["Token"]?.ToString();
-        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/Department?companyId={companyId}";
-
-        //    using var client = new HttpClient();
-        //    client.DefaultRequestHeaders.Authorization =
-        //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-        //    var response = await client.GetAsync(baseUrl);
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var json = await response.Content.ReadAsStringAsync();
-        //        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-        //        cbDepartment.ItemsSource = result?.Data?.Items ?? new List<DepartmentResultDto>();
-        //    }
-        //    else
-        //    {
-        //        cbDepartment.ItemsSource = null;
-        //    }
-        //}
         private async Task LoadDepartmentByCompanyAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -319,14 +283,6 @@ namespace FEQuanLyNhanSu
         {
             await LoadDepartmentByCompanyAsync();
             await FilterAsync();
-            //if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
-            //{
-            //    await LoadDepartmentsByCompanyId(selectedCompany.CompanyId);
-            //}
-            //else
-            //{
-            //    await LoadDepartments();
-            //}
         }
         private async void cbDepartment_KeyUp(object sender, KeyEventArgs e)
         {
@@ -418,6 +374,7 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        
         private void OnPositionCreated(Positions.PositionResultDto newDept)
         {
             if (newDept != null)
@@ -466,7 +423,6 @@ namespace FEQuanLyNhanSu
                 editWindow.ShowDialog();
             }
         }
-
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
