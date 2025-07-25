@@ -11,7 +11,7 @@
                        FontWeight="Bold"
                        Margin="0,0,0,0" VerticalAlignment="Top" />
 
-                <UniformGrid Columns="2" Rows="4" Margin="0,0,0,0" HorizontalAlignment="Center" Height="397" Width="584">
+                <UniformGrid Columns="2" Rows="3" Margin="0,0,0,0" HorizontalAlignment="Center" Height="307" Width="584">
                     <Border x:Name="BrdrCompany" Background="#FFF95A62" Margin="10" CornerRadius="10" Padding="10">
                         <StackPanel>
                             <TextBlock Text="Tổng công ty" Foreground="White" FontSize="16"/>
@@ -26,19 +26,19 @@
                     </Border>
                     <Border Background="#2196F3" Margin="10" CornerRadius="10" Padding="10">
                         <StackPanel>
-                            <TextBlock Text="Nhân viên còn hoạt động" Foreground="White" FontSize="16"/>
+                            <TextBlock Text="Tổng nhân viên còn hoạt động" Foreground="White" FontSize="16"/>
                             <TextBlock Text="{Binding Dashboard.ActiveEmployees}" Foreground="White" FontSize="24" FontWeight="Bold"/>
                         </StackPanel>
                     </Border>
                     <Border x:Name="BrdrDepartment" Background="#FF9800" Margin="10" CornerRadius="10" Padding="10">
                         <StackPanel>
-                            <TextBlock Text="Phòng ban" Foreground="White" FontSize="16"/>
+                            <TextBlock Text="TỔng phòng ban" Foreground="White" FontSize="16"/>
                             <TextBlock Text="{Binding Dashboard.TotalDepartments}" Foreground="White" FontSize="24" FontWeight="Bold"/>
                         </StackPanel>
                     </Border>
                     <Border Background="#9C27B0" Margin="10" CornerRadius="10" Padding="10">
                         <StackPanel>
-                            <TextBlock Text="Chức vụ" Foreground="White" FontSize="16"/>
+                            <TextBlock Text="Tổng chức vụ" Foreground="White" FontSize="16"/>
                             <TextBlock Text="{Binding Dashboard.TotalPositions}" Foreground="White" FontSize="24" FontWeight="Bold"/>
                         </StackPanel>
                     </Border>
@@ -46,12 +46,6 @@
                         <StackPanel>
                             <TextBlock Text="Tổng check-in hôm nay" Foreground="White" FontSize="16"/>
                             <TextBlock Text="{Binding Dashboard.TotalCheckinsToday}" Foreground="White" FontSize="24" FontWeight="Bold"/>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="#607D8B" Margin="10" CornerRadius="10" Padding="10">
-                        <StackPanel>
-                            <TextBlock Text="Tổng lương tháng này" Foreground="White" FontSize="16"/>
-                            <TextBlock Text="{Binding Dashboard.TotalPayrollThisMonth}" Foreground="White" FontSize="24" FontWeight="Bold"/>
                         </StackPanel>
                     </Border>
                 </UniformGrid>
