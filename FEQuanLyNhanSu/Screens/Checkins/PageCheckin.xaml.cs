@@ -666,7 +666,8 @@ namespace FEQuanLyNhanSu
 
                     // Thêm dòng mới (đã có thông tin checkout)
                     user.Checkins.Insert(0, checkout);
-
+                    list.Remove(user);
+                    list.Insert(0, user);
                     // Làm mới UI
                     CheckinDtaGrid.Items.Refresh();
                 }

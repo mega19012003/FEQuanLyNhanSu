@@ -37,7 +37,13 @@
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="5">
-                            <Image Source="{Binding ImageUrl}" Width="30" Height="30" Margin="0,0,8,0"/>
+                            <Image  Width="30" Height="30" Margin="0,0,8,0" >
+                                <Image.Source>
+                                    <Binding Path="ImageUrl" 
+            TargetNullValue="pack://application:,,,/Assets/none.jpg"
+            FallbackValue="pack://application:,,,/Assets/user.png"/>
+                                </Image.Source>
+                            </Image>
                             <TextBlock Text="{Binding Fullname}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </DataTemplate>
