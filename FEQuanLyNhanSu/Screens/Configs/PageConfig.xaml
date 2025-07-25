@@ -33,7 +33,7 @@
                             <!--<DataGridTextColumn x:Name="HeaderCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />-->
                             <DataGridTextColumn Header="Id" Binding="{Binding enumId}" Width="*" />
                             <DataGridTextColumn Header="Tên status" Binding="{Binding Name}" Width="*" />
-                            <DataGridTextColumn Header="Salary multiplier" Binding="{Binding SalaryMultiplier}" Width="*" />
+                            <!--<DataGridTextColumn Header="Salary multiplier" Binding="{Binding SalaryMultiplier}" Width="*" />-->
                             <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>

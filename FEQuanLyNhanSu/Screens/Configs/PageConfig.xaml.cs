@@ -147,7 +147,7 @@ namespace FEQuanLyNhanSu
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải dữ liệu người dùng: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi khi tải dữ liệu logstatus: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         public void LoadAllowedIPStatus()
@@ -605,7 +605,7 @@ namespace FEQuanLyNhanSu
                     cbCompanyStatus.SelectedItem = null;
                     cbCompanyStatus.IsDropDownOpen = true;
 
-                    LoadLogStatus();
+                    await FilterLogStatusAsync();
                 }
                 else
                 {
@@ -649,7 +649,7 @@ namespace FEQuanLyNhanSu
                     cbCompanyHoliday.SelectedItem = null;
                     cbCompanyHoliday.IsDropDownOpen = true;
 
-                    LoadLogStatus();
+                    await FilterLogStatusAsync();
                 }
                 else
                 {
@@ -693,7 +693,7 @@ namespace FEQuanLyNhanSu
                     cbCompanySchedule.SelectedItem = null;
                     cbCompanySchedule.IsDropDownOpen = true;
 
-                    LoadLogStatus();
+                    await FilterScheduleAsync();
                 }
                 else
                 {
@@ -737,7 +737,7 @@ namespace FEQuanLyNhanSu
                     cbCompanyAllowedIP.SelectedItem = null;
                     cbCompanyAllowedIP.IsDropDownOpen = true;
 
-                    LoadLogStatus();
+                    await FilterIPAsync();
                 }
                 else
                 {
