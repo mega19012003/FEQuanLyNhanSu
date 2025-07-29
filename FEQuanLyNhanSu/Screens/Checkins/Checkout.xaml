@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Checkins"
         mc:Ignorable="d"
-        Title="Checkout" Height="450" Width="800">
+        Title="Checkout" Height="500" Width="800">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" Content="Checkout" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
 
         <!-- FORM INPUT -->
         <Grid Margin="40,80,40,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -50,7 +51,13 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <TextBox x:Name="lblNote" Grid.Row="1" Grid.Column="0" Text="Ghi chú" IsReadOnly="True"
+                Background="#FF99C5E3" Foreground="White" FontSize="15"
+                VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                Height="41" Margin="0,5"/>
+            <TextBox x:Name="txtNote" Grid.Row="1" Grid.Column="1" FontSize="15" Height="41" Margin="0,5" VerticalContentAlignment="Center"/>
+
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal"
                 HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnCreate" Content="Checkout" Width="170" Height="41"
                 Margin="10,0" FontSize="15" Background="#FF66A8D5"
@@ -58,8 +65,9 @@
             </StackPanel>
         </Grid>
 
-        <Grid Margin="150,220,150,0">
+        <Grid Margin="150,270,150,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -78,22 +86,22 @@
             <Label Grid.Row="0" Grid.Column="0" Content="Thời gian checkin" FontSize="15"/>
             <Label Grid.Row="1" Grid.Column="0" Content="Thời gian checkout" FontSize="15"/>
             <Label Grid.Row="2" Grid.Column="0" Content="LogStatus" FontSize="15"/>
-            <!--<Label Grid.Row="3" Grid.Column="0" Content="Lương" FontSize="15"/>-->
+            <Label Grid.Row="3" Grid.Column="0" Content="Ghi chú" FontSize="15"/>
             <!--Content Left-->
             <Label Grid.Row="0" Grid.Column="2" x:Name="lblCheckinMor" Content="....." FontSize="15"/>
             <Label x:Name="lblCheckoutMor" Grid.Row="1" Grid.Column="2" Content="....." FontSize="15"/>
             <Label x:Name="lblCheckinAft" Grid.Row="2" Grid.Column="2" Content="....." FontSize="15"/>
-            <!--<Label x:Name="lblSalaryPerDay" Grid.Row="3" Grid.Column="2" Content="....." FontSize="15"/>-->
-      
+            <Label x:Name="lblNoteResult" Grid.Row="3" Grid.Column="2" Content="....." FontSize="15"/>
+
 
             <!--Middle-->
             <Label Grid.Row="0" Grid.Column="1" Content=":" FontSize="15"/>
             <Label Grid.Row="1" Grid.Column="1" Content=":" FontSize="15"/>
             <Label Grid.Row="2" Grid.Column="1" Content=":" FontSize="15"/>
-            <!--<Label Grid.Row="3" Grid.Column="1" Content=":" FontSize="15"/>-->
-         
+            <Label Grid.Row="3" Grid.Column="1" Content=":" FontSize="15"/>
 
-            <StackPanel Grid.Row="3" Grid.ColumnSpan="6" Orientation="Horizontal"
+
+            <StackPanel Grid.Row="4" Grid.ColumnSpan="6" Orientation="Horizontal"
                 HorizontalAlignment="Center" Margin="0,20,0,20">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                 Margin="10,0" FontSize="15" Click="btnExit_Click"/>

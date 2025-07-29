@@ -48,9 +48,33 @@
           RowDetailsVisibilityMode="VisibleWhenSelected">
             <!-- Cột thông tin người dùng -->
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Họ tên" Binding="{Binding FullName}" />
-                <DataGridTextColumn Header="Số điện thoại" Binding="{Binding PhoneNumber}" />
-                <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" />
+                <DataGridTextColumn Header="Họ tên" Binding="{Binding FullName}" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Số điện thoại" Binding="{Binding PhoneNumber}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTemplateColumn Header="Ảnh" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -94,9 +118,127 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Checkin" Binding="{Binding CheckinTime}" />
-                            <DataGridTextColumn Header="Checkout" Binding="{Binding CheckoutTime}" />
-                            <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" />
+                            <DataGridTextColumn Header="Checkin" Binding="{Binding CheckinTime}" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Checkout" Binding="{Binding CheckoutTime}" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Thổng thời gian làm việc" Binding="{Binding TotalTime}" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!--<DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>-->
+                            <DataGridTemplateColumn Header="Trạng thái" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Status}" 
+                       Padding="5,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                    <Setter Property="Background" Value="Transparent"/>
+
+                                                    <!-- Xanh: Trạng thái tốt -->
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="OnTime">
+                                                            <Setter Property="Background" Value="LightGreen"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Overtime">
+                                                            <Setter Property="Background" Value="LightGreen"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="OnHoliday">
+                                                            <Setter Property="Background" Value="LightGreen"/>
+                                                        </DataTrigger>
+
+                                                        <!-- Vàng: Trung bình -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="Late">
+                                                            <Setter Property="Background" Value="Khaki"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="LeaveEarly">
+                                                            <Setter Property="Background" Value="Khaki"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="LateAndOvertime">
+                                                            <Setter Property="Background" Value="Khaki"/>
+                                                        </DataTrigger>
+
+                                                        <!-- Đỏ: Tệ -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="Absent">
+                                                            <Setter Property="Background" Value="Salmon"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="LateAndLeaveEarly">
+                                                            <Setter Property="Background" Value="Salmon"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="OnHolidayLateAndLeaveEarly">
+                                                            <Setter Property="Background" Value="Salmon"/>
+                                                        </DataTrigger>
+
+                                                        <!-- Các trạng thái còn lại (Others...) -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="Others">
+                                                            <Setter Property="Background" Value="LightGray"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Thiết bị" Binding="{Binding DeviceInfo}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="CheckinIP" Binding="{Binding CheckinIP}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!--<DataGridTextColumn Header="CheckoutIp" Binding="{Binding CheckoutIp}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>-->
+                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </DataTemplate>

@@ -56,25 +56,25 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     AddCheckinBtn.Visibility = Visibility.Collapsed;
                     AddCheckouBtn.Visibility = Visibility.Collapsed;
-                    _ = LoadUserWithCheckin();
+                    _ = FilterAsync();
                     _ = LoadCompanies();
                     _ = LoadDepartmentByCompanyAsync();
                     _ = LoadPositionsByDepartmentAsync();
                     break;
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
-                    _ = LoadUserWithCheckin();
+                    _ = FilterAsync();
                     _ = LoadDepartments();
                     _ = LoadPositionsByDepartmentAsync();
                     break;
                 case "Manager":
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
-                    _ = LoadUserWithCheckin();
+                    _ = FilterAsync();
                     _ = LoadPositions();
                     break;
                 case "Employee":
-                    _ = LoadEmployeeWithCheckin();
+                    _ = FilterAsync();
                     lblTitle.Text = "Chấm công";
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
@@ -202,38 +202,38 @@ namespace FEQuanLyNhanSu
                 //}
             }
         }
-        private async Task LoadUserWithCheckin()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
-            int pageSize = 20;
+        //private async Task LoadUserWithCheckin()
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
+        //    int pageSize = 20;
 
-            _paginationHelper = new PaginationHelper<Checkins.UserWithCheckinsDto>(
-                baseUrl,
-                pageSize,
-                token,
-                items => CheckinDtaGrid.ItemsSource = items,
-                txtPage
-            );
+        //    _paginationHelper = new PaginationHelper<Checkins.UserWithCheckinsDto>(
+        //        baseUrl,
+        //        pageSize,
+        //        token,
+        //        items => CheckinDtaGrid.ItemsSource = items,
+        //        txtPage
+        //    );
 
-            await _paginationHelper.LoadPageAsync(1);
-        }
-        private async Task LoadEmployeeWithCheckin()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin";
-            int pageSize = 20;
+        //    await _paginationHelper.LoadPageAsync(1);
+        //}
+        //private async Task LoadEmployeeWithCheckin()
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin";
+        //    int pageSize = 20;
 
-            _paginationHelper = new PaginationHelper<Checkins.UserWithCheckinsDto>(
-                baseUrl,
-                pageSize,
-                token,
-                items => CheckinDtaGrid.ItemsSource = items,
-                txtPage
-            );
+        //    _paginationHelper = new PaginationHelper<Checkins.UserWithCheckinsDto>(
+        //        baseUrl,
+        //        pageSize,
+        //        token,
+        //        items => CheckinDtaGrid.ItemsSource = items,
+        //        txtPage
+        //    );
 
-            await _paginationHelper.LoadPageAsync(1);
-        }
+        //    await _paginationHelper.LoadPageAsync(1);
+        //}
 
         private async Task FilterAsync()
         {

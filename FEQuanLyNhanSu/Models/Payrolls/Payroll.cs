@@ -14,6 +14,5 @@ namespace FEQuanLyNhanSu.Models.Payrolls
         public string Note { get; set; }
         public bool IsDeleted { get; set; } = false;
         public int DaysWorked { get; set; } //ngày công
-
     }
 }

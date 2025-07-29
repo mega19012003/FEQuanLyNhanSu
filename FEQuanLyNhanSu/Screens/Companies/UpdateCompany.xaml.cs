@@ -70,6 +70,7 @@ namespace FEQuanLyNhanSu.Screens.Companies
                     txtName.Text = user.Name;
                     txtAddress.Text = user.Address;
                     txtImage.Text = user.LogoUrl;
+                    chkIsActive.IsChecked = user.IsActive;
 
                     if (!string.IsNullOrEmpty(user.LogoUrl))
                     {
@@ -128,6 +129,7 @@ namespace FEQuanLyNhanSu.Screens.Companies
                     { new StringContent(_companyId.ToString()), "CompanyId" },
                     { new StringContent(txtName.Text), "Name" },
                     { new StringContent(txtAddress.Text), "Address" },
+                    { new StringContent(chkIsActive.IsChecked == true ? "true" : "false"), "IsActive" },
                     { new StringContent(txtImage.Text), "LogoUrl" },
                 };
 

@@ -48,6 +48,7 @@ namespace FEQuanLyNhanSu
             //_ = LoadPositionsByDepartmentAsync();
             //_ = FilterAsync();
             LoadDateComboboxes();
+            LoadIsActiveComboBox();
             Loaded += async (s, e) => await FilterAsync();
         }
 
@@ -87,6 +88,13 @@ namespace FEQuanLyNhanSu
             cbMonth.SelectedIndex = DateTime.Now.Month;
             
         }
+        private void LoadIsActiveComboBox()
+        {
+            var cb = new List<string> { "Tất cả", "Đang hoạt động", "Không hoạt động" };
+            cbIsActive.ItemsSource = cb;
+            cbIsActive.SelectedIndex = 1;
+        }
+
         private async Task LoadUser()
         {
 
@@ -106,8 +114,7 @@ namespace FEQuanLyNhanSu
                 await _paginationHelper.LoadPageAsync(1);
             }
 
-        }
-        
+        }       
         public static async Task<List<UserResultDto>> LoadAllUsersAsync(string baseUrl, string token, int pageIndex = 1, int pageSize = 20)
         {
             try
@@ -235,32 +242,7 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-        //private async Task LoadPosition(Guid? departmentId)
-        //{
-        //    {
-        //        var token = Application.Current.Properties["Token"]?.ToString();
-        //        var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
-        //        if (departmentId.HasValue)
-        //            baseUrl += $"?departmentId={departmentId.Value}";
-
-        //        using var client = new HttpClient();
-        //        client.DefaultRequestHeaders.Authorization =
-        //            new AuthenticationHeaderValue("Bearer", token);
-        //        var response = await client.GetAsync(baseUrl);
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            var json = response.Content.ReadAsStringAsync().Result;
-        //            var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-        //            cbPosition.ItemsSource = result.Data.Items;
-
-        //            //if (result.Data.Items != null && result.Data.Items.Any())
-        //            //{
-        //            //    cbPosition.SelectedItem = result.Data.Items.First();
-        //            //    await FilterAsync();
-        //            //}
-        //        }
-        //    }
-        //}
+        
         private async Task FilterAsync()
         {
             try
@@ -282,9 +264,20 @@ namespace FEQuanLyNhanSu
                 if (cbPosition.SelectedItem is PositionResultDto selectedPos)
                     positionId = selectedPos.Id;
 
+                bool? isActive = null;
+                switch (cbIsActive.SelectedIndex)
+                {
+                    case 1:
+                        isActive = true;
+                        break;
+                    case 2:
+                        isActive = false;
+                        break;
+                }
+
                 List<UserResultDto> items;
 
-                if (string.IsNullOrWhiteSpace(keyword) && !companyId.HasValue && !departmentId.HasValue && !positionId.HasValue)
+                if (string.IsNullOrWhiteSpace(keyword) && !companyId.HasValue && !departmentId.HasValue && !positionId.HasValue && !isActive.HasValue)
                 {
                     items = await LoadAllUsersAsync(baseUrl, token);
                 }
@@ -297,7 +290,8 @@ namespace FEQuanLyNhanSu
                         companyId,
                         departmentId,
                         positionId,
-                        month
+                        month,
+                        isActive
                     );
                 }
 
@@ -308,9 +302,8 @@ namespace FEQuanLyNhanSu
             {
                 MessageBox.Show($"Lỗi khi lọc dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-        
-        public static async Task<List<UserResultDto>> SearchAndFilterUsersAsync(string baseUrl, string token, string searchKeyword, Guid? companyId, Guid? departmentId, Guid? positionId, int? month, int pageIndex = 1, int pageSize = 20)
+        }       
+        public static async Task<List<UserResultDto>> SearchAndFilterUsersAsync(string baseUrl, string token, string searchKeyword, Guid? companyId, Guid? departmentId, Guid? positionId, int? month, bool? IsActive, int pageIndex = 1, int pageSize = 20)
         {
             try
             {
@@ -324,13 +317,15 @@ namespace FEQuanLyNhanSu
                 if (positionId.HasValue)
                     parameters.Add($"positionId={positionId.Value}");
                 if (month.HasValue) parameters.Add($"Month={month}");
+                if (IsActive.HasValue)
+                    parameters.Add($"IsActive={IsActive.Value.ToString().ToLower()}");
                 parameters.Add($"pageIndex={pageIndex}");
                 parameters.Add($"pageSize={pageSize}");
 
                 var url = baseUrl + "/api/User"; 
                 if (parameters.Any())
                     url += "?" + string.Join("&", parameters);
-
+                //MessageBox.Show(url);
                 using var client = new HttpClient();
                 if (!string.IsNullOrWhiteSpace(token))
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -357,6 +352,8 @@ namespace FEQuanLyNhanSu
                 return new List<UserResultDto>();
             }
         }
+        private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
+        private async void cbIsActive_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             await FilterAsync();
@@ -790,6 +787,5 @@ namespace FEQuanLyNhanSu
         {
             await _paginationHelper.NextPageAsync();
         }
-        private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
     }
 }

@@ -80,7 +80,7 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 {
                     var fileStream = File.OpenRead(_imagePath);
                     var fileContent = new StreamContent(fileStream);
-                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg"); // hoặc tự detect
+                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg"); 
                     content.Add(fileContent, "LogoUrl", System.IO.Path.GetFileName(_imagePath));
                 }
 

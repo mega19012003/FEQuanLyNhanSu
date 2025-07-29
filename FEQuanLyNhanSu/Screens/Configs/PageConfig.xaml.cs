@@ -63,7 +63,7 @@ namespace FEQuanLyNhanSu
                     LoadAllowedIPStatus();
                     LoadHolidayConfig();
                     DtaGridActionHoliday.Visibility = Visibility.Collapsed;
-                    DtaGridActionStatus.Visibility = Visibility.Collapsed;
+                    //DtaGridActionStatus.Visibility = Visibility.Collapsed;
                     DtaGridActionIP.Visibility = Visibility.Collapsed;
                     TabSchedule.Visibility = Visibility.Collapsed;
                     AddIPBtn.Visibility = Visibility.Collapsed;
@@ -90,7 +90,7 @@ namespace FEQuanLyNhanSu
                     AddHolidayBtn.Visibility = Visibility.Collapsed;
                     btnUpdateWorkTime.Visibility = Visibility.Collapsed;
                     DtaGridActionHoliday.Visibility = Visibility.Collapsed;
-                    DtaGridActionStatus.Visibility = Visibility.Collapsed;
+                    //DtaGridActionStatus.Visibility = Visibility.Collapsed;
                     btnPrevPageLogStatus.Visibility = Visibility.Collapsed;
                     btnNextPageLogStatus.Visibility = Visibility.Collapsed;
                     txtPageLogStatus.Visibility = Visibility.Collapsed;
@@ -109,7 +109,7 @@ namespace FEQuanLyNhanSu
                     AddHolidayBtn.Visibility = Visibility.Collapsed;
                     btnUpdateWorkTime.Visibility = Visibility.Collapsed;
                     DtaGridActionHoliday.Visibility = Visibility.Collapsed;
-                    DtaGridActionStatus.Visibility = Visibility.Collapsed;
+                    //DtaGridActionStatus.Visibility = Visibility.Collapsed;
                     btnPrevPageLogStatus.Visibility = Visibility.Collapsed;
                     btnNextPageLogStatus.Visibility = Visibility.Collapsed;
                     txtPageLogStatus.Visibility = Visibility.Collapsed;

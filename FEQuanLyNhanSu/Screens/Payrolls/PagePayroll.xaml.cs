@@ -50,25 +50,25 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     //DtaGridAction.Visibility = Visibility.Collapsed;
                     AddPayrollBtn.Visibility = Visibility.Collapsed;
-                    _ = LoadUserWithPayroll();
                     _ = LoadCompanies();
                     _ = LoadDepartmentByCompanyAsync();
                     _ = LoadPositionsByDepartmentAsync();
+                    _ = FilterAsync();
                     break;
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
-                    _ = LoadUserWithPayroll();
+                    _ = FilterAsync();
                     _ = LoadDepartments();
                     _ = LoadPositionsByDepartmentAsync();
                     break; 
                 case "Manager":
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
-                    _ = LoadUserWithPayroll();
+                    _ = FilterAsync();
                     _ = LoadPositions();
                     break;
                 case "Employee":
-                    _ = LoadEmployeePayroll();
+                    _ = FilterAsync();
                     AddPayrollBtn.Visibility = Visibility.Collapsed;
                     //DtaGridAction.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
@@ -80,38 +80,38 @@ namespace FEQuanLyNhanSu
                     break;
             }
         }
-        private async Task LoadUserWithPayroll()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
-            int pageSize = 20;
+        //private async Task LoadUserWithPayroll()
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
+        //    int pageSize = 20;
 
-            _paginationHelper = new PaginationHelper<UserWithPayrollDto>(
-                baseUrl,
-                pageSize,
-                token,
-                items => PayrollDtaGrid.ItemsSource = items,
-                txtPage
-            );
+        //    _paginationHelper = new PaginationHelper<UserWithPayrollDto>(
+        //        baseUrl,
+        //        pageSize,
+        //        token,
+        //        items => PayrollDtaGrid.ItemsSource = items,
+        //        txtPage
+        //    );
 
-            await _paginationHelper.LoadPageAsync(1);
-        }
-        private async Task LoadEmployeePayroll()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll";
-            int pageSize = 20;
+        //    await _paginationHelper.LoadPageAsync(1);
+        //}
+        //private async Task LoadEmployeePayroll()
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll";
+        //    int pageSize = 20;
 
-            _paginationHelper = new PaginationHelper<UserWithPayrollDto>(
-                baseUrl,
-                pageSize,
-                token,
-                items => PayrollDtaGrid.ItemsSource = items,
-                txtPage
-            );
+        //    _paginationHelper = new PaginationHelper<UserWithPayrollDto>(
+        //        baseUrl,
+        //        pageSize,
+        //        token,
+        //        items => PayrollDtaGrid.ItemsSource = items,
+        //        txtPage
+        //    );
 
-            await _paginationHelper.LoadPageAsync(1);
-        }
+        //    await _paginationHelper.LoadPageAsync(1);
+        //}
         private async Task LoadCompanies()
         {
             var token = Application.Current.Properties["Token"]?.ToString();

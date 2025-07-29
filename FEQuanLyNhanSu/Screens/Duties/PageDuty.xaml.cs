@@ -42,7 +42,7 @@ namespace FEQuanLyNhanSu
                 await FilterAsync();
             };
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            LoadDuty();
+            _ = FilterAsync();
             LoadDateComboboxes();
             Loaded += async (s, e) => await FilterAsync();
         }

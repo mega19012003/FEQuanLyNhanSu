@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -54,6 +55,8 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 case "Employee":
                     cbEmployee.Visibility = Visibility.Collapsed;
                     lblName.Visibility = Visibility.Collapsed;
+                    lblNote.Visibility = Visibility.Collapsed;
+                    txtNote.Visibility = Visibility.Collapsed;
                     break;
             }
         }
@@ -129,27 +132,30 @@ namespace FEQuanLyNhanSu.Screens.Checkins
         {
             btnCreate.IsEnabled = false;
             btnExit.IsEnabled = false;
+
             try
             {
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Checkin";
 
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                HttpContent content = null;
+                var form = new MultipartFormDataContent();
+                var deviceInfo = Environment.MachineName;
+                form.Add(new StringContent(deviceInfo), "DeviceInfo");
+                var note = txtNote.Text ?? "";
+                form.Add(new StringContent(note), "Note");
 
                 var selectedUser = cbEmployee.SelectedItem as UserResultDto;
                 if (selectedUser != null)
                 {
-                    var form = new MultipartFormDataContent();
                     form.Add(new StringContent(selectedUser.UserId.ToString()), "userId");
-                    content = form;
                 }
 
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await client.PostAsync(baseUrl, content);
+                var response = await client.PostAsync(baseUrl, form);
                 var json = await response.Content.ReadAsStringAsync();
+
                 if (response.IsSuccessStatusCode)
                 {
                     var apiResponse = JsonConvert.DeserializeObject<ApiResponse<CheckinResultDto>>(json);
@@ -158,43 +164,22 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                         lblCheckinMor.Content = apiResponse.Data.CheckinTime;
                         lblCheckoutMor.Content = apiResponse.Data.CheckoutTime;
                         lblCheckinAft.Content = apiResponse.Data.LogStatus;
-                        //lblSalaryPerDay.Content = apiResponse.Data.SalaryPerDay.ToString("N0");
+                        lblNoteResult.Content = apiResponse.Data.Note;
 
                         _onCheckinCreated?.Invoke(apiResponse.Data);
                         MessageBox.Show("Checkin thành công.");
                     }
-                    else
-                    {
-                        var apiResponseError = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                        var errorData = apiResponseError?.Data ?? "Có lỗi xảy ra";
-                        MessageBox.Show($"Checkin thành công nhưng không nhận được dữ liệu: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
                 }
                 else
                 {
-                    try
-                    {
-                        var errorResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                        if (!string.IsNullOrEmpty(errorResponse?.Data))
-                        {
-                            MessageBox.Show($"Checkin thất bại: {errorResponse.Data}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                        else if (!string.IsNullOrEmpty(errorResponse?.Message))
-                        {
-                            MessageBox.Show($"Checkin thất bại: {errorResponse.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                        else
-                        {
-                            var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                            var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                            MessageBox.Show($"Checkin thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show($"Checkin thất bại: {json}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    var errorResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorMessage = errorResponse?.Data ?? errorResponse?.Message ?? "Có lỗi xảy ra.";
+                    MessageBox.Show($"Checkin thất bại: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi không xác định: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

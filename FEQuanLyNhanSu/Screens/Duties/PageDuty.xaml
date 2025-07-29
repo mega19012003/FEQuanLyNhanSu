@@ -24,9 +24,9 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button x:Name="btnAddDetail" Content="Thêm" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnAddDetail_Click" Tag="{Binding Id}" />
-                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnDutyUpdate_Click" Tag="{Binding Id}" />
-                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDutyDelete_Click" Tag="{Binding Id}"/>
+                                <Button x:Name="btnAddDetail" Content="Thêm" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnAddDetail_Click" Tag="{Binding Id}" VerticalAlignment="Center" VerticalContentAlignment="Center"  />
+                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnDutyUpdate_Click" Tag="{Binding Id}" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDutyDelete_Click" Tag="{Binding Id}" VerticalAlignment="Center" VerticalContentAlignment="Center" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -35,13 +35,37 @@
                 <DataGridTemplateColumn Header="Tên công việc" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Name}" TextWrapping="Wrap" ToolTip="{Binding Name}" />
+                            <TextBlock Text="{Binding Name}" TextWrapping="Wrap" ToolTip="{Binding Name}" VerticalAlignment="Center" Padding="5,0"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}" Width="*" />
-                <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}" Width="*" />
-                <DataGridTextColumn Header="Người tạo" Binding="{Binding AssignedBy}" Width="*" />
+                <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}" Width="*" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}" Width="*" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Người tạo" Binding="{Binding AssignedBy}" Width="*" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridTemplateColumn Header="Ảnh" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -55,7 +79,32 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridCheckBoxColumn Header="Đã hoàn thành" Binding="{Binding IsCompleted}" Width="*" />
+                <DataGridTemplateColumn Header="Trạng thái" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Status}" Padding="5" TextAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                <Setter Property="Foreground" Value="Green"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="InProgress">
+                                                <Setter Property="Foreground" Value="DarkOrange"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="NotStarted">
+                                                <Setter Property="Foreground" Value="Black"/>
+                                                <Setter Property="FontStyle" Value="Italic"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
  
             <DataGrid.RowDetailsTemplate>
@@ -63,21 +112,28 @@
                     <Grid>
                         <DataGrid ItemsSource="{Binding DutyDetails}" AutoGenerateColumns="False" IsReadOnly="True" Margin="20,5,20,5" ColumnWidth="*" HeadersVisibility="Column" HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn 
-                                                   Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='SystemAdmin'}">
+                                <DataGridTemplateColumn Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='SystemAdmin'}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click" Tag="{Binding DutyDetailId}" />
-                                                <Button x:Name="btnUpdateDetail" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" Tag="{Binding DutyDetailId}" 
-                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
-                                                <Button x:Name="btnDeleteDetail" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" Tag="{Binding DutyDetailId}" 
-                                                        Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
+                                                <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click"  VerticalAlignment="Center" VerticalContentAlignment="Center" Tag="{Binding DutyDetailId}" />
+                                                <Button x:Name="btnUpdateDetail" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" VerticalAlignment="Center" VerticalContentAlignment="Center"   
+                                                        Tag="{Binding DutyDetailId}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
+                                                <Button x:Name="btnDeleteDetail" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" VerticalAlignment="Center" VerticalContentAlignment="Center"  
+                                                        Tag="{Binding DutyDetailId}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
+                                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="5,0"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                                 <DataGridTemplateColumn Header="Ảnh" Width="100">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -91,15 +147,49 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding Deadline}" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="5,0"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                                 <DataGridTemplateColumn Header="Mô tả" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock 
-                                                Text="{Binding Description}" TextWrapping="Wrap" ToolTip="{Binding Description}" MaxHeight="80" VerticalAlignment="Top"/>
+                                                Text="{Binding Description}" TextWrapping="Wrap" ToolTip="{Binding Description}" MaxHeight="80" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridCheckBoxColumn Header="Đã hoàn thành" Binding="{Binding IsCompleted}" Width="*" />
+                                <DataGridTemplateColumn Header="Trạng thái" Width="150">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Status}" Padding="5" TextAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                                <Setter Property="Foreground" Value="Green"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="InProgress">
+                                                                <Setter Property="Foreground" Value="DarkOrange"/>
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="NotStarted">
+                                                                <Setter Property="Foreground" Value="Gray"/>
+                                                                <Setter Property="FontStyle" Value="Italic"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>

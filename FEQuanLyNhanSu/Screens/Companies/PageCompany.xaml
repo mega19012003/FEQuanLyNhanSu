@@ -18,14 +18,38 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding CompanyId}"/>
-                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding CompanyId}"/>
+                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding CompanyId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding CompanyId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Tên công ty" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="*" />
+                <DataGridTextColumn Header="Tên công ty" Binding="{Binding Name}" Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridCheckBoxColumn Header="Còn hoạt động" Binding="{Binding IsActive}" Width="Auto">
+                    <DataGridCheckBoxColumn.ElementStyle>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridCheckBoxColumn.ElementStyle>
+                </DataGridCheckBoxColumn>
                 <DataGridTemplateColumn Header="Ảnh" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -42,6 +66,9 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddDprtmntBtn" Content="Thêm công ty" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="180" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="btnAdd_Click" FontWeight="Bold"/>
+        <Grid HorizontalAlignment="Center">
+            <ComboBox x:Name="cbIsActive" HorizontalAlignment="Center" Margin="0,58,0,0" VerticalAlignment="Top" Width="150" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbIsActive_SelectionChanged"/>
+        </Grid>
         <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="250" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -53,7 +80,9 @@
             <TextBlock Text="🔍" FontSize="16" VerticalAlignment="Center" Margin="5,0" Grid.Column="0" />
 
             <TextBox x:Name="txtSearch" FontSize="15" VerticalContentAlignment="Center" BorderThickness="1" Padding="5,0" Grid.Column="1" TextChanged="txtTextChanged"/>
+       
         </Grid>
+        
         <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
             <Button x:Name="btnPrevPage" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPage_Click"/>
             <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Right" Height="34" Margin="230,0,0,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>

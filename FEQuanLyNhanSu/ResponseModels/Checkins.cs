@@ -16,10 +16,15 @@ namespace FEQuanLyNhanSu.Services
             public string Name { get; set; }
             public DateTime CheckinTime { get; set; }
             public DateTime CheckoutTime { get; set; }
+            public string Status { get; set; }
             public int? LogStatus { get; set; }
-            public string Status { get; set; } 
-            //public double SalaryPerDay { get; set; }
+            public string DeviceInfo { get; set; } = string.Empty;
+            public string CheckinIP { get; set; }
+            public string CheckoutIP { get; set; } = string.Empty;
+            public double TotalTime { get; set; }
+            public string Note { get; set; } = string.Empty;
         }
+
         public class CheckinResponse
         {
             public string Message { get; set; }

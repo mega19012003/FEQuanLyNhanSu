@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Checkins"
+        xmlns:c="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Update" Height="300" Width="800">
+        Title="Update" Height="400" Width="800">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser"
            Content="Cập nhật checkin người dùng"
@@ -14,8 +15,10 @@
            VerticalAlignment="Top"
            Margin="0,20,0,10" />
 
-        <Grid Margin="40,80,40,20" VerticalAlignment="Top">
+        <Grid Margin="40,80,40,0" VerticalAlignment="Top" Height="304">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -28,25 +31,35 @@
                 <!-- Input -->
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="0" Text="Fullname" IsReadOnly="True" 
+            <TextBox Grid.Row="0" Grid.Column="0" Text="Họ tên" IsReadOnly="True" 
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5" FontWeight="Heavy"/>
             <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtFullname"
                      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
 
-            <TextBox x:Name="txtboxRole" Grid.Row="1" Grid.Column="0" Text="Log Status" IsReadOnly="True"
+            <TextBox Grid.Row="1" Grid.Column="0" Text="Thời gian checkin" IsReadOnly="True" 
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="cbChkinMor" FontSize="15" Height="41" Margin="0,5" Padding="10,0"
-                  VerticalContentAlignment="Center"
-                  DisplayMemberPath="Name"
-                  SelectedValuePath="Id"
-                  IsEditable="False"/>
+            <c:DateTimePicker Grid.Row="1" Grid.Column="1" x:Name="dtpCheckinTime"
+                 FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <!-- Buttons -->
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <TextBox Grid.Row="2" Grid.Column="0" Text="Thời gian checkout" IsReadOnly="True" 
+                 Background="#FF99C5E3" Foreground="White" FontSize="15"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <c:DateTimePicker Grid.Row="2" Grid.Column="1" x:Name="dtpCheckoutTime"
+                 FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
+
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Chi chú" IsReadOnly="True" 
+                 Background="#FF99C5E3" Foreground="White" FontSize="15"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtNote"
+                 FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
+
+            <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal"
                     HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                     Margin="10,0" FontSize="15" Click="btnExit_Click"/>

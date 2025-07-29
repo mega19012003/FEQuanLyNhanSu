@@ -21,7 +21,7 @@
                     <DataGrid x:Name="LogDtaGrid" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
 
-                            <DataGridTemplateColumn x:Name="DtaGridActionStatus" Header="Hành động" Width="150">
+                            <!--<DataGridTemplateColumn x:Name="DtaGridActionStatus" Header="Hành động" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -29,7 +29,7 @@
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
+                            </DataGridTemplateColumn>-->
                             <!--<DataGridTextColumn x:Name="HeaderCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />-->
                             <DataGridTextColumn Header="Id" Binding="{Binding enumId}" Width="*" />
                             <DataGridTextColumn Header="Tên status" Binding="{Binding Name}" Width="*" />

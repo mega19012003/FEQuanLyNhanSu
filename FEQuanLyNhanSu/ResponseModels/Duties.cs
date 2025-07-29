@@ -14,12 +14,13 @@ namespace FEQuanLyNhanSu.ResponseModels
             public string Name { get; set; }
             public DateOnly StartDate { get; set; }
             public DateOnly EndDate { get; set; }
+            [JsonIgnore]
             public Guid AssignedById { get; set; }
             public string AssignedBy { get; set; }
             public string AssignImageUrl { get; set; }
-            public bool IsCompleted { get; set; }
+            public string Status { get; set; }
             public bool IsDeleted { get; set; }
-            public ObservableCollection<DutyDetailResultDto> DutyDetails { get; set; } = new ObservableCollection<DutyDetailResultDto>();
+            public List<DutyDetailResultDto> DutyDetails { get; set; } = new List<DutyDetailResultDto>();
             public Guid CompanyId { get; set; }
             public string CompanyName { get; set; }
         }
@@ -29,7 +30,9 @@ namespace FEQuanLyNhanSu.ResponseModels
             public Guid UserId { get; set; }
             public string Name { get; set; }
             public string UserImageUrl { get; set; }
-            public bool IsCompleted { get; set; }
+            public string Status { get; set; }
+            public DateOnly Deadline { get; set; }
+            //public bool IsCompleted { get; set; }
             public string Description { get; set; }
         }
         public class DutyResponse

@@ -1,11 +1,15 @@
-﻿using FEQuanLyNhanSu.Base;
+﻿using EmployeeAPI.Models;
+using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.Departments;
+using FEQuanLyNhanSu.Models.Positions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +21,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static FEQuanLyNhanSu.ResponseModels.Companies;
+using static FEQuanLyNhanSu.ResponseModels.Departments;
+using static FEQuanLyNhanSu.ResponseModels.Positions;
+using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu.Screens.Companies
 {
@@ -30,6 +37,7 @@ namespace FEQuanLyNhanSu.Screens.Companies
         {
             InitializeComponent();
             LoadCompany();
+            LoadIsActive();
         }
         // btnAdd_Click
         private void btnAdd_Click(object sender, RoutedEventArgs e)
@@ -158,6 +166,84 @@ namespace FEQuanLyNhanSu.Screens.Companies
         private async void btnNextPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.NextPageAsync();
+        }
+
+        // cbIsActive
+        private void LoadIsActive()
+        {
+            var options = new List<string> { "Tất cả", "Đang hoạt động", "Không hoạt động" };
+            cbIsActive.ItemsSource = options;
+            cbIsActive.SelectedIndex = 1;
+        }
+        private async void cbIsActive_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
+
+        private async Task FilterAsync()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+
+            string keyword = txtSearch.Text?.Trim();
+
+            bool? isActive = null;
+            switch (cbIsActive.SelectedIndex)
+            {
+                case 1: 
+                    isActive = true;
+                    break;
+                case 2: 
+                    isActive = false;
+                    break;
+            }
+
+            var items = await SearchAndFilterDepartmentsAsync(
+                baseUrl,
+                token,
+                keyword,
+                isActive 
+            );
+
+            CompDtaGrid.ItemsSource = null;
+            CompDtaGrid.ItemsSource = items;
+        }
+        public static async Task<List<CompanyResultDto>> SearchAndFilterDepartmentsAsync(string baseUrl, string token, string searchKeyword, bool? isActive, int pageIndex = 1, int pageSize = 20)
+        {
+            try
+            {
+                var parameters = new List<string>();
+                if (!string.IsNullOrWhiteSpace(searchKeyword))
+                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
+                if (isActive.HasValue)
+                    parameters.Add($"IsActive={isActive.Value.ToString().ToLower()}"); 
+                parameters.Add($"pageIndex={pageIndex}");
+                parameters.Add($"pageSize={pageSize}");
+
+                var url = baseUrl + "/api/Company"; 
+                if (parameters.Any())
+                    url += "?" + string.Join("&", parameters);
+
+                using var client = new HttpClient();
+                if (!string.IsNullOrWhiteSpace(token))
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                var response = await client.GetAsync(url);
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show($"Lỗi khi lọc công ty: {response.StatusCode}");
+                    return new List<CompanyResultDto>();
+                }
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<CompanyResultDto>>>(json,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return result?.Data?.Items?.ToList() ?? new List<CompanyResultDto>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+                return new List<CompanyResultDto>();
+            }
         }
     }
 }
