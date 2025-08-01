@@ -38,7 +38,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
         private async Task LoadUsers()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager?employeeOnly=true";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
@@ -102,7 +102,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             btnExit.IsEnabled = false;
             try
             {
-                if (string.IsNullOrWhiteSpace(txtDescription.Text) || dpStartDate.SelectedDate == null || dpEndDate.SelectedDate == null)
+                if (string.IsNullOrWhiteSpace(txtDescription.Text) || dpStartDate.SelectedDate == null || dpEndDate.SelectedDate == null || dpDeadline.SelectedDate == null || string.IsNullOrEmpty(txtDetailTitle.Text))
                 {
                     MessageBox.Show("Vui lòng nhập đầy đủ thông tin");
                     return;
@@ -116,6 +116,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
 
                 var startDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value);
                 var endDate = DateOnly.FromDateTime(dpEndDate.SelectedDate.Value);
+                var deadLine = DateOnly.FromDateTime(dpDeadline.SelectedDate.Value);
 
                 var duty = new
                 {
@@ -126,7 +127,9 @@ namespace FEQuanLyNhanSu.Screens.Duties
                     {
                         new {
                             userId = selectedUser.UserId,
+                            title = txtDetailTitle.Text?.Trim(),
                             description = txtDescription.Text?.Trim(),
+                            deadLine = deadLine,
                         }
                     }
                 };

@@ -1,4 +1,5 @@
-﻿using FEQuanLyNhanSu.Base;
+﻿using EmployeeAPI.Enums;
+using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
 using Newtonsoft.Json;
 using System;
@@ -38,6 +39,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             _detailId = detailId;
             _onDetailUpdated = onDetailUpdated;
             _ = LoadDetailAsync();
+            LoadDutyStatus();
         }
 
         private HttpClient CreateAuthorizedClient(string token)
@@ -46,10 +48,14 @@ namespace FEQuanLyNhanSu.Screens.Duties
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
         }
+        private void LoadDutyStatus()
+        {
+            cb.ItemsSource = Enum.GetValues(typeof(DutyStatus)).Cast<DutyStatus>();
+        }
         private async Task LoadUsers()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager?employeeOnly=true";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
@@ -87,8 +93,13 @@ namespace FEQuanLyNhanSu.Screens.Duties
 
                 //cbEmployee.Text = result.Data.Name;
                 txtDescription.Text = result.Data.Description;
+                dpEndDate.SelectedDate = result.Data.Deadline.ToDateTime(TimeOnly.MinValue);
+                if (Enum.TryParse<DutyStatus>(result.Data.Status, out var dutyStatus))
+                {
+                    cb.SelectedItem = dutyStatus;
+                }
 
-                await LoadUsers();  //  chờ trước khi set SelectedItem
+                await LoadUsers();  
 
                 var userList = cbEmployee.ItemsSource as List<UserResultDto>;
                 var selectedUser = userList?.FirstOrDefault(u => u.UserId == result.Data.UserId);

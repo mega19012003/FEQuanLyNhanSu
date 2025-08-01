@@ -14,6 +14,9 @@ namespace FEQuanLyNhanSu.ResponseModels
             //public double Salary { get; set; }
             public DateTime CreatedDate { get; set; }
             public string Note { get; set; }
+            public string? PhoneNumber { get; set; }
+            public string? Address { get; set; }
+            public string ImageUrl { get; set; }
             public int DaysWorked { get; set; }
         }
         public class PayrollResponse

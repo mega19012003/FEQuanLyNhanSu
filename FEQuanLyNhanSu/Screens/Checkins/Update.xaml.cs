@@ -68,9 +68,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                     txtFullname.Text = result.Data.Name;
                     dtpCheckinTime.Text = result.Data.CheckinTime.ToString("dd/MM/yyyy HH:mm:ss");
                     dtpCheckoutTime.Text = result.Data.CheckoutTime.ToString("dd/MM/yyyy HH:mm:ss");
-                    //cbChkinMor.SelectedValue = _logStatuses.FirstOrDefault(x =>
-                    //    string.Equals(x.Name?.Trim(), result.Data.Status?.Trim(), StringComparison.OrdinalIgnoreCase))?.Id;
-
+                    txtNote.Text = result.Data.Note ?? "";
                 }
             }
             else

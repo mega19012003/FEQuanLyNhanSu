@@ -3,6 +3,7 @@ using FEQuanLyNhanSu.Helpers;
 using FEQuanLyNhanSu.Models.Departments;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Checkins;
+using FEQuanLyNhanSu.Screens.Payrolls;
 using FEQuanLyNhanSu.Screens.Positions;
 using FEQuanLyNhanSu.Services;
 using Newtonsoft.Json;
@@ -30,6 +31,7 @@ using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.ResponseModels.Positions;
 using static FEQuanLyNhanSu.Services.Checkins;
+using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu
 {
@@ -47,6 +49,10 @@ namespace FEQuanLyNhanSu
             CheckinDtaGrid.ItemsSource = UserList;
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadDateComboboxes();
+            _ = LoadCompanies();
+            _ = LoadDepartmentByCompanyAsync();
+            _ = LoadPositionsByDepartmentAsync();
+            Loaded += async (s, e) => await FilterAsync();
         }
 
         private void HandleUI(string role)
@@ -56,25 +62,15 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     AddCheckinBtn.Visibility = Visibility.Collapsed;
                     AddCheckouBtn.Visibility = Visibility.Collapsed;
-                    _ = FilterAsync();
-                    _ = LoadCompanies();
-                    _ = LoadDepartmentByCompanyAsync();
-                    _ = LoadPositionsByDepartmentAsync();
                     break;
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
-                    _ = FilterAsync();
-                    _ = LoadDepartments();
-                    _ = LoadPositionsByDepartmentAsync();
                     break;
                 case "Manager":
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
-                    _ = FilterAsync();
-                    _ = LoadPositions();
                     break;
                 case "Employee":
-                    _ = FilterAsync();
                     lblTitle.Text = "Chấm công";
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
@@ -125,52 +121,6 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-        private async Task LoadDepartments()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync(baseUrl);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json = response.Content.ReadAsStringAsync().Result;
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                cbDepartment.ItemsSource = result.Data.Items;
-
-                if (result.Data.Items != null && result.Data.Items.Any())
-                {
-                    cbDepartment.SelectedItem = result.Data.Items.First();
-
-                    await FilterAsync();
-                }
-            }
-        }
-        private async Task LoadPositions()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync(baseUrl);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = response.Content.ReadAsStringAsync().Result;
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                cbPosition.ItemsSource = result.Data.Items;
-
-                if (result.Data.Items != null && result.Data.Items.Any())
-                {
-                    cbPosition.SelectedItem = result.Data.Items.First();
-                    await FilterAsync();
-                }
-            }
-        }
         private async Task LoadDepartmentsByCompanyId(Guid? companyId)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -202,38 +152,6 @@ namespace FEQuanLyNhanSu
                 //}
             }
         }
-        //private async Task LoadUserWithCheckin()
-        //{
-        //    var token = Application.Current.Properties["Token"]?.ToString();
-        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
-        //    int pageSize = 20;
-
-        //    _paginationHelper = new PaginationHelper<Checkins.UserWithCheckinsDto>(
-        //        baseUrl,
-        //        pageSize,
-        //        token,
-        //        items => CheckinDtaGrid.ItemsSource = items,
-        //        txtPage
-        //    );
-
-        //    await _paginationHelper.LoadPageAsync(1);
-        //}
-        //private async Task LoadEmployeeWithCheckin()
-        //{
-        //    var token = Application.Current.Properties["Token"]?.ToString();
-        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin";
-        //    int pageSize = 20;
-
-        //    _paginationHelper = new PaginationHelper<Checkins.UserWithCheckinsDto>(
-        //        baseUrl,
-        //        pageSize,
-        //        token,
-        //        items => CheckinDtaGrid.ItemsSource = items,
-        //        txtPage
-        //    );
-
-        //    await _paginationHelper.LoadPageAsync(1);
-        //}
 
         private async Task FilterAsync()
         {
@@ -582,96 +500,120 @@ namespace FEQuanLyNhanSu
         private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
 
-        //private void OnCheckinCreated(Checkins.CheckinResultDto newDept)
-        //{
-        //    var list = CheckinDtaGrid.ItemsSource as List<UserWithCheckinsDto>;
-        //    if (list == null) return;
-
-        //    var user = list.FirstOrDefault(u => u.UserId == newDept.UserId);
-        //    if (user != null)
-        //    {
-        //        user.Checkins.Insert(0, newDept); // Thêm checkin mới vào đầu danh sách
-        //        CheckinDtaGrid.Items.Refresh();   // Cập nhật lại UI
-        //    }
-        //}
-        private void OnCheckinUpdated(Checkins.CheckinResultDto updatedDept)
+        private async void OnCheckinCreated(Checkins.CheckinResultDto newCheckin)
         {
-            if (updatedDept != null)
+            if (newCheckin == null) return;
+
+            var list = CheckinDtaGrid.ItemsSource as List<Checkins.UserWithCheckinsDto>;
+            if (list == null) return;
+
+            var user = list.FirstOrDefault(u => u.UserId == newCheckin.UserId);
+
+            var token = Application.Current.Properties["Token"]?.ToString();
+            if (string.IsNullOrEmpty(token)) return;
+
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var response = await httpClient.GetAsync($"{baseUrl}/api/User/{newCheckin.UserId}");
+            if (!response.IsSuccessStatusCode) return;
+
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var userResponse = System.Text.Json.JsonSerializer.Deserialize<UserResponse>(resultJson,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (userResponse?.Data == null) return;
+
+            var userData = userResponse.Data;
+
+            if (user == null)
             {
-                var list = CheckinDtaGrid.ItemsSource as List<Checkins.CheckinResultDto> ?? new List<Checkins.CheckinResultDto>();
-
-                var existing = list.FirstOrDefault(d => d.CheckinId == updatedDept.CheckinId);
-                if (existing != null)
+                user = new Checkins.UserWithCheckinsDto
                 {
-                    list.Remove(existing);
-                }
-
-                list.Insert(0, updatedDept);
-
-                CheckinDtaGrid.ItemsSource = null;
-                CheckinDtaGrid.ItemsSource = list;
-
-                CheckinDtaGrid.SelectedItem = updatedDept;
-                CheckinDtaGrid.ScrollIntoView(updatedDept);
+                    UserId = userData.UserId,
+                    FullName = userData.Fullname,
+                    PhoneNumber = userData.PhoneNumber,
+                    Address = userData.Address,
+                    ImageUrl = userData.ImageUrl,
+                    Checkins = new ObservableCollection<Checkins.CheckinResultDto>()
+                };
+                list.Add(user);
             }
+
+            var existing = user.Checkins.FirstOrDefault(p => p.CheckinTime.Day == newCheckin.CheckinTime.Day && p.CheckinTime.Month == newCheckin.CheckinTime.Month && p.CheckinTime.Year == newCheckin.CheckinTime.Year);
+
+            if (existing != null)
+                user.Checkins.Remove(existing);
+
+            user.Checkins.Insert(0, newCheckin);
+            list.Remove(user);
+            list.Insert(0, user);
+
+            CheckinDtaGrid.ItemsSource = null;
+            CheckinDtaGrid.ItemsSource = list;
         }
-        private async void AddCheckinBtn_Click(object sender, RoutedEventArgs e)
+        private async void OnCheckinUpdated(Checkins.CheckinResultDto newCheckin)
         {
-            try
+            if (newCheckin == null) return;
+
+            var list = CheckinDtaGrid.ItemsSource as List<Checkins.UserWithCheckinsDto>;
+            if (list == null) return;
+
+            var user = list.FirstOrDefault(u => u.UserId == newCheckin.UserId);
+
+            var token = Application.Current.Properties["Token"]?.ToString();
+            if (string.IsNullOrEmpty(token)) return;
+
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var response = await httpClient.GetAsync($"{baseUrl}/api/User/{newCheckin.UserId}");
+            if (!response.IsSuccessStatusCode) return;
+
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var userResponse = System.Text.Json.JsonSerializer.Deserialize<UserResponse>(resultJson,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (userResponse?.Data == null) return;
+
+            var userData = userResponse.Data;
+
+            if (user == null)
             {
-                var window = new Checkin(checkin =>
+                user = new Checkins.UserWithCheckinsDto
                 {
-                    var list = CheckinDtaGrid.ItemsSource as List<UserWithCheckinsDto>;
-                    if (list == null) return;
-
-                    var user = list.FirstOrDefault(u => u.UserId == checkin.UserId);
-                    if (user != null)
-                    {
-                        user.Checkins.Insert(0, checkin); // Thêm check-in mới
-
-                        // Đẩy user lên đầu danh sách
-                        list.Remove(user);
-                        list.Insert(0, user);
-
-                        // Cập nhật lại DataGrid
-                        CheckinDtaGrid.ItemsSource = null;
-                        CheckinDtaGrid.ItemsSource = list;
-                    }
-                });
-
-                window.ShowDialog();
+                    UserId = userData.UserId,
+                    FullName = userData.Fullname,
+                    PhoneNumber = userData.PhoneNumber,
+                    Address = userData.Address,
+                    ImageUrl = userData.ImageUrl,
+                    Checkins = new ObservableCollection<Checkins.CheckinResultDto>()
+                };
+                list.Add(user);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Đã xảy ra lỗi:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
+            var existing = user.Checkins.FirstOrDefault(p => p.CheckinTime.Day == newCheckin.CheckinTime.Day && p.CheckinTime.Month == newCheckin.CheckinTime.Month && p.CheckinTime.Year == newCheckin.CheckinTime.Year);
+
+            if (existing != null)
+                user.Checkins.Remove(existing);
+
+            user.Checkins.Insert(0, newCheckin);
+            list.Remove(user);
+            list.Insert(0, user);
+
+            CheckinDtaGrid.ItemsSource = null;
+            CheckinDtaGrid.ItemsSource = list;
+        }
+        private void AddCheckinBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new Checkin(OnCheckinCreated);
+            window.ShowDialog();
         }
         private void AddCheckouBtn_Click(object sender, RoutedEventArgs e)
         {
-            var window = new Checkout(checkout =>
-            {
-                var list = CheckinDtaGrid.ItemsSource as List<UserWithCheckinsDto>;
-                if (list == null) return;
-
-                var user = list.FirstOrDefault(u => u.UserId == checkout.UserId);
-                if (user != null)
-                {
-                    // Tìm bản ghi checkin cũ trong danh sách
-                    var existing = user.Checkins.FirstOrDefault(c => c.CheckinId == checkout.CheckinId);
-                    if (existing != null)
-                    {
-                        user.Checkins.Remove(existing); // Xóa dòng cũ
-                    }
-
-                    // Thêm dòng mới (đã có thông tin checkout)
-                    user.Checkins.Insert(0, checkout);
-                    list.Remove(user);
-                    list.Insert(0, user);
-                    // Làm mới UI
-                    CheckinDtaGrid.Items.Refresh();
-                }
-            });
-
+            var window = new Checkout(OnCheckinUpdated);
             window.ShowDialog();
         }
         private void btnUpdate_Click(object sender, RoutedEventArgs e)

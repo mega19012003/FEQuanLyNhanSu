@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Duties" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="CreateDuty" Height="550" Width="530">
+        Title="CreateDuty" Height="650" Width="550">
     <Grid Background="#FFCCE2F1" Margin="0,0,0,-6">
         <Label x:Name="lblCreateUser" 
                Content="Tạo công việc mới" 
@@ -14,8 +14,10 @@
                VerticalAlignment="Top" 
                Margin="0,20,0,10" />
 
-        <Grid Margin="40,80,40,0" VerticalAlignment="Top" Height="452">
+        <Grid Margin="40,80,40,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -42,27 +44,25 @@
                      Height="41" Margin="0,5"/>
             <DatePicker Grid.Row="1" Grid.Column="1" x:Name="dpStartDate"
                      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
-
             <TextBox Grid.Row="2" Grid.Column="0" Text="Ngày kết thúc" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5"/>
             <DatePicker Grid.Row="2" Grid.Column="1" x:Name="dpEndDate"
                      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
-
-            <TextBox Grid.Row="3" Grid.Column="0" Text="Tên người làm" IsReadOnly="True"
+            
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Tên chi tiết công việc" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5"/>
-            <!--<ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbEmployee"
-              FontSize="15" Height="41" Margin="0,5" Padding="10,0"
-              IsEditable="True"
-              StaysOpenOnEdit="True"
-              IsTextSearchEnabled="False"
-              KeyUp="cbEmployee_KeyUp"
-              DisplayMemberPath="Fullname"
-              SelectedValuePath="UserId" VerticalContentAlignment="Center"/>-->
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbEmployee"
+            <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtDetailTitle"
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
+
+            <TextBox Grid.Row="4" Grid.Column="0" Text="Tên người làm" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cbEmployee"
                   FontSize="15" Height="41" Margin="0,5" Padding="10,0"
                   IsEditable="True"
                   StaysOpenOnEdit="True"
@@ -86,13 +86,20 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBox Grid.Row="4" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
+            <TextBox Grid.Row="5" Grid.Column="0" Text="Thời hạn" IsReadOnly="True"
+                      Background="#FF99C5E3" Foreground="White" FontSize="15"
+                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                      Height="41" Margin="0,5"/>
+            <DatePicker Grid.Row="5" Grid.Column="1" x:Name="dpDeadline"
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
+
+            <TextBox Grid.Row="6" Grid.Column="0" Text="Mô tả chi tiết         công việc" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
-                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,10"/>
-            <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtDescription"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,10" TextWrapping="Wrap"/>
+            <TextBox Grid.Row="6" Grid.Column="1" x:Name="txtDescription"
                      FontSize="15" Margin="0,5,0,10" Padding="10,0" TextWrapping="Wrap"/>
 
-            <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal"
                         HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Click="btnExit_Click"/>

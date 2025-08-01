@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static FEQuanLyNhanSu.ResponseModels.Departments;
+using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.ResponseModels.Payrolls;
 using static FEQuanLyNhanSu.Services.Checkins;
 using static FEQuanLyNhanSu.Services.UserService.Users;
@@ -35,12 +37,27 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
             InitializeComponent();
             _onPayrollCreated = onPayrollCreated;
             _ = LoadUsers(); // có thể xóa nếu ko cần
+            LoadDateComboboxes();
+        }
+        private void LoadDateComboboxes()
+        {
+            var months = new List<string> { "Tháng" };
+            months.AddRange(Enumerable.Range(1, 12).Select(i => i.ToString()));
+            cbMonth.ItemsSource = months;
+
+            int currentYear = DateTime.Now.Year;
+            var years = new List<string> { "Năm" };
+            years.AddRange(Enumerable.Range(2000, currentYear - 2000 + 1).Select(i => i.ToString()).Reverse());
+            cbYear.ItemsSource = years;
+
+            cbMonth.SelectedIndex = DateTime.Now.Month;
+            cbYear.SelectedIndex = years.IndexOf(currentYear.ToString());
         }
         private async Task LoadUsers()
         {
             string keyword = cbEmployee.Text.Trim();
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
@@ -108,46 +125,50 @@ namespace FEQuanLyNhanSu.Screens.Payrolls
             try
             {
                 var selectedUser = cbEmployee.SelectedItem as UserResultDto;
-                if (selectedUser == null)
+                var selectedMonth = cbMonth.SelectedItem;
+                var selectedYear = cbYear.SelectedItem;
+
+                if (selectedUser == null || selectedMonth == null || selectedYear == null)
                 {
-                    MessageBox.Show("Vui lòng chọn nhân viên từ danh sách");
+                    MessageBox.Show("Vui lòng chọn đầy đủ nhân viên, tháng và năm.");
                     return;
                 }
 
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl();
 
-                var url = $"{baseUrl}/api/Payroll/calculate?userId={selectedUser.UserId}";
+                // Gán Month và Year vào query string
+                var url = $"{baseUrl}/api/Payroll/calculate?userId={selectedUser.UserId}&Month={selectedMonth}&Year={selectedYear}";
 
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
+                // Gửi POST nhưng không có body
                 var response = await client.PostAsync(url, null);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<ApiResponse<PayrollResultDto>>(json);
-
-                    if (result != null && result.Data != null)
+                    var jsonResult = await response.Content.ReadAsStringAsync();
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<PayrollResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    if (result?.Data != null)
                     {
-                        //lblId.Content = result.Data.Id.ToString();
                         lblFullname.Content = result.Data.Name;
-                        //lblSalary.Content = result.Data.Salary.ToString("N0");
                         lblDayWorked.Content = result.Data.DaysWorked.ToString();
                         lblNote.Content = result.Data.Note ?? "Không có ghi chú";
                         lblCreatedDate.Content = result.Data.CreatedDate.ToString("dd/MM/yyyy HH:mm:ss");
                     }
+
                     MessageBox.Show("Chấm công thành công.");
                     _onPayrollCreated?.Invoke(result.Data);
-                    //this.Close();
                 }
                 else
                 {
                     var json = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra tạo payroll";
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra khi tạo payroll.";
                     MessageBox.Show($"Chấm công thất bại: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }

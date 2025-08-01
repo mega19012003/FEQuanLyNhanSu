@@ -18,7 +18,7 @@
     <Grid Background="White" Margin="0,-3,0,0">
         
         <TextBlock x:Name="lblTitle" Text="Trang quản lý công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
-        <DataGrid x:Name="DutyDtaGrid" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid x:Name="DutyDtaGrid" MinRowHeight="60" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn x:Name="DtaGridActionDuty" Header="Hành động" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
@@ -39,7 +39,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}" Width="*" >
+                <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding StartDate}" Width="Auto" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -48,7 +48,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}" Width="*" >
+                <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding EndDate}" Width="Auto" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -57,32 +57,20 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Người tạo" Binding="{Binding AssignedBy}" Width="*" >
+                <DataGridTextColumn Header="Chi chú" Binding="{Binding Note}" Width="*" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Left"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="Padding" Value="5,0"/>
+                            <Setter Property="TextWrapping" Value="Wrap"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTemplateColumn Header="Ảnh" Width="100">
+                <DataGridTemplateColumn Header="Trạng thái" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Width="60" Height="60" Stretch="UniformToFill">
-                                <Image.Source>
-                                    <Binding Path="AssignImageUrl" 
-                                         TargetNullValue="pack://application:,,,/Assets/none.jpg"
-                                         FallbackValue="pack://application:,,,/Assets/user.png"/>
-                                </Image.Source>
-                            </Image>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Trạng thái" Width="150">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Status}" Padding="5" TextAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Status}" Padding="10" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Style.Triggers>
@@ -94,9 +82,9 @@
                                                 <Setter Property="Foreground" Value="DarkOrange"/>
                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding Status}" Value="NotStarted">
+                                            <DataTrigger Binding="{Binding Status}" Value="Pending">
                                                 <Setter Property="Foreground" Value="Black"/>
-                                                <Setter Property="FontStyle" Value="Italic"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -105,27 +93,84 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Người tạo" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Width="30" Height="30" Margin="5" Stretch="UniformToFill">
+                                    <Image.Source>
+                                        <Binding Path="AssignImageUrl" 
+                                                 TargetNullValue="pack://application:,,,/Assets/none.jpg"
+                                                 FallbackValue="pack://application:,,,/Assets/user.png"/>  
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock Text="{Binding AssignedBy}" 
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,5,5,5"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Ngày tạo" Binding="{Binding CreatedDate}" Width="Auto" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Ngày cập nhật" Binding="{Binding UpdatedDate}" Width="Auto" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
  
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <Grid>
-                        <DataGrid ItemsSource="{Binding DutyDetails}" AutoGenerateColumns="False" IsReadOnly="True" Margin="20,5,20,5" ColumnWidth="*" HeadersVisibility="Column" HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
+                        <DataGrid ItemsSource="{Binding DutyDetails}" MinRowHeight="60" AutoGenerateColumns="False" IsReadOnly="True" Margin="5" ColumnWidth="*" HeadersVisibility="Column" HorizontalAlignment="Stretch" Width="{Binding RelativeSource={RelativeSource AncestorType=DataGrid}, Path=ActualWidth}">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='SystemAdmin'}">
+                                <DataGridTemplateColumn Header ="Hành động" Width="Auto" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='SystemAdmin'}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click"  VerticalAlignment="Center" VerticalContentAlignment="Center" Tag="{Binding DutyDetailId}" />
-                                                <Button x:Name="btnUpdateDetail" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateDetail_Click" VerticalAlignment="Center" VerticalContentAlignment="Center"   
-                                                        Tag="{Binding DutyDetailId}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
-                                                <Button x:Name="btnDeleteDetail" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteDetail_Click" VerticalAlignment="Center" VerticalContentAlignment="Center"  
-                                                        Tag="{Binding DutyDetailId}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
+                                                <!--<Button Content="Hoàn thành" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnDoneTask_Click"  VerticalAlignment="Center" VerticalContentAlignment="Center" Tag="{Binding DutyDetailId}" />-->
+                                                <Button x:Name="btnUpdateDetail" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="2.5" Click="btnUpdateDetail_Click" VerticalAlignment="Center" VerticalContentAlignment="Center"  Tag="{Binding DutyDetailId}" />
+                                                <!--Tag="{Binding DutyDetailId}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>-->
+                                                <Button x:Name="btnDeleteDetail" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="2.5" Click="btnDeleteDetail_Click" VerticalAlignment="Center" VerticalContentAlignment="Center" 
+                                                Tag="{Binding DutyDetailId}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*">
+                                <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title}" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="5,0"/>
+                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Mô tả" Binding="{Binding Description}" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="5,0"/>
+                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Thời hạn" Binding="{Binding Deadline}" Width="Auto">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -134,40 +179,10 @@
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTemplateColumn Header="Ảnh" Width="100">
+                                <DataGridTemplateColumn Header="Trạng thái" Width="Auto">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image Width="60" Height="60" Stretch="UniformToFill">
-                                                <Image.Source>
-                                                    <Binding Path="UserImageUrl" 
-                                                         TargetNullValue="pack://application:,,,/Assets/none.jpg"
-                                                         FallbackValue="pack://application:,,,/Assets/user.png"/>
-                                                </Image.Source>
-                                            </Image>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding Deadline}" Width="*">
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Left"/>
-                                            <Setter Property="VerticalAlignment" Value="Center"/>
-                                            <Setter Property="Padding" Value="5,0"/>
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
-                                <DataGridTemplateColumn Header="Mô tả" Width="*">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock 
-                                                Text="{Binding Description}" TextWrapping="Wrap" ToolTip="{Binding Description}" MaxHeight="80" VerticalAlignment="Center"/>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Header="Trạng thái" Width="150">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Status}" Padding="5" TextAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding Status}" TextAlignment="Center" Padding="10" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Style.Triggers>
@@ -179,9 +194,9 @@
                                                                 <Setter Property="Foreground" Value="DarkOrange"/>
                                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                                             </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="NotStarted">
+                                                            <DataTrigger Binding="{Binding Status}" Value="Pending">
                                                                 <Setter Property="Foreground" Value="Gray"/>
-                                                                <Setter Property="FontStyle" Value="Italic"/>
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -190,6 +205,53 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Người thực hiện" Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Image Width="30" Height="30" Margin="5,5,5,5" Stretch="UniformToFill">
+                                                    <Image.Source>
+                                                        <Binding Path="UserImageUrl" 
+                                                                 TargetNullValue="pack://application:,,,/Assets/none.jpg"
+                                                                 FallbackValue="pack://application:,,,/Assets/user.png" />
+                                                    </Image.Source>
+                                                </Image>
+                                                <TextBlock Text="{Binding Name}" 
+                                                           VerticalAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Margin="0,5,5,5"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="5,0"/>
+                                            <Setter Property="TextWrapping" Value="Wrap"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Ngày tạo" Binding="{Binding CreatedDate}" Width="Auto">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="5,0"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Ngày cập nhật" Binding="{Binding UpdatedDate}" Width="Auto">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="5,0"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>

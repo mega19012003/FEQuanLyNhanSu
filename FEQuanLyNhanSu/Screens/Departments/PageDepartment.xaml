@@ -11,21 +11,29 @@
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock Text="Trang quản lý phòng ban" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="DprtmtDtaGrid" Margin="20,100,20,50" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+        <DataGrid x:Name="DprtmtDtaGrid" RowHeight="60" Margin="20,100,20,50" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
 
                 <DataGridTemplateColumn x:Name="DtaGridActionDepartment" Header="Hành động" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding DepartmentId}"/>
-                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding DepartmentId}"/>
+                                <Button x:Name="btnUpdate" Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding DepartmentId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                <Button x:Name="btnDelete" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding DepartmentId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <!--<DataGridTextColumn Header="Id" Binding="{Binding DepartmentId}" Width="*" />-->
-                <DataGridTextColumn Header="Tên phòng ban" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Tên phòng ban" Binding="{Binding Name}" Width="*" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <!--<DataGridTextColumn x:Name="DtaGridColumnCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />-->
             </DataGrid.Columns>
         </DataGrid>

@@ -13,7 +13,7 @@
              FontSize="24"
              HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <DataGrid x:Name="UserDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+        <DataGrid x:Name="UserDtaGrid" RowHeight="60" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
 
 
@@ -23,12 +23,12 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding UserId}" VerticalAlignment="Center" VerticalContentAlignment="Center" />
                                 <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding UserId}" VerticalAlignment="Center" VerticalContentAlignment="Center" />
-                                <Button Content="Reset Pass" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnResetPass_Click" Tag="{Binding UserId}"/>
+                                <Button Content="Reset Pass" Background="White" Foreground="Black" Margin="2" Padding="5,2" Click="btnResetPass_Click" Tag="{Binding UserId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*" >
+                <!--<DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -36,7 +36,7 @@
                             <Setter Property="Padding" Value="5,0"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                </DataGridTextColumn>-->
                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Fullname}" Width="*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">

@@ -18,7 +18,7 @@
             <TabItem Header="Trạng thái Checkin">
                 <Grid Background="White">
                     <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-                    <DataGrid x:Name="LogDtaGrid" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+                    <DataGrid x:Name="LogDtaGrid" RowHeight="60" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
 
                             <!--<DataGridTemplateColumn x:Name="DtaGridActionStatus" Header="Hành động" Width="150">
@@ -31,10 +31,33 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>-->
                             <!--<DataGridTextColumn x:Name="HeaderCompany" Header="Công ty" Binding="{Binding CompanyName}" Width="*" />-->
-                            <DataGridTextColumn Header="Id" Binding="{Binding enumId}" Width="*" />
-                            <DataGridTextColumn Header="Tên status" Binding="{Binding Name}" Width="*" />
-                            <!--<DataGridTextColumn Header="Salary multiplier" Binding="{Binding SalaryMultiplier}" Width="*" />-->
-                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*" />
+                            <DataGridTextColumn Header="Id" Binding="{Binding enumId}" Width="*"  >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Tên status" Binding="{Binding Name}" Width="*"  >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="*"  >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                     <Grid HorizontalAlignment="Right" Margin="0,10,20,0" VerticalAlignment="Top" Width="250" Height="35">
@@ -74,23 +97,47 @@
                       VerticalAlignment="Top" Width="150" FontSize="16"
                       Background="#FF66A8D5" Foreground="White" Click="AddHolidayBtn_Click"/>
 
-                    <DataGrid x:Name="HolidayDtaGrid" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+                    <DataGrid x:Name="HolidayDtaGrid" RowHeight="60" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
 
                             <DataGridTemplateColumn x:Name="DtaGridActionHoliday" Header="Hành động" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateHoliday_Click" Tag="{Binding HolidayId}"/>
-                                            <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteHoliday_Click" Tag="{Binding HolidayId}"/>
+                                            <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdateHoliday_Click" Tag="{Binding HolidayId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                            <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteHoliday_Click" Tag="{Binding HolidayId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <!--<DataGridTextColumn Header="Id" Binding="{Binding HolidayId}" Width="*" />-->
-                            <DataGridTextColumn Header="Tên ngày nghỉ lễ" Binding="{Binding Name}" Width="*" />
-                            <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding startDate}" Width="*" />
-                            <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding endDate}" Width="*" />
+                            <DataGridTextColumn Header="Tên ngày nghỉ lễ" Binding="{Binding Name}" Width="*"  >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Ngày bắt đầu" Binding="{Binding startDate}" Width="*"  >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Ngày kết thúc" Binding="{Binding endDate}" Width="*"  >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <!--<DataGridTextColumn x:Name="HeaderCompanyHoliday" Header="Công ty" Binding="{Binding companyName}" Width="*" />-->
                         </DataGrid.Columns>
                     </DataGrid>
@@ -176,16 +223,56 @@
 
                 <Grid Background="White">
 
-                    <DataGrid x:Name="ScheduleDtaGrid" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+                    <DataGrid x:Name="ScheduleDtaGrid" RowHeight="60" Margin="10,60,10,55" FontSize="15"  ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
 
                             <!--<DataGridTextColumn Header="Id" Binding="{Binding id}" Width="*" />-->
                             <!--<DataGridTextColumn Header="Công ty" Binding="{Binding CompanyName}" Width="*" />-->
-                            <DataGridTextColumn Header="Bắt đầu ca sáng" Binding="{Binding StartTimeMorning}" Width="*" />
-                            <DataGridTextColumn Header="Kết thúc ca sáng" Binding="{Binding EndTimeMorning}" Width="*" />
-                            <DataGridTextColumn Header="Thời gian checkin" Binding="{Binding LogAllowtime}" Width="*" />
-                            <DataGridTextColumn Header="Bắt đầu ca chiều" Binding="{Binding StartTimeAfternoon}" Width="*" />
-                            <DataGridTextColumn Header="Kết thúc ca chiều" Binding="{Binding EndTimeAfternoon}" Width="*" />
+                            <DataGridTextColumn Header="Bắt đầu ca sáng" Binding="{Binding StartTimeMorning}" Width="*"  >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Kết thúc ca sáng" Binding="{Binding EndTimeMorning}" Width="*"  >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Thời gian checkin" Binding="{Binding LogAllowtime}" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Bắt đầu ca chiều" Binding="{Binding StartTimeAfternoon}" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Kết thúc ca chiều" Binding="{Binding EndTimeAfternoon}" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
 
                         </DataGrid.Columns>
                     </DataGrid>
@@ -208,7 +295,7 @@
             <TabItem x:Name="TabIP" Header="Allowed IP">
                 <Grid x:Name="IPGrid" Background="White">
                     <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-                    <DataGrid x:Name="AllowedIPDtaGrid" Margin="10,60,10,55" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
+                    <DataGrid x:Name="AllowedIPDtaGrid" RowHeight="60" Margin="10,60,10,55" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
                         <DataGrid.Columns>
 
                             <DataGridTemplateColumn x:Name="DtaGridActionIP" Header="Hành động" >
@@ -216,13 +303,21 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                             <!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>-->
-                                            <Button x:Name="btnDeleteIP" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteIP_Click" Tag="{Binding AllowedIPId}"/>
+                                            <Button x:Name="btnDeleteIP" Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDeleteIP_Click" Tag="{Binding AllowedIPId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <!--<DataGridTextColumn Header="Id" Binding="{Binding AllowedIPId}" Width="*" />-->
-                            <DataGridTextColumn Header="Địa chỉ IP" Binding="{Binding IPAddress}" Width="*" />
+                            <DataGridTextColumn Header="Địa chỉ IP" Binding="{Binding IPAddress}" Width="*" >
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <!--<DataGridTextColumn x:Name="HeaderCompanyIP" Header="Công ty" Binding="{Binding companyName}" Width="*" />-->
                         </DataGrid.Columns>
                     </DataGrid>

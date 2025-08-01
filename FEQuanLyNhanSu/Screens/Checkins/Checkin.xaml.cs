@@ -63,7 +63,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
         private async Task LoadUsers()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =

@@ -14,7 +14,9 @@ namespace FEQuanLyNhanSu.ResponseModels
             public string Name { get; set; }
             public DateOnly StartDate { get; set; }
             public DateOnly EndDate { get; set; }
-            [JsonIgnore]
+            public DateTime CreatedDate { get; set; }
+            public DateTime? UpdatedDate { get; set; }
+            public string? Note { get; set; }
             public Guid AssignedById { get; set; }
             public string AssignedBy { get; set; }
             public string AssignImageUrl { get; set; }
@@ -32,7 +34,12 @@ namespace FEQuanLyNhanSu.ResponseModels
             public string UserImageUrl { get; set; }
             public string Status { get; set; }
             public DateOnly Deadline { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public DateTime? UpdatedDate { get; set; }
+            public DateTime? CompletedDate { get; set; }
+            public string? Note { get; set; }
             //public bool IsCompleted { get; set; }
+            public string Title { get; set; }
             public string Description { get; set; }
         }
         public class DutyResponse

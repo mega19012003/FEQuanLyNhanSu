@@ -1,11 +1,13 @@
 ﻿using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.Payrolls;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Payrolls;
 using FEQuanLyNhanSu.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -26,6 +28,7 @@ using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
 using static FEQuanLyNhanSu.ResponseModels.Payrolls;
 using static FEQuanLyNhanSu.ResponseModels.Positions;
+using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu
 {
@@ -41,6 +44,10 @@ namespace FEQuanLyNhanSu
             InitializeComponent();
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadDateComboboxes();
+            _ = LoadCompanies();
+            _ = LoadDepartmentByCompanyAsync();
+            _ = LoadPositionsByDepartmentAsync();
+            Loaded += async (s, e) => await FilterAsync();
         }
 
         private void HandleUI(string role)
@@ -50,25 +57,16 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     //DtaGridAction.Visibility = Visibility.Collapsed;
                     AddPayrollBtn.Visibility = Visibility.Collapsed;
-                    _ = LoadCompanies();
-                    _ = LoadDepartmentByCompanyAsync();
-                    _ = LoadPositionsByDepartmentAsync();
-                    _ = FilterAsync();
+
                     break;
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
-                    _ = FilterAsync();
-                    _ = LoadDepartments();
-                    _ = LoadPositionsByDepartmentAsync();
                     break; 
                 case "Manager":
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
-                    _ = FilterAsync();
-                    _ = LoadPositions();
                     break;
                 case "Employee":
-                    _ = FilterAsync();
                     AddPayrollBtn.Visibility = Visibility.Collapsed;
                     //DtaGridAction.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
@@ -135,50 +133,50 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-        private async Task LoadDepartments()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+        //private async Task LoadDepartments()
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
 
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync(baseUrl);
+        //    using var client = new HttpClient();
+        //    client.DefaultRequestHeaders.Authorization =
+        //        new AuthenticationHeaderValue("Bearer", token);
+        //    var response = await client.GetAsync(baseUrl);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var json = response.Content.ReadAsStringAsync().Result;
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
-                cbDepartment.ItemsSource = result.Data.Items;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var json = response.Content.ReadAsStringAsync().Result;
+        //        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+        //        cbDepartment.ItemsSource = result.Data.Items;
 
-                if (result.Data.Items != null && result.Data.Items.Any())
-                {
-                    cbDepartment.SelectedItem = result.Data.Items.First();
-                    await FilterAsync();
-                }
-            }
-        }
-        private async Task LoadPositions()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+        //        if (result.Data.Items != null && result.Data.Items.Any())
+        //        {
+        //            cbDepartment.SelectedItem = result.Data.Items.First();
+        //            await FilterAsync();
+        //        }
+        //    }
+        //}
+        //private async Task LoadPositions()
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
 
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync(baseUrl);
-            if (response.IsSuccessStatusCode)
-            {
-                var json = response.Content.ReadAsStringAsync().Result;
-                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                cbPosition.ItemsSource = result.Data.Items;
-                if (result.Data.Items != null && result.Data.Items.Any())
-                {
-                    cbPosition.SelectedItem = result.Data.Items.First();
-                    await FilterAsync();
-                }
-            }
-        }
+        //    using var client = new HttpClient();
+        //    client.DefaultRequestHeaders.Authorization =
+        //        new AuthenticationHeaderValue("Bearer", token);
+        //    var response = await client.GetAsync(baseUrl);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var json = response.Content.ReadAsStringAsync().Result;
+        //        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+        //        cbPosition.ItemsSource = result.Data.Items;
+        //        if (result.Data.Items != null && result.Data.Items.Any())
+        //        {
+        //            cbPosition.SelectedItem = result.Data.Items.First();
+        //            await FilterAsync();
+        //        }
+        //    }
+        //}
         private async Task LoadDepartmentsByCompanyId(Guid? companyId)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -580,33 +578,86 @@ namespace FEQuanLyNhanSu
         private async void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
 
-        private void OnPayrollCreated(Payrolls.PayrollResultDto newPayroll)
+        //private void OnPayrollCreated(Payrolls.PayrollResultDto newPayroll)
+        //{
+        //    if (newPayroll != null)
+        //    {
+        //        var list = PayrollDtaGrid.ItemsSource as List<Payrolls.UserWithPayrollDto>;
+        //        if (list == null) return;
+
+        //        var user = list.FirstOrDefault(u => u.UserId == newPayroll.UserId);
+        //        if (user == null) return;
+
+        //        // Xóa bản cũ nếu cùng tháng/năm
+        //        var existing = user.Payrolls.FirstOrDefault(p =>
+        //            p.CreatedDate.Month == newPayroll.CreatedDate.Month &&
+        //            p.CreatedDate.Year == newPayroll.CreatedDate.Year);
+
+        //        if (existing != null)
+        //            user.Payrolls.Remove(existing);
+
+        //        user.Payrolls.Insert(0, newPayroll); // Thêm payroll mới vào đầu danh sách của user
+
+        //        // Đẩy user lên đầu danh sách
+        //        list.Remove(user);
+        //        list.Insert(0, user);
+
+        //        PayrollDtaGrid.ItemsSource = null;
+        //        PayrollDtaGrid.ItemsSource = list; // reset lại ItemsSource để update UI
+        //    }
+        //}
+        private async void OnPayrollCreated(Payrolls.PayrollResultDto newPayroll)
         {
-            if (newPayroll != null)
+            if (newPayroll == null) return;
+
+            var list = PayrollDtaGrid.ItemsSource as List<Payrolls.UserWithPayrollDto>;
+            if (list == null) return;
+
+            var user = list.FirstOrDefault(u => u.UserId == newPayroll.UserId);
+
+            var token = Application.Current.Properties["Token"]?.ToString();
+            if (string.IsNullOrEmpty(token)) return;
+
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var response = await httpClient.GetAsync($"{baseUrl}/api/User/{newPayroll.UserId}");
+            if (!response.IsSuccessStatusCode) return;
+
+            var resultJson = await response.Content.ReadAsStringAsync();
+            var userResponse = System.Text.Json.JsonSerializer.Deserialize<UserResponse>(resultJson,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            if (userResponse?.Data == null) return;
+
+            var userData = userResponse.Data;
+
+            if (user == null)
             {
-                var list = PayrollDtaGrid.ItemsSource as List<Payrolls.UserWithPayrollDto>;
-                if (list == null) return;
-
-                var user = list.FirstOrDefault(u => u.UserId == newPayroll.UserId);
-                if (user == null) return;
-
-                // Xóa bản cũ nếu cùng tháng/năm
-                var existing = user.Payrolls.FirstOrDefault(p =>
-                    p.CreatedDate.Month == newPayroll.CreatedDate.Month &&
-                    p.CreatedDate.Year == newPayroll.CreatedDate.Year);
-
-                if (existing != null)
-                    user.Payrolls.Remove(existing);
-
-                user.Payrolls.Insert(0, newPayroll); // Thêm payroll mới vào đầu danh sách của user
-
-                // Đẩy user lên đầu danh sách
-                list.Remove(user);
-                list.Insert(0, user);
-
-                PayrollDtaGrid.ItemsSource = null;
-                PayrollDtaGrid.ItemsSource = list; // reset lại ItemsSource để update UI
+                user = new Payrolls.UserWithPayrollDto
+                {
+                    UserId = userData.UserId,
+                    Fullname = userData.Fullname,
+                    PhoneNumber = userData.PhoneNumber,
+                    Address = userData.Address,
+                    ImageUrl = userData.ImageUrl,
+                    Payrolls = new ObservableCollection<Payrolls.PayrollResultDto>()
+                };
+                list.Add(user);
             }
+
+            var existing = user.Payrolls.FirstOrDefault(p => p.CreatedDate.Month == newPayroll.CreatedDate.Month &&  p.CreatedDate.Year == newPayroll.CreatedDate.Year);
+
+            if (existing != null)
+                user.Payrolls.Remove(existing);
+
+            user.Payrolls.Insert(0, newPayroll);
+            list.Remove(user);
+            list.Insert(0, user);
+
+            PayrollDtaGrid.ItemsSource = null;
+            PayrollDtaGrid.ItemsSource = list;
         }
         private void AddPayroll(object sender, RoutedEventArgs e)
         {
@@ -635,15 +686,26 @@ namespace FEQuanLyNhanSu
             var response = await client.DeleteAsync(baseUrl);
             if (response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Xóa cấu  bảng lương thành công.");
+                MessageBox.Show("Xóa bảng lương thành công.");
+
+                var list = PayrollDtaGrid.ItemsSource as List<Payrolls.UserWithPayrollDto>;
+                if (list != null)
+                {
+                    foreach (var user in list)
+                    {
+                        var payroll = user.Payrolls.FirstOrDefault(p => p.Id == PayrollId);
+                        if (payroll != null)
+                        {
+                            user.Payrolls.Remove(payroll);
+                            break;
+                        }
+                    }
+
+                    PayrollDtaGrid.ItemsSource = null;
+                    PayrollDtaGrid.ItemsSource = list;
+                }
+
                 _paginationHelper.RefreshAsync();
-            }
-            else
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra khi xóa";
-                MessageBox.Show($"Không thể xóa bảng lương. Vui lòng thử lại sau: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

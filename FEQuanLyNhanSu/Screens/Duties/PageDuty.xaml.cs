@@ -42,7 +42,7 @@ namespace FEQuanLyNhanSu
                 await FilterAsync();
             };
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            _ = FilterAsync();
+            //_ = FilterAsync();
             LoadDateComboboxes();
             Loaded += async (s, e) => await FilterAsync();
         }
@@ -154,19 +154,22 @@ namespace FEQuanLyNhanSu
             int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
             int? year = cbYear.SelectedIndex > 0 ? int.Parse(cbYear.SelectedItem.ToString()) : (int?)null;
 
+            //Guid? companyId = null;
+            //string companyText = cbCompany.Text?.Trim();
+            //if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
+            //{
+            //    companyId = selectedCompany.CompanyId;
+            //}
+            //else if (!string.IsNullOrEmpty(companyText))
+            //{
+            //    var found = (cbCompany.ItemsSource as IEnumerable<CompanyResultDto>)
+            //        ?.FirstOrDefault(c => c.Name.Equals(companyText, StringComparison.OrdinalIgnoreCase));
+            //    if (found != null)
+            //        companyId = found.CompanyId;
+            //}
             Guid? companyId = null;
-            string companyText = cbCompany.Text?.Trim();
-            if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
-            {
-                companyId = selectedCompany.CompanyId;
-            }
-            else if (!string.IsNullOrEmpty(companyText))
-            {
-                var found = (cbCompany.ItemsSource as IEnumerable<CompanyResultDto>)
-                    ?.FirstOrDefault(c => c.Name.Equals(companyText, StringComparison.OrdinalIgnoreCase));
-                if (found != null)
-                    companyId = found.CompanyId;
-            }
+            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
+                companyId = selectedComp.CompanyId;
 
             var items = await SearchAndFilterDutiesAsync(baseUrl, token, keyword, day, month, year, companyId);
             DutyDtaGrid.ItemsSource = items;

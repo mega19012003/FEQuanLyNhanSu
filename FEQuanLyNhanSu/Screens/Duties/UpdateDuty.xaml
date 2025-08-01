@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Duties" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="UpdateDuty"  Height="350" Width="530">
+        Title="UpdateDuty"  Height="500" Width="550">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" 
                Content="Cập nhật công việc" 
@@ -19,6 +19,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="150"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
@@ -48,7 +49,20 @@
             <DatePicker Grid.Row="2" Grid.Column="1" x:Name="dpEndDate"
                      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <!--<TextBox Grid.Row="3" Grid.Column="0" Text="Trạng thái" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cbStatus"
+                        FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>-->
+
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Ghi chú" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,10" TextWrapping="Wrap"/>    
+            <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtNote"
+                     FontSize="15" Margin="0,5,0,10" Padding="10,0" TextWrapping="Wrap"/>
+
+            <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal"
                         HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Click="btnExit_Click"/>

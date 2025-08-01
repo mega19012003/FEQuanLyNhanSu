@@ -1,4 +1,5 @@
-﻿using FEQuanLyNhanSu.Base;
+﻿using EmployeeAPI.Enums;
+using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
 using FEQuanLyNhanSu.Models.Configs;
 using Newtonsoft.Json;
@@ -37,6 +38,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
             _dutyId = dutyId;
             _onDutyUpdated = onDutyUpdated;
             _ = LoadDutyAsync();
+            //LoadDutyStatus();
         }
 
         private HttpClient CreateAuthorizedClient(string token)
@@ -46,6 +48,11 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             return client;
         }
+
+        //private void LoadDutyStatus()
+        //{
+        //    cb.ItemsSource = Enum.GetValues(typeof(DutyStatus)).Cast<DutyStatus>().Skip(1).ToList();
+        //}
         private async Task LoadDutyAsync()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -61,10 +68,13 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 var result = JsonConvert.DeserializeObject<ApiResponse<DutyResultDto>>(json);
 
                 txtUsername.Text = result.Data.Name;
-
                 // Convert DateOnly to DateTime? for compatibility
                 dpStartDate.SelectedDate = result.Data.StartDate.ToDateTime(TimeOnly.MinValue);
                 dpEndDate.SelectedDate = result.Data.EndDate.ToDateTime(TimeOnly.MinValue);
+                //if (Enum.TryParse<DutyStatus>(result.Data.Status, out var dutyStatus))
+                //{
+                //    cb.SelectedItem = dutyStatus;
+                //}
             }
             else
             {
@@ -82,28 +92,38 @@ namespace FEQuanLyNhanSu.Screens.Duties
             try
             {
                 string name = txtUsername.Text?.Trim();
+                string note = txtNote.Text?.Trim();
                 DateTime? startDate = dpStartDate.SelectedDate;
                 DateTime? endDate = dpEndDate.SelectedDate;
 
-                if (string.IsNullOrWhiteSpace(name) || startDate == null || endDate == null)
+                if (string.IsNullOrWhiteSpace(name) || startDate == null || endDate == null || string.IsNullOrEmpty(txtNote.Text))
                 {
                     MessageBox.Show("Vui lòng đầy đủ thông tin");
                     return;
                 }
 
-                var result = new DutyResultDto
+                //var result = new DutyResultDto
+                //{
+                //    Id = _dutyId,
+                //    Name = name,
+                //    StartDate = DateOnly.FromDateTime(startDate.Value), 
+                //    EndDate = DateOnly.FromDateTime(endDate.Value),
+                //    Status = ((DutyStatus)cb.SelectedItem).ToString()
+                //};
+                var updateDto = new
                 {
                     Id = _dutyId,
                     Name = name,
-                    StartDate = DateOnly.FromDateTime(startDate.Value), // Fix for CS0029
-                    EndDate = DateOnly.FromDateTime(endDate.Value)      // Fix for CS0029
+                    StartDate = DateOnly.FromDateTime(startDate.Value),
+                    EndDate = DateOnly.FromDateTime(endDate.Value),
+                    Note = note,
                 };
 
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl();
                 var url = $"{baseUrl}/api/Duty";
 
-                var json = JsonConvert.SerializeObject(result);
+                var json = JsonConvert.SerializeObject(updateDto);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 using var client = CreateAuthorizedClient(token);
@@ -113,8 +133,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var jsonResult = await response.Content.ReadAsStringAsync();
-                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DutyResponse>(jsonResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    var apiResponse = System.Text.Json.JsonSerializer.Deserialize<DutyResponse>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                     if (apiResponse?.Data != null)
                     {

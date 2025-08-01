@@ -58,7 +58,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
         private async Task LoadUsers()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =
@@ -125,7 +125,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             try
             {
                 var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Checkin";
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Checkout";
 
                 var form = new MultipartFormDataContent();
                 var deviceInfo = Environment.MachineName;
@@ -156,14 +156,14 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                         lblNoteResult.Content = apiResponse.Data.Note;
 
                         _onCheckoutCreated?.Invoke(apiResponse.Data);
-                        MessageBox.Show("Checkin thành công.");
+                        MessageBox.Show("Checkout thành công.");
                     }
                 }
                 else
                 {
                     var errorResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
                     var errorMessage = errorResponse?.Data ?? errorResponse?.Message ?? "Có lỗi xảy ra.";
-                    MessageBox.Show($"Checkin thất bại: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Checkout thất bại: {errorMessage}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

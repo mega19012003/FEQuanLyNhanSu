@@ -48,7 +48,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
         private async Task LoadUsers()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User/employee-manager?employeeOnly=true";
 
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization =

@@ -19,28 +19,7 @@
          FontSize="24"
          HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <!--<DataGrid x:Name="PayrollDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-
-                <DataGridTemplateColumn x:Name="DtaGridAction" Header="Hành động">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                --><!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2"/>--><!--
-                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding Id}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                --><!--<DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="*" />--><!--
-                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
-                --><!--<DataGridTextColumn Header="Lương 1 tháng" Binding="{Binding Salary}" Width="*" />--><!--
-                <DataGridTextColumn Header="Ngày chấm công" Binding="{Binding CreatedDate}" Width="*" />
-                <DataGridTextColumn Header="Nội dung" Binding="{Binding Note}" Width="*" />
-                <DataGridTextColumn Header="Số ngày đi làm" Binding="{Binding DaysWorked}" Width="*" />
-            </DataGrid.Columns>
-        </DataGrid>-->
-        <DataGrid x:Name="PayrollDtaGrid"
+        <DataGrid x:Name="PayrollDtaGrid" RowHeight="60"
               Margin="20,100,20,50"
               FontSize="15"
               IsReadOnly="True"
@@ -95,7 +74,7 @@
             <!-- Phần chi tiết khi click vào 1 user -->
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid ItemsSource="{Binding Payrolls}"
+                    <DataGrid ItemsSource="{Binding Payrolls}" RowHeight="60"
               AutoGenerateColumns="False"
               IsReadOnly="True"
               HeadersVisibility="Column"
@@ -115,7 +94,7 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                             <!--<Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding CheckinId}"/>-->
-                                            <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding CheckinId}"/>
+                                            <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding Id}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

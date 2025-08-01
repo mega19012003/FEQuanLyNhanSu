@@ -17,27 +17,6 @@
     <Grid Background="White" Margin="0,-3,0,0">
         <TextBlock x:Name="lblTitle" Text="Trang quản lý checkin" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
-        <!--<DataGrid x:Name="CheckinDtaGrid" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-
-                <DataGridTemplateColumn x:Name="DtaGridAction" Header="Hành động" Width="100">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding CheckinId}"/>
-                                <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding CheckinId}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Id" Binding="{Binding CheckinId}" Width="*" />
-                <DataGridTextColumn Header="Họ tên" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="Thời gian Checkin" Binding="{Binding CheckinTime}" Width="*" />
-                <DataGridTextColumn Header="Thời gian Checkout" Binding="{Binding CheckoutTime}" Width="*" />
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*" />
-                <DataGridTextColumn Header="Lương 1 ngày" Binding="{Binding SalaryPerDay}" Width="*" />
-            </DataGrid.Columns>
-        </DataGrid>-->
         <DataGrid x:Name="CheckinDtaGrid"
           Margin="20,100,20,50"
           FontSize="15"
@@ -93,7 +72,7 @@
             <!-- Phần chi tiết khi click vào 1 user -->
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid ItemsSource="{Binding Checkins}"
+                    <DataGrid ItemsSource="{Binding Checkins}" RowHeight="60"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       HeadersVisibility="Column"
@@ -112,8 +91,8 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding CheckinId}"/>
-                                            <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding CheckinId}"/>
+                                            <Button Content="Sửa" Background="#FF66A8D5" Foreground="White" Margin="2" Padding="5,2" Click="btnUpdate_Click" Tag="{Binding CheckinId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+                                            <Button Content="Xóa" Background="#FFFF5E5E" Foreground="White" Margin="2" Padding="5,2" Click="btnDelete_Click" Tag="{Binding CheckinId}" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
