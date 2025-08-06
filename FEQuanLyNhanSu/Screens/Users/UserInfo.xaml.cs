@@ -59,6 +59,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                         txtAddress.Text = user.Address;
                         txtDepartment.Text = user.DepartmentName;
                         txtPosition.Text = user.PositionName;
+                        txtEmail.Text = user.Email;
 
                         if (!string.IsNullOrEmpty((string)user.ImageUrl))
                         {

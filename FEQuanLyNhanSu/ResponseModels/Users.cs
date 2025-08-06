@@ -14,6 +14,7 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string? Username { get; set; }
             public string RoleName { get; set; }
             public string? PhoneNumber { get; set; }
+            public string Email { get; set; }
             public string? Address { get; set; }
             public string CompanyName { get; set; }
             public string DepartmentName { get; set; }
@@ -53,6 +54,7 @@ namespace FEQuanLyNhanSu.Services.UserService
             public string RoleName { get; set; }
             public string? PhoneNumber { get; set; }
             public string? Address { get; set; }
+            public string Email { get; set; }
             public string DepartmentName { get; set; }
             public Guid? DepartmentId { get; set; }
             public string PositionName { get; set; }

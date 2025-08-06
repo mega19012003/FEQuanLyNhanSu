@@ -161,7 +161,6 @@ namespace FEQuanLyNhanSu
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                // Bước 1: Gọi API /api/User/{userId} để lấy CompanyId
                 var userApiUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/User/{userId}";
                 var userResponse = await client.GetAsync(userApiUrl);
 
@@ -176,7 +175,6 @@ namespace FEQuanLyNhanSu
 
                 var companyId = userResult?.Data?.CompanyId;
 
-                // Bước 2: Gọi API /api/Company/{companyId}
                 var companyApiUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/Company/{companyId}";
                 var companyResponse = await client.GetAsync(companyApiUrl);
 
@@ -189,7 +187,7 @@ namespace FEQuanLyNhanSu
                 var companyJson = await companyResponse.Content.ReadAsStringAsync();
                 var companyResult = JsonConvert.DeserializeObject<ApiResponse<CompanyResultDto>>(companyJson);
 
-                if (companyResult?.Data?.IsDeleted == true)
+                if (companyResult?.Data?.IsDeleted == true || companyResult?.Data?.IsActive == false)
                 {
                     MessageBox.Show("Công ty của bạn đã bị vô hiệu hóa. Vui lòng liên hệ admin.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                     Application.Current.Shutdown();

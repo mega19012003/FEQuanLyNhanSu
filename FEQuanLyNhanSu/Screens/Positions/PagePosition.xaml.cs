@@ -1,5 +1,6 @@
 ﻿using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.Positions;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Positions;
 using FEQuanLyNhanSu.Services;
@@ -50,7 +51,6 @@ namespace FEQuanLyNhanSu
                 case "Manager":
                     cbDepartment.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
-                    //HeaderDepartment.Visibility = Visibility.Collapsed;
                     _ = LoadDepartments();
                     break;
                 case "Administrator":
@@ -63,6 +63,8 @@ namespace FEQuanLyNhanSu
                     _ =LoadDepartmentByCompanyAsync();
                     DtaGridActionPosition.Visibility = Visibility.Collapsed;
                     AddPositionBtn.Visibility = Visibility.Collapsed;
+                    btnDeleteSelected.Visibility = Visibility.Collapsed;
+                    SelectedColumnHeader.Visibility = Visibility.Collapsed;
                     break;
             }
         } 
@@ -70,18 +72,44 @@ namespace FEQuanLyNhanSu
         {
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
-            int pageSize = 20;
+            int pageSize = 10;
 
             _paginationHelper = new PaginationHelper<PositionResultDto>(
                 baseUrl,
                 pageSize,
                 token,
                 items => PositionDtaGrid.ItemsSource = items,
-                txtPage
+                txtPage,
+                page => BuildPositionUrlWithFilter(page, pageSize)
             );
 
             _ = _paginationHelper.LoadPageAsync(1);
         }
+        private string BuildPositionUrlWithFilter(int pageIndex, int pageSize)
+        {
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll/Position";
+            var parameters = new List<string>();
+
+            string keyword = txtSearch.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(keyword))
+                parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
+                parameters.Add($"companyId={selectedComp.CompanyId}");
+
+            if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
+                parameters.Add($"departmentId={selectedDept.DepartmentId}");
+
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
+        }
+        private async Task FilterAsync()
+        {
+            await LoadCompanies();
+        }
+
         private async Task LoadCompanies()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -182,101 +210,6 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private async Task FilterAsync()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
-            string keyword = txtSearch.Text?.Trim();
-
-            Guid? departmentId = null;
-            string departmentText = cbDepartment.Text?.Trim();
-
-            if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
-            {
-                departmentId = selectedDept.DepartmentId;
-            }
-            else if (!string.IsNullOrEmpty(departmentText))
-            {
-                var found = (cbDepartment.ItemsSource as IEnumerable<DepartmentResultDto>)
-                    ?.FirstOrDefault(d => d.Name.Equals(departmentText, StringComparison.OrdinalIgnoreCase));
-                if (found != null)
-                {
-                    departmentId = found.DepartmentId;
-                }
-            }
-
-            Guid? companyId = null;
-            string companyText = cbCompany.Text?.Trim();
-
-            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
-            {
-                companyId = selectedComp.CompanyId;
-            }
-            else if (!string.IsNullOrEmpty(companyText))
-            {
-                var found = (cbCompany.ItemsSource as IEnumerable<CompanyResultDto>)
-                    ?.FirstOrDefault(d => d.Name.Equals(companyText, StringComparison.OrdinalIgnoreCase));
-                if (found != null)
-                {
-                    companyId = found.CompanyId;
-                }
-            }
-
-            // MessageBox.Show($"keyword={keyword}\ndepartmentId={departmentId}");
-            var items = await SearchAndFilterPositionsAsync(
-                baseUrl,
-                token,
-                keyword,
-                companyId,
-                departmentId
-            );
-
-            PositionDtaGrid.ItemsSource = null;
-            PositionDtaGrid.ItemsSource = items;
-        }
-        public static async Task<List<PositionResultDto>> SearchAndFilterPositionsAsync(string baseUrl, string token, string searchKeyword, Guid? companyId, Guid? departmentId, int pageIndex = 1, int pageSize = 20)
-        {
-            try
-            {
-                var parameters = new List<string>();
-                if (!string.IsNullOrWhiteSpace(searchKeyword))
-                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
-                if (companyId.HasValue)
-                    parameters.Add($"companyId={companyId}");
-                if (departmentId.HasValue)
-                    parameters.Add($"departmentId={departmentId}");
-                parameters.Add($"pageIndex={pageIndex}");
-                parameters.Add($"pageSize={pageSize}");
-
-                var url = baseUrl + "/api/Position";
-                if (parameters.Any())
-                    url += "?" + string.Join("&", parameters);
-
-                using var client = new HttpClient();
-                if (!string.IsNullOrWhiteSpace(token))
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.GetAsync(url);
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show($"Lỗi khi lọc chức vụ: {response.StatusCode}");
-                    return new List<PositionResultDto>();
-                }
-
-                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<PositionResultDto>>>(json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return result?.Data?.Items?.ToList() ?? new List<PositionResultDto>();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-                return new List<PositionResultDto>();
-            }
-        }
         private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
         private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -456,6 +389,60 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Không thể xóa chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private async void btnDeleteSelected_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedPositions = new List<PositionResultDto>();
+            foreach (var item in PositionDtaGrid.Items)
+            {
+                var row = (DataGridRow)PositionDtaGrid.ItemContainerGenerator.ContainerFromItem(item);
+                if (row != null)
+                {
+                    var checkbox = FindVisualChild<CheckBox>(row);
+                    if (checkbox != null && checkbox.IsChecked == true)
+                    {
+                        selectedPositions.Add(item as PositionResultDto);
+                    }
+                }
+            }
+
+            var confirm = MessageBox.Show($"Bạn có chắc muốn xóa {selectedPositions.Count} chức vụ?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (confirm != MessageBoxResult.Yes) return;
+
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            foreach (var position in selectedPositions)
+            {
+                var url = $"{AppsettingConfigHelper.GetBaseUrl()}/api/Position/{position.Id}";
+                var response = await client.DeleteAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var msg = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Xóa thất bại chức vụ {position.Name}: {msg}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            MessageBox.Show("Xóa thành công các chức vụ đã chọn.");
+            //await _paginationHelper.RefreshAsync();
+            //_ = _paginationHelper.LoadPageAsync(1);
+            await FilterAsync();
+        }
+        public static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                    return typedChild;
+
+                var result = FindVisualChild<T>(child);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
 
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {

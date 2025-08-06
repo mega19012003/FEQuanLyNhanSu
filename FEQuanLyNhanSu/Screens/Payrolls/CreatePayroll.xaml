@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Payrolls"
         mc:Ignorable="d"
-        Title="CreatePayroll" Height="480" Width="600">
+        Title="CreatePayroll" Height="550" Width="600">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" Content="Thêm chấm công mới" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
 
         <!-- FORM INPUT -->
         <Grid Margin="40,80,40,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -32,8 +33,7 @@
                   StaysOpenOnEdit="True"
                   IsTextSearchEnabled="False"
                   KeyUp="cbEmployee_KeyUp"
-                  DisplayMemberPath="{x:Null}"  
-                        SelectedValuePath="UserId"
+                  SelectedValuePath="UserId"
                   VerticalContentAlignment="Center">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -51,7 +51,29 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <Grid HorizontalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2">
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                <ComboBox x:Name="cbDepartment"          
+                        Width="200" Height="41" Margin="5,0"
+                        FontSize="15" Padding="10,0"
+                        IsEditable="True"
+                        StaysOpenOnEdit="True"
+                        IsTextSearchEnabled="False"
+                        KeyUp="cbDepartment_KeyUp"
+                        DisplayMemberPath="Name"
+                        SelectedValuePath="departmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban"/>
+
+                <ComboBox x:Name="cbPosition"          
+                          Width="200" Height="41" Margin="5,0"
+                          FontSize="15" Padding="10,0"
+                          IsEditable="True"
+                          StaysOpenOnEdit="True"
+                          IsTextSearchEnabled="False"
+                          KeyUp="cbPosition_KeyUp"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="positionId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbPosition_SelectionChanged" Text="Nhập tên chức vụ"/>
+            </StackPanel>
+
+            <Grid HorizontalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2">
                 <StackPanel Orientation="Horizontal" Margin="0,5" HorizontalAlignment="Center" >
                     <StackPanel Orientation="Horizontal" Margin="5,0">
                         <Label Content="Chọn tháng:" VerticalAlignment="Center" FontSize="14" />
@@ -70,7 +92,7 @@
                     </StackPanel>
                 </StackPanel>
             </Grid>
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal"
                     HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnCreate" Content="Tính chấm công" Width="170" Height="41"
                     Margin="10,0" FontSize="15" Background="#FF66A8D5"
@@ -78,7 +100,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Margin="100,250,100,0">
+        <Grid Margin="100,300,100,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>

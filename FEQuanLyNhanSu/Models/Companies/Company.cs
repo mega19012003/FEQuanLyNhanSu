@@ -9,6 +9,7 @@ namespace EmployeeAPI.Models
         public string? Name { get; set; } 
         public string? Address { get; set; }
         public string? LogoUrl { get; set; }
+        public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         //public User? Founder { get; set; }
         //public string? FounderName { get; set; }

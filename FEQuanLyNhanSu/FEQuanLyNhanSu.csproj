@@ -42,8 +42,12 @@
     <Resource Include="Assets\images.png" />
     <Resource Include="Assets\eye.png" />
     <Resource Include="Assets\hidden.png" />
-    <Resource Include="Assets\none.jpg" />
-    <Resource Include="Assets\user.png" />
+    <Resource Include="Assets\none.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\user.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

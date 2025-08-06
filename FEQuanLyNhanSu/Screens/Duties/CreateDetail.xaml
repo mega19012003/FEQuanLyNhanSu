@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Duties" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:c="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="CreateDetail" Height="550" Width="550">
+        Title="CreateDetail" Height="600" Width="550">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" 
                Content="Tạo chi tiết công việc mới" 
@@ -17,6 +17,7 @@
 
         <Grid Margin="40,80,40,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -54,8 +55,7 @@
                   StaysOpenOnEdit="True"
                   IsTextSearchEnabled="False"
                   KeyUp="cbEmployee_KeyUp"
-                  DisplayMemberPath="{x:Null}"  
-                        SelectedValuePath="UserId"
+                  SelectedValuePath="UserId"
                   VerticalContentAlignment="Center">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -63,8 +63,8 @@
                             <Image  Width="30" Height="30" Margin="0,0,8,0" >
                                 <Image.Source>
                                     <Binding Path="ImageUrl" 
-            TargetNullValue="pack://application:,,,/Assets/none.jpg"
-            FallbackValue="pack://application:,,,/Assets/user.png"/>
+                                            TargetNullValue="pack://application:,,,/Assets/none.jpg"
+                                            FallbackValue="pack://application:,,,/Assets/user.png"/>            
                                 </Image.Source>
                             </Image>
                             <TextBlock Text="{Binding Fullname}" VerticalAlignment="Center"/>
@@ -73,20 +73,42 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <TextBox Grid.Row="3" Grid.Column="0" Text="Thời hạn" IsReadOnly="True"
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                <ComboBox x:Name="cbDepartment"          
+                            Width="200" Height="41" Margin="5,0"
+                            FontSize="15" Padding="10,0"
+                            IsEditable="True"
+                            StaysOpenOnEdit="True"
+                            IsTextSearchEnabled="False"
+                            KeyUp="cbDepartment_KeyUp"
+                            DisplayMemberPath="Name"
+                            SelectedValuePath="departmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban"/>
+
+                <ComboBox x:Name="cbPosition"          
+                          Width="200" Height="41" Margin="5,0"
+                          FontSize="15" Padding="10,0"
+                          IsEditable="True"
+                          StaysOpenOnEdit="True"
+                          IsTextSearchEnabled="False"
+                          KeyUp="cbPosition_KeyUp"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="positionId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbPosition_SelectionChanged" Text="Nhập tên chức vụ"/>
+            </StackPanel>
+
+            <TextBox Grid.Row="4" Grid.Column="0" Text="Thời hạn" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5"/>
-            <DatePicker Grid.Row="3" Grid.Column="1" x:Name="txtDealine"
+            <DatePicker Grid.Row="4" Grid.Column="1" x:Name="dpDeadline"
                      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <TextBox Grid.Row="4" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
+            <TextBox Grid.Row="5" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,10"/>
-            <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtDescription"
+            <TextBox Grid.Row="5" Grid.Column="1" x:Name="txtDescription"
                      FontSize="15" Margin="0,5,0,10" Padding="10,0" TextWrapping="Wrap"/>
 
-            <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal"
                         HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Click="btnExit_Click"/>

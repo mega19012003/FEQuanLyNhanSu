@@ -24,9 +24,23 @@
           AutoGenerateColumns="False"
           ColumnWidth="*"
           CanUserAddRows="False"
-          RowDetailsVisibilityMode="VisibleWhenSelected">
+          RowDetailsVisibilityMode="VisibleWhenSelected"
+          PreviewMouseLeftButtonDown="DtaGrid_PreviewMouseLeftButtonDown">
             <!-- Cột thông tin người dùng -->
             <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Ảnh" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Width="60" Height="60" Stretch="UniformToFill">
+                                <Image.Source>
+                                    <Binding Path="ImageUrl" 
+                                    TargetNullValue="pack://application:,,,/Assets/none.jpg"
+                                    FallbackValue="pack://application:,,,/Assets/user.png"/>
+                                </Image.Source>
+                            </Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Họ tên" Binding="{Binding FullName}" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
@@ -54,19 +68,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTemplateColumn Header="Ảnh" Width="100">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Width="60" Height="60" Stretch="UniformToFill">
-                                <Image.Source>
-                                    <Binding Path="ImageUrl" 
-             TargetNullValue="pack://application:,,,/Assets/none.jpg"
-             FallbackValue="pack://application:,,,/Assets/user.png"/>
-                                </Image.Source>
-                            </Image>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                
             </DataGrid.Columns>
 
             <!-- Phần chi tiết khi click vào 1 user -->

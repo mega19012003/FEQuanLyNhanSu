@@ -66,6 +66,8 @@ namespace FEQuanLyNhanSu.Screens.Users
                 txtboxRole.Visibility = Visibility.Collapsed;
                 cbDepartment.Visibility = Visibility.Collapsed;
                 txtboxDepartment.Visibility = Visibility.Collapsed;
+                cbCompany.Visibility = Visibility.Collapsed;
+                txtboxCompany.Visibility = Visibility.Collapsed;
             }
             else if(role == "Administrator")
             {
@@ -78,6 +80,8 @@ namespace FEQuanLyNhanSu.Screens.Users
                 txtboxDepartment.Visibility = Visibility.Collapsed;
                 cbPosition.Visibility = Visibility.Collapsed;
                 txtboxPosition.Visibility = Visibility.Collapsed;
+                cbCompany.Visibility = Visibility.Collapsed;
+                txtboxCompany.Visibility = Visibility.Collapsed;
             }
         }
       
@@ -107,6 +111,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     txtAddress.Text = user.Address;
                     txtPhoneNo.Text = user.PhoneNumber;
                     cmbRole.Text = user.RoleName;
+                    txtEmail.Text = user.Email;
                     //txtSalary.Text = user.SalaryPerHour?.ToString();
                     txtImage.Text = user.ImageUrl;
                     chkIsActive.IsChecked = user.IsActive;
@@ -495,6 +500,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     { new StringContent(txtFullname.Text), "Fullname" },
                     { new StringContent(txtPhoneNo.Text), "PhoneNumber" },
                     { new StringContent(txtAddress.Text), "Address" },
+                    { new StringContent(txtEmail.Text), "Email" },
                     { new StringContent(roleType.ToString()), "Role" },
                     //{ new StringContent(txtSalary.Text), "SalaryPerHour" },
                     { new StringContent(txtImage.Text), "ImageUrl" },

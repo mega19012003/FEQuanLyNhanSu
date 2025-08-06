@@ -3,6 +3,8 @@ using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Enums;
 using FEQuanLyNhanSu.Helpers;
 using FEQuanLyNhanSu.Models.Configs;
+using FEQuanLyNhanSu.Models.Departments;
+using FEQuanLyNhanSu.Models.Positions;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Configs;
 using FEQuanLyNhanSu.Screens.Configs.HolidayConfig;
@@ -35,6 +37,7 @@ using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
 using static FEQuanLyNhanSu.ResponseModels.Companies;
 using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.LogStatusConfigs;
+using static FEQuanLyNhanSu.ResponseModels.Positions;
 using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu
@@ -126,7 +129,7 @@ namespace FEQuanLyNhanSu
         }
         // LOAD DATABASE
         /// ///////////////////////////////////////////
-        private async void LoadLogStatus()
+        private async Task LoadLogStatus()
         {
             try
             {
@@ -139,7 +142,8 @@ namespace FEQuanLyNhanSu
                     pageSize,
                     token,
                     items => LogDtaGrid.ItemsSource = items,
-                    txtPageLogStatus
+                    txtPageLogStatus,
+                    page => BuildLogStatusUrlWithFilter(page, pageSize)
                 );
 
                 await _logStatusPaginationHelper.LoadPageAsync(1);
@@ -149,29 +153,73 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tải dữ liệu logstatus: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        public void LoadAllowedIPStatus()
+        private string BuildLogStatusUrlWithFilter(int pageIndex, int pageSize)
         {
-            try
-            {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/AllowedIP";
-                int pageSize = 20;
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/LogStatusConfig";
+            var parameters = new List<string>();
 
-                _ipPaginationHelper = new PaginationHelper<AllowedIPs.IPResultDto>(
-                    baseUrl,
-                    pageSize,
-                    token,
-                    items => AllowedIPDtaGrid.ItemsSource = items,
-                    txtPageIP
-                );
-                _ = _ipPaginationHelper.LoadPageAsync(1);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải cấu hình IP: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            string keyword = txtSearchLog.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(keyword))
+                parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+            if (cbCompanyStatus.SelectedItem is CompanyResultDto selectedComp)
+                parameters.Add($"companyId={selectedComp.CompanyId}");
+
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
         }
-        public void LoadHolidayConfig()
+        private async Task FilterLogStatusAsync()
+        {
+            await LoadLogStatus();
+        }
+
+        public async Task LoadAllowedIPStatus()
+        {
+            //try
+            //{
+            //    var token = Application.Current.Properties["Token"]?.ToString();
+            //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/AllowedIP";
+            //    int pageSize = 20;
+
+            //    _ipPaginationHelper = new PaginationHelper<AllowedIPs.IPResultDto>(
+            //        baseUrl,
+            //        pageSize,
+            //        token,
+            //        items => AllowedIPDtaGrid.ItemsSource = items,
+            //        txtPageIP
+            //    );
+            //    _ = _ipPaginationHelper.LoadPageAsync(1);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Lỗi khi tải cấu hình IP: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
+        }
+        private string BuildAllowedIPUrlWithFilter(int pageIndex, int pageSize)
+        {
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/AllowedIP";
+            var parameters = new List<string>();
+
+            string keyword = txtSearchAllowedIP.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(keyword))
+                parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+            if (cbCompanyAllowedIP.SelectedItem is CompanyResultDto selectedComp)
+                parameters.Add($"companyId={selectedComp.CompanyId}");
+
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
+        }
+        private async Task FilterIPAsync()
+        {
+            await LoadAllowedIPStatus();
+        }
+        
+        public async Task LoadHolidayConfig()
         {
             try
             {
@@ -183,7 +231,8 @@ namespace FEQuanLyNhanSu
                     pageSize,
                     token,
                     items => HolidayDtaGrid.ItemsSource = items,
-                    txtPageHoliday
+                    txtPageHoliday,
+                    page => BuildHolidayUrlWithFilter(page, pageSize)
                 );
                 _ = _holidayPaginationHelper.LoadPageAsync(1);
             }
@@ -192,7 +241,29 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tải cấu hình ngày nghỉ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        public async void LoadListScheduleTime()
+        private string BuildHolidayUrlWithFilter(int pageIndex, int pageSize)
+        {
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Holiday";
+            var parameters = new List<string>();
+
+            string keyword = txtSearchHoliday.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(keyword))
+                parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+            if (cbCompanyHoliday.SelectedItem is CompanyResultDto selectedComp)
+                parameters.Add($"companyId={selectedComp.CompanyId}");
+
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
+        }
+        private async Task FilterHolidayAsync()
+        {
+            await LoadHolidayConfig();
+        }
+
+        public async Task LoadListScheduleTime()
         {
             try
             {
@@ -204,7 +275,8 @@ namespace FEQuanLyNhanSu
                     pageSize,
                     token,
                     items => ScheduleDtaGrid.ItemsSource = items,
-                    txtPageSchedule
+                    txtPageSchedule,
+                    Page => BuildScheduleTimeUrlWithFilter(Page, pageSize)
                 );
                 _ = _schedulePaginationHelper.LoadPageAsync(1);
             }
@@ -213,49 +285,71 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tải cấu hình giờ làm việc: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private string BuildScheduleTimeUrlWithFilter(int pageIndex, int pageSize)
+        {
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
+            var parameters = new List<string>();
+
+            //string keyword = txtS.Text?.Trim();
+            //if (!string.IsNullOrWhiteSpace(keyword))
+            //    parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+            if (cbCompanyAllowedIP.SelectedItem is CompanyResultDto selectedComp)
+                parameters.Add($"companyId={selectedComp.CompanyId}");
+
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
+        }
+        private async Task FilterScheduleAsync()
+        {
+            await LoadListScheduleTime();
+        }
         public async void LoadScheduleTime()
         {
-            try
-            {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
+            //try
+            //{
+            //    var token = Application.Current.Properties["Token"]?.ToString();
+            //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
 
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            //    using var client = new HttpClient();
+            //    client.DefaultRequestHeaders.Authorization =
+            //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-                var response = await client.GetAsync(baseUrl);
+            //    var response = await client.GetAsync(baseUrl);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
-                    return;
-                }
+            //    if (!response.IsSuccessStatusCode)
+            //    {
+            //        MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
+            //        return;
+            //    }
 
-                var responseStr = await response.Content.ReadAsStringAsync();
+            //    var responseStr = await response.Content.ReadAsStringAsync();
 
-                var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<ScheduleTime>>>(responseStr);
-                var schedule = apiResult?.Data?.Items?.FirstOrDefault();
+            //    var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<ScheduleTime>>>(responseStr);
+            //    var schedule = apiResult?.Data?.Items?.FirstOrDefault();
 
-                if (schedule != null)
-                {
-                    _currentScheduleTime = schedule;
-                    txtStartTimeMorning.Text = schedule.StartTimeMorning.ToString();
-                    txtEndTimeMorning.Text = schedule.EndTimeMorning.ToString();
-                    txtAllowTime.Text = schedule.LogAllowtime.ToString();
-                    txtStartTimeAfternoon.Text = schedule.StartTimeAfternoon.ToString();
-                    txtEndTimeAfternoon.Text = schedule.EndTimeAfternoon.ToString();
-                }
-                else
-                {
-                    MessageBox.Show("Không tìm thấy cấu hình thời gian.");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải cấu hình thời gian: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //    if (schedule != null)
+            //    {
+            //        _currentScheduleTime = schedule;
+            //        txtStartTimeMorning.Text = schedule.StartTimeMorning.ToString();
+            //        txtEndTimeMorning.Text = schedule.EndTimeMorning.ToString();
+            //        txtAllowTime.Text = schedule.LogAllowtime.ToString();
+            //        txtStartTimeAfternoon.Text = schedule.StartTimeAfternoon.ToString();
+            //        txtEndTimeAfternoon.Text = schedule.EndTimeAfternoon.ToString();
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("Không tìm thấy cấu hình thời gian.");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Lỗi khi tải cấu hình thời gian: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
         }
+
         private async Task LoadCompanies()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -352,12 +446,16 @@ namespace FEQuanLyNhanSu
         }
         // LOGSTATUS CONFIG
         /// ///////////////////////////////////////////
+        public void LoadLogStatusConfig()
+        {
+            _ = LoadLogStatus();
+        }
         private void btnUpdateStatus_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             if (button?.Tag is Guid Id)
             {
-                var editWindow = new UpdateLogStatus(Id, LoadLogStatus);
+                var editWindow = new UpdateLogStatus(Id, LoadLogStatusConfig);
                 editWindow.ShowDialog();
             }
         }
@@ -476,90 +574,6 @@ namespace FEQuanLyNhanSu
             await _holidayPaginationHelper.PrevPageAsync();
         }
         //////////////////////////////////////////////// search
-        private async Task FilterAsync<TDto>(string apiPath, TextBox? searchTextBox, ComboBox companyComboBox, DataGrid targetDataGrid)
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
-            string? keyword = searchTextBox?.Text?.Trim();
-
-            Guid? companyId = null;
-            string companyText = companyComboBox.Text?.Trim();
-
-            if (companyComboBox.SelectedItem is CompanyResultDto selectedComp)
-            {
-                companyId = selectedComp.CompanyId;
-            }
-            else if (!string.IsNullOrEmpty(companyText))
-            {
-                var found = (companyComboBox.ItemsSource as IEnumerable<CompanyResultDto>)
-                    ?.FirstOrDefault(d => d.Name.Equals(companyText, StringComparison.OrdinalIgnoreCase));
-                companyId = found?.CompanyId;
-            }
-
-            var items = await FilterService.SearchAndFilterAsync<TDto>(baseUrl, apiPath, token, keyword, companyId);
-
-            //MessageBox.Show("Items count: " + items.Count);
-            targetDataGrid.ItemsSource = items;
-        }
-        public static class FilterService
-        {
-            public static async Task<List<TDto>> SearchAndFilterAsync<TDto>(string baseUrl, string apiPath, string token, string? searchKeyword, Guid? companyId, int pageIndex = 1, int pageSize = 20)
-            {
-                try
-                {
-                    var parameters = new List<string>();
-                    if (!string.IsNullOrWhiteSpace(searchKeyword))
-                        parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
-                    if (companyId.HasValue)
-                        parameters.Add($"companyId={companyId}");
-                    parameters.Add($"pageIndex={pageIndex}");
-                    parameters.Add($"pageSize={pageSize}");
-
-                    var url = baseUrl + apiPath;
-                    if (parameters.Any())
-                        url += "?" + string.Join("&", parameters);
-                    //MessageBox.Show($"Search keyword: {url}");
-                    using var client = new HttpClient();
-                    if (!string.IsNullOrWhiteSpace(token))
-                        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                    var response = await client.GetAsync(url);
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        MessageBox.Show($"Lỗi khi lọc: {response.StatusCode}");
-                        return new List<TDto>();
-                    }
-
-                    var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<TDto>>>(
-                        json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return result?.Data?.Items?.ToList() ?? new List<TDto>();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error: {ex.Message}");
-                    return new List<TDto>();
-                }
-            }
-        }
-        private async Task FilterLogStatusAsync()
-        {
-            await FilterAsync<LogStatusConfigs.LogStatusDto>("/api/LogStatusConfig", txtSearchLog, cbCompanyStatus, LogDtaGrid);
-        }
-        private async Task FilterHolidayAsync()
-        {
-            await FilterAsync<Holidays.HolidayResultDto>("/api/Holiday", txtSearchHoliday, cbCompanyHoliday, HolidayDtaGrid);
-        }
-        private async Task FilterScheduleAsync()
-        {
-            await FilterAsync<Schedules.ScheduleDto>("/api/ScheduleTime", null, cbCompanySchedule, ScheduleDtaGrid);
-        }
-        private async Task FilterIPAsync()
-        {
-            await FilterAsync<IPResultDto>("/api/AllowedIP", txtSearchAllowedIP, cbCompanyAllowedIP, AllowedIPDtaGrid);
-        }
         // LogStatus
         private async void txtTextChangedLog(object sender, TextChangedEventArgs e) => await FilterLogStatusAsync();
         private async void cbCompanyStatus_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterLogStatusAsync();

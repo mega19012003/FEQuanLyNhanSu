@@ -29,6 +29,7 @@ using System.Windows.Shapes;
 using static FEQuanLyNhanSu.ResponseModels.Companies;
 using static FEQuanLyNhanSu.ResponseModels.Departments;
 using static FEQuanLyNhanSu.ResponseModels.Duties;
+using static FEQuanLyNhanSu.ResponseModels.Payrolls;
 using static FEQuanLyNhanSu.ResponseModels.Positions;
 using static FEQuanLyNhanSu.Services.Checkins;
 using static FEQuanLyNhanSu.Services.UserService.Users;
@@ -71,7 +72,7 @@ namespace FEQuanLyNhanSu
                     cbDepartment.Visibility = Visibility.Collapsed;
                     break;
                 case "Employee":
-                    lblTitle.Text = "Chấm công";
+                    lblTitle.Text = "Checkin";
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
                     cbPosition.Visibility = Visibility.Collapsed;
@@ -153,85 +154,71 @@ namespace FEQuanLyNhanSu
             }
         }
 
-        private async Task FilterAsync()
+        private async Task LoadUserWithCheckin()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll/user-checkins";
+            int pageSize = 10;
+
+            _paginationHelper = new PaginationHelper<UserWithCheckinsDto>(
+                baseUrl,
+                pageSize,
+                token,
+                items => CheckinDtaGrid.ItemsSource = items,
+                txtPage,
+                page => BuildCheckinUrlWithFilter(page, pageSize)
+            );
+
+            await _paginationHelper.LoadPageAsync(1);
+        }
+        private string BuildCheckinUrlWithFilter(int pageIndex, int pageSize)
+        {
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll/user-payrolls";
+            var parameters = new List<string>();
 
             string keyword = txtSearch.Text?.Trim();
-            int? day = cbDay.SelectedIndex > 0 ? int.Parse(cbDay.SelectedItem.ToString()) : (int?)null;
-            int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
-            int? year = cbYear.SelectedIndex > 0 ? int.Parse(cbYear.SelectedItem.ToString()) : (int?)null;
+            if (!string.IsNullOrWhiteSpace(keyword))
+                parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
 
-            Guid? companyId = null;
+            if (cbDay.SelectedIndex > 0)
+                parameters.Add($"Day={cbDay.SelectedItem}");
+
+            if (cbMonth.SelectedIndex > 0)
+                parameters.Add($"Month={cbMonth.SelectedItem}");
+
+            if (cbYear.SelectedIndex > 0)
+                parameters.Add($"Year={cbYear.SelectedItem}");
+
             if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
-                companyId = selectedComp.CompanyId;
+                parameters.Add($"companyId={selectedComp.CompanyId}");
 
-            Guid? departmentId = null;
             if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
-                departmentId = selectedDept.DepartmentId;
+                parameters.Add($"departmentId={selectedDept.DepartmentId}");
 
-            Guid? positionId = null;
             if (cbPosition.SelectedItem is PositionResultDto selectedPos)
-                positionId = selectedPos.Id;
+                parameters.Add($"positionId={selectedPos.Id}");
 
-            var items = await SearchAndFilterCheckinsAsync(baseUrl, token, keyword, day, month, year, companyId, departmentId, positionId);
-            CheckinDtaGrid.ItemsSource = items;
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
         }
-        public static async Task<List<UserWithCheckinsDto>> SearchAndFilterCheckinsAsync(string baseUrl, string token, string searchKeyword, int? day, int? month, int? year, Guid? companyId, Guid? departmentId, Guid? positionId, int pageIndex = 1, int pageSize = 20)
+        private async Task FilterAsync()
         {
-            try
-            {
-                var parameters = new List<string>();
-                if (!string.IsNullOrWhiteSpace(searchKeyword))
-                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
-                if (day.HasValue) parameters.Add($"Day={day}");
-                if (month.HasValue) parameters.Add($"Month={month}");
-                if (year.HasValue) parameters.Add($"Year={year}");
-                if (companyId.HasValue) parameters.Add($"companyId={companyId}");
-                if (departmentId.HasValue) parameters.Add($"departmentId={departmentId}");
-                if (positionId.HasValue) parameters.Add($"positionId={positionId}");
-                parameters.Add($"pageIndex={pageIndex}");
-                parameters.Add($"pageSize={pageSize}");
-
-                var url = baseUrl + "/api/Checkin/users-checkins";
-                if (parameters.Any()) url += "?" + string.Join("&", parameters);
-
-                using var client = new HttpClient();
-                if (!string.IsNullOrWhiteSpace(token))
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.GetAsync(url);
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show($"Lỗi khi lọc Checkin: {response.StatusCode}");
-                    return new List<UserWithCheckinsDto>();
-                }
-
-                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<UserWithCheckinsDto>>>(json, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                return result?.Data?.Items?.ToList() ?? new List<UserWithCheckinsDto>();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-                return new List<UserWithCheckinsDto>();
-            }
+            await LoadUserWithCheckin();
         }
+      
         private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await LoadDepartmentByCompanyAsync();
-            await LoadPositionsByDepartmentAsync();
+            await LoadPositionByCompanyAsync();
             await FilterAsync();
         }
         private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await LoadPositionsByDepartmentAsync();
+            if (cbDepartment.SelectedItem == null)
+                await LoadPositionByCompanyAsync();
+            else await LoadPositionsByDepartmentAsync();
             await FilterAsync();
         }
         private async void cbPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -304,39 +291,39 @@ namespace FEQuanLyNhanSu
                 cbDepartment.ItemsSource = null;
             }
         }
-        //private async Task LoadPositionByCompanyAsync()
-        //{
-        //    var token = Application.Current.Properties["Token"]?.ToString();
-        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+        private async Task LoadPositionByCompanyAsync()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
 
-        //    Guid? companyId = null;
-        //    if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
-        //        companyId = selectedComp.CompanyId;
+            Guid? companyId = null;
+            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
+                companyId = selectedComp.CompanyId;
 
-        //    string url = baseUrl;
-        //    if (companyId.HasValue)
-        //    {
-        //        url += $"?companyId={companyId.Value}";
-        //    }
+            string url = baseUrl;
+            if (companyId.HasValue)
+            {
+                url += $"?companyId={companyId.Value}";
+            }
 
-        //    using var client = new HttpClient();
-        //    client.DefaultRequestHeaders.Authorization =
-        //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-        //    var response = await client.GetAsync(url);
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var json = await response.Content.ReadAsStringAsync();
-        //        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-        //        cbPosition.ItemsSource = result?.Data?.Items;
-        //        if (result?.Data?.Items?.Any() == true)
-        //            cbPosition.SelectedItem = result.Data.Items.First();
-        //    }
-        //    else
-        //    {
-        //        cbPosition.ItemsSource = null;
-        //    }
-        //}
+            var response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                cbPosition.ItemsSource = result?.Data?.Items;
+                if (result?.Data?.Items?.Any() == true)
+                    cbPosition.SelectedItem = result.Data.Items.First();
+            }
+            else
+            {
+                cbPosition.ItemsSource = null;
+            }
+        }
         private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
         {
             try
@@ -667,6 +654,41 @@ namespace FEQuanLyNhanSu
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)
         {
             await _paginationHelper.PrevPageAsync();
+        }
+        private void DtaGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var dep = (DependencyObject)e.OriginalSource;
+
+            // Nếu click vào Button (hoặc phần tử con của Button), thì bỏ qua để nút hoạt động bình thường
+            while (dep != null)
+            {
+                if (dep is Button)
+                    return;
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+
+            dep = (DependencyObject)e.OriginalSource;
+
+            while (dep != null && !(dep is DataGridRow))
+            {
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+
+            if (dep is DataGridRow row)
+            {
+                var item = row.Item;
+
+                if (CheckinDtaGrid.SelectedItems.Contains(item))
+                {
+                    CheckinDtaGrid.SelectedItems.Remove(item); // Ẩn details
+                }
+                else
+                {
+                    CheckinDtaGrid.SelectedItems.Add(item); // Hiện details
+                }
+
+                e.Handled = true; // Ngăn chọn lại dòng
+            }
         }
     }
 }

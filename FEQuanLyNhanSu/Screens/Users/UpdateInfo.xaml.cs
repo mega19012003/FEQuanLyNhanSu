@@ -66,6 +66,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                         txtFullname.Text = user.Fullname;
                         txtPhoneNo.Text = user.PhoneNumber;
                         txtAddress.Text = user.Address;
+                        txtEmail.Text = user.Email;
 
                         if (!string.IsNullOrEmpty((string)user.ImageUrl))
                         {
@@ -128,6 +129,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                     { new StringContent(txtFullname.Text), "Fullname" },
                     { new StringContent(txtPhoneNo.Text), "PhoneNumber" },
                     { new StringContent(txtAddress.Text), "Address" },
+                    { new StringContent(txtEmail.Text), "Email" },
                     { new StringContent(txtImage.Text), "ImageUrl" },
                 };
 

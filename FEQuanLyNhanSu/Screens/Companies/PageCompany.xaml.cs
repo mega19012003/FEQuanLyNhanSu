@@ -36,8 +36,8 @@ namespace FEQuanLyNhanSu.Screens.Companies
         public PageCompany()
         {
             InitializeComponent();
-            LoadCompany();
             LoadIsActive();
+            LoadCompany();
         }
         // btnAdd_Click
         private void btnAdd_Click(object sender, RoutedEventArgs e)
@@ -90,7 +90,7 @@ namespace FEQuanLyNhanSu.Screens.Companies
             }
         }
         //Load Company List
-        private void LoadCompany()
+        private async Task LoadCompany()
         {
             try
             {
@@ -103,7 +103,8 @@ namespace FEQuanLyNhanSu.Screens.Companies
                     pageSize,
                     token,
                     items => CompDtaGrid.ItemsSource = items,
-                    txtPage
+                    txtPage,
+                    page => BuildCompanyUrlWithFilter(page, pageSize)
                 );
                 _ = _paginationHelper.LoadPageAsync(1);
             }
@@ -111,6 +112,31 @@ namespace FEQuanLyNhanSu.Screens.Companies
             {
                 MessageBox.Show($"Lỗi khi tải dữ liệu phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+        private string BuildCompanyUrlWithFilter(int pageIndex, int pageSize)
+        {
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Company";
+            var parameters = new List<string>();
+
+            string keyword = txtSearch.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(keyword))
+                parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+            if (cbIsActive.SelectedItem is ComboBoxItem selectedStatus)
+            {
+                var tagValue = selectedStatus.Tag?.ToString();
+                if (!string.IsNullOrEmpty(tagValue))
+                    parameters.Add($"IsActive={tagValue.ToLower()}");
+            }
+
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
+        }
+        private async Task FilterAsync()
+        {
+            await LoadCompany();
         }
         //Search
         private async void txtTextChanged(object sender, TextChangedEventArgs e)
@@ -147,15 +173,16 @@ namespace FEQuanLyNhanSu.Screens.Companies
             var response = await client.DeleteAsync(baseUrl);
             if (response.IsSuccessStatusCode)
             {
-                MessageBox.Show("Xóa phòng ban thành công.");
-                _ = _paginationHelper.LoadPageAsync(1); // Reload the first page
+                MessageBox.Show("Xóa công ty thành công.");
+                //_ = _paginationHelper.LoadPageAsync(1);
+                await _paginationHelper.RefreshAsync();
             }
             else
             {
                 var json = await response.Content.ReadAsStringAsync();
                 var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
                 var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                MessageBox.Show($"Không thể xóa phòng ban: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Không thể xóa công ty: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         //Pagination
@@ -171,79 +198,68 @@ namespace FEQuanLyNhanSu.Screens.Companies
         // cbIsActive
         private void LoadIsActive()
         {
-            var options = new List<string> { "Tất cả", "Đang hoạt động", "Không hoạt động" };
-            cbIsActive.ItemsSource = options;
-            cbIsActive.SelectedIndex = 1;
+            cbIsActive.Items.Clear();
+
+            cbIsActive.Items.Add(new ComboBoxItem { Content = "Tất cả", Tag = "" });
+            cbIsActive.Items.Add(new ComboBoxItem { Content = "Đang hoạt động", Tag = "true" });
+            cbIsActive.Items.Add(new ComboBoxItem { Content = "Không hoạt động", Tag = "false" });
+
+            cbIsActive.SelectedIndex = 1; 
         }
         private async void cbIsActive_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
 
-        private async Task FilterAsync()
+        private async void btnDeleteSelected_Click(object sender, RoutedEventArgs e)
         {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
-            string keyword = txtSearch.Text?.Trim();
-
-            bool? isActive = null;
-            switch (cbIsActive.SelectedIndex)
+            var selectedCompanies = new List<CompanyResultDto>();
+            foreach (var item in CompDtaGrid.Items)
             {
-                case 1: 
-                    isActive = true;
-                    break;
-                case 2: 
-                    isActive = false;
-                    break;
+                var row = (DataGridRow)CompDtaGrid.ItemContainerGenerator.ContainerFromItem(item);
+                if (row != null)
+                {
+                    var checkbox = FindVisualChild<CheckBox>(row);
+                    if (checkbox != null && checkbox.IsChecked == true)
+                    {
+                        selectedCompanies.Add(item as CompanyResultDto);
+                    }
+                }
             }
 
-            var items = await SearchAndFilterDepartmentsAsync(
-                baseUrl,
-                token,
-                keyword,
-                isActive 
-            );
+            var confirm = MessageBox.Show($"Bạn có chắc muốn xóa {selectedCompanies.Count} công ty?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (confirm != MessageBoxResult.Yes) return;
 
-            CompDtaGrid.ItemsSource = null;
-            CompDtaGrid.ItemsSource = items;
-        }
-        public static async Task<List<CompanyResultDto>> SearchAndFilterDepartmentsAsync(string baseUrl, string token, string searchKeyword, bool? isActive, int pageIndex = 1, int pageSize = 20)
-        {
-            try
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            foreach (var company in selectedCompanies)
             {
-                var parameters = new List<string>();
-                if (!string.IsNullOrWhiteSpace(searchKeyword))
-                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
-                if (isActive.HasValue)
-                    parameters.Add($"IsActive={isActive.Value.ToString().ToLower()}"); 
-                parameters.Add($"pageIndex={pageIndex}");
-                parameters.Add($"pageSize={pageSize}");
-
-                var url = baseUrl + "/api/Company"; 
-                if (parameters.Any())
-                    url += "?" + string.Join("&", parameters);
-
-                using var client = new HttpClient();
-                if (!string.IsNullOrWhiteSpace(token))
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.GetAsync(url);
-                var json = await response.Content.ReadAsStringAsync();
+                var url = $"{AppsettingConfigHelper.GetBaseUrl()}/api/Company/{company.CompanyId}";
+                var response = await client.DeleteAsync(url);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    MessageBox.Show($"Lỗi khi lọc công ty: {response.StatusCode}");
-                    return new List<CompanyResultDto>();
+                    var msg = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Xóa thất bại công ty {company.Name}: {msg}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-
-                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<CompanyResultDto>>>(json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return result?.Data?.Items?.ToList() ?? new List<CompanyResultDto>();
             }
-            catch (Exception ex)
+            MessageBox.Show("Xóa thành công các công ty đã chọn.");
+            //await _paginationHelper.RefreshAsync();
+            //_ = _paginationHelper.LoadPageAsync(1);
+            await FilterAsync();
+        }
+        public static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
-                MessageBox.Show($"Error: {ex.Message}");
-                return new List<CompanyResultDto>();
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                    return typedChild;
+
+                var result = FindVisualChild<T>(child);
+                if (result != null)
+                    return result;
             }
+            return null;
         }
     }
 }

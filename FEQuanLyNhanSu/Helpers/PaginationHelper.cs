@@ -18,17 +18,19 @@ namespace FEQuanLyNhanSu.Helpers
         private readonly string _token;
         private readonly Action<List<T>> _updateUI;
         private readonly Label _pageLabel;
+        private readonly Func<int, string> _buildUrlWithPage;
 
         private int _currentPage = 1;
         private int _totalPages = 1;
 
-        public PaginationHelper(string baseUrl, int pageSize, string token, Action<List<T>> updateUI, Label pageLabel)
+        public PaginationHelper(string baseUrl, int pageSize, string token, Action<List<T>> updateUI, Label pageLabel, Func<int, string> buildUrlWithPage)
         {
             _baseUrl = baseUrl;
             _pageSize = pageSize;
             _token = token;
             _updateUI = updateUI;
             _pageLabel = pageLabel;
+            _buildUrlWithPage = buildUrlWithPage;
         }
 
         public async Task LoadPageAsync(int page)
@@ -41,7 +43,8 @@ namespace FEQuanLyNhanSu.Helpers
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _token);
 
-                string url = $"{_baseUrl}?pageSize={_pageSize}&pageIndex={page}";
+                //string url = $"{_baseUrl}?pageSize={_pageSize}&pageIndex={page}";
+                string url = _buildUrlWithPage(page);
                 var response = await client.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
@@ -49,8 +52,8 @@ namespace FEQuanLyNhanSu.Helpers
                     var errorJson = await response.Content.ReadAsStringAsync();
                     var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
                     var errorData = apiResponse?.Data ?? errorJson ?? "Có lỗi xảy ra";
-                    MessageBox.Show($"{url}");
-                    MessageBox.Show($"Lỗi phân trang: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //MessageBox.Show($"{url}");
+                    //MessageBox.Show($"Lỗi phân trang: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 

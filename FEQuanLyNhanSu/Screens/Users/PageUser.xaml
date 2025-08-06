@@ -15,8 +15,6 @@
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
         <DataGrid x:Name="UserDtaGrid" RowHeight="60" Margin="20,100,20,50" FontSize="15" IsReadOnly="True" ColumnWidth="*" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
-
-
                 <DataGridTemplateColumn Header="Hành động" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -28,15 +26,19 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <!--<DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*" >
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Left"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="Padding" Value="5,0"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>-->
+                <DataGridTemplateColumn Header="Ảnh" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Width="60" Height="60" Stretch="UniformToFill">
+                                <Image.Source>
+                                    <Binding Path="ImageUrl" 
+                                     TargetNullValue="pack://application:,,,/Assets/none.jpg"
+                                     FallbackValue="pack://application:,,,/Assets/user.png"/>
+                                </Image.Source>
+                            </Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Fullname}" Width="*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
@@ -55,15 +57,19 @@
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding RoleName}" Value="AdminSystem">
                                                 <Setter Property="Foreground" Value="#FFE44149"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding RoleName}" Value="Administrator">
-                                                <Setter Property="Foreground" Value="#FF26CECA"/>
+                                                <Setter Property="Foreground" Value="#FF3D37FF"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding RoleName}" Value="Manager">
                                                 <Setter Property="Foreground" Value="#FFC37323"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding RoleName}" Value="Employee">
                                                 <Setter Property="Foreground" Value="#FF3D985B"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -82,6 +88,15 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="*" >
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="5,0"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -111,28 +126,17 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridCheckBoxColumn Header="Còn hoạt động" Binding="{Binding IsActive}" Width="Auto" >
+                <DataGridCheckBoxColumn Header="Còn hoạt động" Binding="{Binding IsActive}" Width="Auto">
                     <DataGridCheckBoxColumn.ElementStyle>
                         <Style TargetType="CheckBox">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="Padding" Value="5,0"/>
+                            <Setter Property="IsEnabled" Value="False"/>
                         </Style>
                     </DataGridCheckBoxColumn.ElementStyle>
                 </DataGridCheckBoxColumn>
-                    <DataGridTemplateColumn Header="Ảnh" Width="100">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Width="60" Height="60" Stretch="UniformToFill">
-                                <Image.Source>
-                                    <Binding Path="ImageUrl" 
-                             TargetNullValue="pack://application:,,,/Assets/none.jpg"
-                             FallbackValue="pack://application:,,,/Assets/user.png"/>
-                                </Image.Source>
-                            </Image>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddUserBtn" Content="Thêm người dùng" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="190" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="CreateUser" FontWeight="Bold"/>

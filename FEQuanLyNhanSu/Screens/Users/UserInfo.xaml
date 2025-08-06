@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Users"
         mc:Ignorable="d"
-        Title="UserInfo" Height="750" Width="750">
+        Title="UserInfo" Height="800" Width="760">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser"
            Content="Thông tin người dùng"
@@ -14,9 +14,8 @@
            VerticalAlignment="Top"
            Margin="0,20,0,10" />
 
-        <Grid Margin="40,80,40,0" VerticalAlignment="Top" Height="654">
+        <Grid Margin="40,80,40,0" VerticalAlignment="Top" Height="705">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -54,35 +53,42 @@
             <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtPhoneNo"
                  FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
 
-            <TextBox x:Name="txtboxCompany" Grid.Row="3" Grid.Column="0" Text="Company" IsReadOnly="True"
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Email" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtCompany"
+            <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtEmail"
+                 FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
+
+            <TextBox x:Name="txtboxCompany" Grid.Row="4" Grid.Column="0" Text="Company" IsReadOnly="True"
+                 Background="#FF99C5E3" Foreground="White" FontSize="15"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtCompany"
                   FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
 
-            <TextBox x:Name="txtboxDepartment" Grid.Row="4" Grid.Column="0" Text="Phòng ban" IsReadOnly="True"
+            <TextBox x:Name="txtboxDepartment" Grid.Row="5" Grid.Column="0" Text="Phòng ban" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtDepartment"          
+            <TextBox Grid.Row="5" Grid.Column="1" x:Name="txtDepartment"          
                   FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
 
-            <TextBox Grid.Row="5" Grid.Column="0" Text="Chức vụ" IsReadOnly="True"
+            <TextBox Grid.Row="6" Grid.Column="0" Text="Chức vụ" IsReadOnly="True"
                  Background="#FF99C5E3" Foreground="White" FontSize="15"
                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                  Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <TextBox Grid.Row="5" Grid.Column="1" x:Name="txtPosition"          
+            <TextBox Grid.Row="6" Grid.Column="1" x:Name="txtPosition"          
                   FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" IsReadOnly="True" />
 
-            <TextBox Grid.Row="6" Grid.Column="0" Text="Image" IsReadOnly="True"
+            <TextBox Grid.Row="7" Grid.Column="0" Text="Image" IsReadOnly="True"
                   Background="#FF99C5E3" Foreground="White" FontSize="15"
                   VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,10,0,10" FontWeight="Heavy" Height="41"/>
-            <Image x:Name="imgAvatar" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" Width="250" Height="250"/>
+            <Image x:Name="imgAvatar" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Center" Width="250" Height="250"/>
 
             <!-- Buttons -->
-            <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal"
-                    HorizontalAlignment="Center" Margin="0,20,0,0">
+            <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal"
+                    HorizontalAlignment="Left" Margin="0,20,0,0" Height="41" VerticalAlignment="Top">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                     Margin="10,0" FontSize="15" Click="btnExit_Click"/>
 

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Duties" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="UpdateDetail" Height="500" Width="530">
+        Title="UpdateDetail" Height="750" Width="530">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" 
                Content="Cập nhật chi tiết công việc" 
@@ -14,12 +14,15 @@
                VerticalAlignment="Top" 
                Margin="0,20,0,10" />
 
-        <Grid Margin="40,80,40,0" VerticalAlignment="Top" Height="402">
+        <Grid Margin="40,80,40,0" VerticalAlignment="Top" Height="642">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="150"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="150"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
@@ -28,7 +31,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="0" Text="Tên người làm" IsReadOnly="True"
+            <TextBox x:Name="txtEmployee" Grid.Row="0" Grid.Column="0" Text="Tên người làm" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5"/>
@@ -38,8 +41,7 @@
                       StaysOpenOnEdit="True"
                       IsTextSearchEnabled="False"
                       KeyUp="cbEmployee_KeyUp"
-                      DisplayMemberPath="{x:Null}"  
-                            SelectedValuePath="UserId"
+                      SelectedValuePath="UserId"
                       VerticalContentAlignment="Center">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -57,28 +59,62 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <TextBox Grid.Row="1" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                <ComboBox x:Name="cbDepartment"          
+                            Width="200" Height="41" Margin="5,0"
+                            FontSize="15" Padding="10,0"
+                            IsEditable="True"
+                            StaysOpenOnEdit="True"
+                            IsTextSearchEnabled="False"
+                            KeyUp="cbDepartment_KeyUp"
+                            DisplayMemberPath="Name"
+                            SelectedValuePath="departmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban"/>
+
+                <ComboBox x:Name="cbPosition"          
+                          Width="200" Height="41" Margin="5,0"
+                          FontSize="15" Padding="10,0"
+                          IsEditable="True"
+                          StaysOpenOnEdit="True"
+                          IsTextSearchEnabled="False"
+                          KeyUp="cbPosition_KeyUp"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="positionId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbPosition_SelectionChanged" Text="Nhập tên chức vụ"/>
+            </StackPanel>
+
+            <TextBox Grid.Row="2" Grid.Column="0" Text="Tên chi tiết công việc" IsReadOnly="True"
+                    Background="#FF99C5E3" Foreground="White" FontSize="15"
+                    VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                    Height="41" Margin="0,5"/>
+            <TextBox x:Name="txtTitle" Grid.Row="2" Grid.Column="1" 
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
+
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,10"/>
-            <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtDescription"
+            <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtDescription"
                      FontSize="15" Margin="0,5,0,10" Padding="10,0" TextWrapping="Wrap"/>
 
-            <TextBox Grid.Row="2" Grid.Column="0" Text="Deadline" IsReadOnly="True"
+            <TextBox Grid.Row="4" Grid.Column="0" Text="Deadline" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5"/>
-            <DatePicker Grid.Row="2" Grid.Column="1" x:Name="dpEndDate"
+            <DatePicker Grid.Row="4" Grid.Column="1" x:Name="dpEndDate"
                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <TextBox Grid.Row="3" Grid.Column="0" Text="Trạng thái" IsReadOnly="True"
+            <TextBox Grid.Row="5" Grid.Column="0" Text="Trạng thái" IsReadOnly="True"
          Background="#FF99C5E3" Foreground="White" FontSize="15"
          VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
          Height="41" Margin="0,5"/>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cb"
-            FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
+            <ComboBox Grid.Row="5" Grid.Column="1" x:Name="cb"
+            FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center" DisplayMemberPath="."/>
 
+            <TextBox Grid.Row="6" Grid.Column="0" Text="Mô tả" IsReadOnly="True"
+          Background="#FF99C5E3" Foreground="White" FontSize="15"
+          VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,10"/>
+            <TextBox Grid.Row="6" Grid.Column="1" x:Name="txtNote"
+          FontSize="15" Margin="0,5,0,10" Padding="10,0" TextWrapping="Wrap"/>
 
-            <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal"
                         HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Click="btnExit_Click"/>

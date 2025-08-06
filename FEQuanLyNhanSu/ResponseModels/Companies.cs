@@ -17,6 +17,7 @@ namespace FEQuanLyNhanSu.ResponseModels
             public string? LogoUrl { get; set; }
             public bool IsActive { get; set; }
             public bool IsDeleted { get; set; }
+            public bool IsSelected { get; set; } 
         }
 
         public class CompanyResponse

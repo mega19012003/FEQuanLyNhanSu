@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Users"
         mc:Ignorable="d"
-        Title="UpdateInfo" Height="650" Width="750">
-    <Grid Background="#FFCCE2F1" Height="854" VerticalAlignment="Top">
+        Title="UpdateInfo" Height="700" Width="750">
+    <Grid Background="#FFCCE2F1" VerticalAlignment="Top" Height="690">
         <Label x:Name="lblCreateUser"
                Content="Cập nhật thông tin"
                FontSize="20"
@@ -14,8 +14,9 @@
                VerticalAlignment="Top"
                Margin="0,20,0,10" />
 
-        <Grid Margin="40,80,40,20" VerticalAlignment="Top">
+        <Grid Margin="40,80,40,0" VerticalAlignment="Top" Height="600">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -50,11 +51,18 @@
             <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtPhoneNo"
                      FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
 
-            <TextBox Grid.Row="3" Grid.Column="0" Text="Image" IsReadOnly="True"
+            <TextBox Grid.Row="3" Grid.Column="0" Text="Email" IsReadOnly="True"
                      Background="#FF99C5E3" Foreground="White" FontSize="15"
                      VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      Height="41" Margin="0,5" FontWeight="Heavy"/>
-            <Grid Grid.Row="3" Grid.Column="1" Margin="0,5">
+            <TextBox Grid.Row="3" Grid.Column="1" x:Name="txtEmail"
+                     FontSize="15" Height="41" Margin="0,5" Padding="10,0" VerticalContentAlignment="Center"/>
+
+            <TextBox Grid.Row="4" Grid.Column="0" Text="Image" IsReadOnly="True"
+                     Background="#FF99C5E3" Foreground="White" FontSize="15"
+                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     Height="41" Margin="0,5" FontWeight="Heavy"/>
+            <Grid Grid.Row="4" Grid.Column="1" Margin="0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -68,13 +76,13 @@
                         Grid.Column="1" Click="btnSelectImage_Click"/>
             </Grid>
 
-            <TextBox Grid.Row="4" Grid.Column="0" Text="preview" IsReadOnly="True"
+            <TextBox Grid.Row="5" Grid.Column="0" Text="preview" IsReadOnly="True"
                       Background="#FF99C5E3" Foreground="White" FontSize="15"
                       VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,10,0,10" FontWeight="Heavy"/>
-            <Image x:Name="imgAvatar" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" Width="250" Height="250"/>
+            <Image x:Name="imgAvatar" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" Width="250" Height="250"/>
 
             <!-- Buttons -->
-            <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal"
                         HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                         Margin="10,0" FontSize="15" Click="btnExit_Click"/>

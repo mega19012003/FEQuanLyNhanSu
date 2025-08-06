@@ -26,9 +26,23 @@
               AutoGenerateColumns="False"
               ColumnWidth="*"
               CanUserAddRows="False"
-              RowDetailsVisibilityMode="VisibleWhenSelected">
+              RowDetailsVisibilityMode="VisibleWhenSelected"
+              PreviewMouseLeftButtonDown="DtaGrid_PreviewMouseLeftButtonDown">
             <!-- Cột thông tin người dùng -->
             <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Ảnh" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Width="60" Height="60" Stretch="UniformToFill">
+                                <Image.Source>
+                                    <Binding Path="ImageUrl" 
+                                    TargetNullValue="pack://application:,,,/Assets/none.jpg"
+                                    FallbackValue="pack://application:,,,/Assets/user.png"/>
+                                </Image.Source>
+                            </Image>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Họ tên" Binding="{Binding Fullname}" >
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
@@ -56,19 +70,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTemplateColumn Header="Ảnh" Width="100">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Width="60" Height="60" Stretch="UniformToFill">
-                                <Image.Source>
-                                    <Binding Path="ImageUrl" 
-             TargetNullValue="pack://application:,,,/Assets/none.jpg"
-             FallbackValue="pack://application:,,,/Assets/user.png"/>
-                                </Image.Source>
-                            </Image>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+               
             </DataGrid.Columns>
 
             <!-- Phần chi tiết khi click vào 1 user -->
@@ -149,7 +151,7 @@
         <Grid VerticalAlignment="Bottom" Margin="0,0,0,8" HorizontalAlignment="Center">
             <Button x:Name="btnPrevPage" Content="◁" HorizontalAlignment="Left" Height="34" Margin="0,0,230,0" VerticalAlignment="Bottom" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnPrevPage_Click"/>
             <Button x:Name="btnNextPage" Content="▷" HorizontalAlignment="Left" Height="34" Margin="230,0,0,0" VerticalAlignment="Top" Width="96" Background="#FF66A8D5" Foreground="White" Click="btnNextPage_Click"/>
-            <Label x:Name="txtPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
+            <Label x:Name="lblPage" Content="1" HorizontalAlignment="Center" Height="34" Width="34" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  />
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,56,0,0" >
             <ComboBox x:Name="cbCompany" Width="200" Height="41" Margin="5,0"

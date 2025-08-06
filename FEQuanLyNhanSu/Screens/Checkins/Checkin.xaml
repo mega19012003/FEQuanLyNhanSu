@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FEQuanLyNhanSu.Screens.Checkins"
         mc:Ignorable="d"
-        Title="Checkin" Height="500" Width="800">
+        Title="Checkin" Height="550" Width="800">
     <Grid Background="#FFCCE2F1">
         <Label x:Name="lblCreateUser" Content="Checkin" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20" />
 
         <!-- FORM INPUT -->
         <Grid Margin="40,80,40,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -32,8 +33,7 @@
                   StaysOpenOnEdit="True"
                   IsTextSearchEnabled="False"
                   KeyUp="cbEmployee_KeyUp"
-                  DisplayMemberPath="{x:Null}"  
-                        SelectedValuePath="UserId"
+                  SelectedValuePath="UserId"
                   VerticalContentAlignment="Center">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -51,13 +51,35 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <TextBox x:Name="lblNote" Grid.Row="1" Grid.Column="0" Text="Ghi chú" IsReadOnly="True"
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                <ComboBox x:Name="cbDepartment"          
+                        Width="200" Height="41" Margin="5,0"
+                        FontSize="15" Padding="10,0"
+                        IsEditable="True"
+                        StaysOpenOnEdit="True"
+                        IsTextSearchEnabled="False"
+                        KeyUp="cbDepartment_KeyUp"
+                        DisplayMemberPath="Name"
+                        SelectedValuePath="departmentId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbDepartment_SelectionChanged" Text="Nhập tên phòng ban"/>
+
+                <ComboBox x:Name="cbPosition"          
+                          Width="200" Height="41" Margin="5,0"
+                          FontSize="15" Padding="10,0"
+                          IsEditable="True"
+                          StaysOpenOnEdit="True"
+                          IsTextSearchEnabled="False"
+                          KeyUp="cbPosition_KeyUp"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="positionId" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" SelectionChanged="cbPosition_SelectionChanged" Text="Nhập tên chức vụ"/>
+            </StackPanel>
+
+            <TextBox x:Name="lblNote" Grid.Row="2" Grid.Column="0" Text="Ghi chú" IsReadOnly="True"
                Background="#FF99C5E3" Foreground="White" FontSize="15"
                VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                Height="41" Margin="0,5"/>
-            <TextBox x:Name="txtNote" Grid.Row="1" Grid.Column="1" FontSize="15" Height="41" Margin="0,5" VerticalContentAlignment="Center"/>
+            <TextBox x:Name="txtNote" Grid.Row="2" Grid.Column="1" FontSize="15" Height="41" Margin="0,5" VerticalContentAlignment="Center"/>
 
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal"
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal"
                 HorizontalAlignment="Center" Margin="0,20,0,0">
                 <Button x:Name="btnCreate" Content="Checkin" Width="170" Height="41"
                 Margin="10,0" FontSize="15" Background="#FF66A8D5"
@@ -67,7 +89,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Margin="150,270,150,0">
+        <Grid Margin="150,320,100,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -78,7 +100,7 @@
                 <RowDefinition Height="Auto"/>-->
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>

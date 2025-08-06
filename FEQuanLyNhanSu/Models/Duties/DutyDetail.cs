@@ -14,7 +14,7 @@ namespace FEQuanLyNhanSu.Models.Duties
         public Guid UserId { get; set; }
         public User Users { get; set; }
         public DateOnly Deadline { get; set; }
-        public DutyStatus Status { get; set; } = DutyStatus.NotStarted;
+        public DutyStatus Status { get; set; } = DutyStatus.Pending;
         public bool IsDeleted { get; set; } = false;
         public string Description { get; set; }
     }

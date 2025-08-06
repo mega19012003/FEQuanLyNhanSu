@@ -1,6 +1,7 @@
 ﻿using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
 using FEQuanLyNhanSu.Models.Departments;
+using FEQuanLyNhanSu.Models.Positions;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Departments;
 using FEQuanLyNhanSu.Screens.Departments;
@@ -24,8 +25,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static FEQuanLyNhanSu.ResponseModels.Companies;
 using static FEQuanLyNhanSu.ResponseModels.Departments;
-using static FEQuanLyNhanSu.ResponseModels.Departments;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static FEQuanLyNhanSu.ResponseModels.Positions;
 
 namespace FEQuanLyNhanSu
 {
@@ -50,6 +50,8 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     DtaGridActionDepartment.Visibility = Visibility.Collapsed;
                     AddDprtmntBtn.Visibility = Visibility.Collapsed;
+                    btnDeleteSelected.Visibility = Visibility.Collapsed;
+                    SelectedColumnHeader.Visibility = Visibility.Collapsed;
                     break;
 
                 case "Administrator":
@@ -59,20 +61,21 @@ namespace FEQuanLyNhanSu
             }
         }
         //Load Department List
-        private void LoadDepartment()
+        private async Task LoadDepartment()
         {
             try
             {
                 var token = Application.Current.Properties["Token"]?.ToString();
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
-                int pageSize = 20;
+                int pageSize = 10;
 
                 _paginationHelper = new PaginationHelper<Departments.DepartmentResultDto>(
                     baseUrl,
                     pageSize,
                     token,
                     items => DprtmtDtaGrid.ItemsSource = items,
-                    txtPage
+                    txtPage,
+                    page => BuildDepartmentUrlWithFilter(page, pageSize)
                 );
                 _ = _paginationHelper.LoadPageAsync(1);
             }
@@ -81,6 +84,28 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Lỗi khi tải dữ liệu phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private string BuildDepartmentUrlWithFilter(int pageIndex, int pageSize)
+        {
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+            var parameters = new List<string>();
+
+            string keyword = txtSearch.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(keyword))
+                parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
+                parameters.Add($"companyId={selectedComp.CompanyId}");
+
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
+        }
+        private async Task FilterAsync()
+        {
+            await LoadDepartment();
+        }
+
         private async Task LoadCompanies()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -99,7 +124,7 @@ namespace FEQuanLyNhanSu
                 {
                     cbCompany.SelectedItem = result.Data.Items.First();
                     //await LoadDepartmentByCompanyAsync();
-                    //await LoadPositionByCompanyAsync();
+                    //await LoaddepartmentByCompanyAsync();
                     await FilterAsync();
                 }
             }
@@ -159,40 +184,7 @@ namespace FEQuanLyNhanSu
             }
         }
         //Search
-        private async Task FilterAsync()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
-            string keyword = txtSearch.Text?.Trim();
-
-            Guid? CompanyId = null;
-            string departmentText = cbCompany.Text?.Trim();
-
-            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
-            {
-                CompanyId = selectedComp.CompanyId;
-            }
-            else if (!string.IsNullOrEmpty(departmentText))
-            {
-                var found = (cbCompany.ItemsSource as IEnumerable<CompanyResultDto>)
-                    ?.FirstOrDefault(d => d.Name.Equals(departmentText, StringComparison.OrdinalIgnoreCase));
-                if (found != null)
-                {
-                    CompanyId = found.CompanyId;
-                }
-            }
-
-            var items = await SearchAndFilterDepartmentsAsync(
-                baseUrl,
-                token,
-                keyword,
-                CompanyId
-            );
-
-            DprtmtDtaGrid.ItemsSource = null;
-            DprtmtDtaGrid.ItemsSource = items;
-        }
+       
         public static async Task<List<DepartmentResultDto>> SearchAndFilterDepartmentsAsync(string baseUrl, string token, string searchKeyword, Guid? CompanyId, int pageIndex = 1, int pageSize = 20)
         {
             try
@@ -276,7 +268,7 @@ namespace FEQuanLyNhanSu
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tìm kiếm chức vụ: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         //Delete
@@ -311,6 +303,59 @@ namespace FEQuanLyNhanSu
                 var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
                 MessageBox.Show($"Không thể xóa phòng ban: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+        private async void btnDeleteSelected_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedDepartments = new List<DepartmentResultDto>();
+            foreach (var item in DprtmtDtaGrid.Items)
+            {
+                var row = (DataGridRow)DprtmtDtaGrid.ItemContainerGenerator.ContainerFromItem(item);
+                if (row != null)
+                {
+                    var checkbox = FindVisualChild<CheckBox>(row);
+                    if (checkbox != null && checkbox.IsChecked == true)
+                    {
+                        selectedDepartments.Add(item as DepartmentResultDto);
+                    }
+                }
+            }
+
+            var confirm = MessageBox.Show($"Bạn có chắc muốn xóa {selectedDepartments.Count} phòng ban?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (confirm != MessageBoxResult.Yes) return;
+
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            foreach (var department in selectedDepartments)
+            {
+                var url = $"{AppsettingConfigHelper.GetBaseUrl()}/api/Department/{department.DepartmentId}"; 
+                var response = await client.DeleteAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var msg = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"Xóa thất bại phòng ban {department.Name}: {msg}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            MessageBox.Show("Xóa thành công các phòng ban đã chọn.");
+            //await _paginationHelper.RefreshAsync();
+            //_ = _paginationHelper.LoadPageAsync(1);
+            await FilterAsync();
+        }
+        public static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                    return typedChild;
+
+                var result = FindVisualChild<T>(child);
+                if (result != null)
+                    return result;
+            }
+            return null;
         }
         //Pagination
         private async void btnPrevPage_Click(object sender, RoutedEventArgs e)

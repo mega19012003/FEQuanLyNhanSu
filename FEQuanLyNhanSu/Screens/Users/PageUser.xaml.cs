@@ -47,6 +47,9 @@ namespace FEQuanLyNhanSu
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             //_ = LoadPositionsByDepartmentAsync();
             //_ = FilterAsync();
+            _ = LoadCompanies();
+            _ = LoadDepartmentByCompanyAsync();
+            _ = LoadPositionsByDepartmentAsync();
             LoadDateComboboxes();
             LoadIsActiveComboBox();
             Loaded += async (s, e) => await FilterAsync();
@@ -59,17 +62,13 @@ namespace FEQuanLyNhanSu
                 case "Manager":
                     cbDepartment.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
-                    _ = LoadPosition();
                     break;
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
-                    _ = LoadDepartments();
-                    _ = LoadPositionsByDepartmentAsync();
+                  
                     break;
                 case "SystemAdmin":
-                    _ = LoadCompanies();
-                    _ = LoadDepartmentByCompanyAsync();
-                    _ = LoadPositionsByDepartmentAsync();
+
                     break;
             }
         }
@@ -90,31 +89,71 @@ namespace FEQuanLyNhanSu
         }
         private void LoadIsActiveComboBox()
         {
-            var cb = new List<string> { "Tất cả", "Đang hoạt động", "Không hoạt động" };
-            cbIsActive.ItemsSource = cb;
-            cbIsActive.SelectedIndex = 1;
+            cbIsActive.Items.Clear();
+
+            cbIsActive.Items.Add(new ComboBoxItem { Content = "Tất cả", Tag = "" });
+            cbIsActive.Items.Add(new ComboBoxItem { Content = "Đang hoạt động", Tag = "true" });
+            cbIsActive.Items.Add(new ComboBoxItem { Content = "Không hoạt động", Tag = "false" });
+
+            cbIsActive.SelectedIndex = 1; 
         }
 
         private async Task LoadUser()
         {
 
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            int pageSize = 10;
+
+            _paginationHelper = new PaginationHelper<UserResultDto>(
+                baseUrl,
+                pageSize,
+                token,
+                items => UserDtaGrid.ItemsSource = items,
+                txtPage,
+                page => BuildUserUrlWithFilter(page, pageSize)
+            );
+
+            _ = _paginationHelper.LoadPageAsync(1);
+        }
+        private string BuildUserUrlWithFilter(int pageIndex, int pageSize)
+        {
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
+            var parameters = new List<string>();
+
+            string keyword = txtSearch.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(keyword))
+                parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
+                parameters.Add($"companyId={selectedComp.CompanyId}");
+
+            if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
+                parameters.Add($"departmentId={selectedDept.DepartmentId}");
+
+            if (cbPosition.SelectedItem is PositionResultDto selectedPos)
+                parameters.Add($"positionId={selectedPos.Id}");
+
+            if (cbMonth.SelectedIndex > 0 && int.TryParse(cbMonth.SelectedItem.ToString(), out int selectedMonth))
+                parameters.Add($"Month={selectedMonth}");
+
+            if (cbIsActive.SelectedItem is ComboBoxItem selectedStatus)
             {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/User";
-                int pageSize = 20;
-
-                _paginationHelper = new PaginationHelper<UserResultDto>(
-                    baseUrl,
-                    pageSize,
-                    token,
-                    items => UserDtaGrid.ItemsSource = items,
-                    txtPage
-                );
-
-                await _paginationHelper.LoadPageAsync(1);
+                var tagValue = selectedStatus.Tag?.ToString();
+                if (!string.IsNullOrEmpty(tagValue))
+                    parameters.Add($"IsActive={tagValue.ToLower()}");
             }
 
-        }       
+            parameters.Add($"pageIndex={pageIndex}");
+            parameters.Add($"pageSize={pageSize}");
+
+            return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
+        }
+        private async Task FilterAsync()
+        {
+            await LoadUser();
+        }
+
         public static async Task<List<UserResultDto>> LoadAllUsersAsync(string baseUrl, string token, int pageIndex = 1, int pageSize = 20)
         {
             try
@@ -219,7 +258,7 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-        private async Task LoadPosition()
+        private async Task LoadPositions()
         {
             {
                 var token = Application.Current.Properties["Token"]?.ToString();
@@ -242,116 +281,7 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
-        
-        private async Task FilterAsync()
-        {
-            try
-            {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-                int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
-                string keyword = txtSearch.Text?.Trim();
-
-                Guid? companyId = null;
-                if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
-                    companyId = selectedComp.CompanyId;
-
-                Guid? departmentId = null;
-                if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
-                    departmentId = selectedDept.DepartmentId;
-
-                Guid? positionId = null;
-                if (cbPosition.SelectedItem is PositionResultDto selectedPos)
-                    positionId = selectedPos.Id;
-
-                bool? isActive = null;
-                switch (cbIsActive.SelectedIndex)
-                {
-                    case 1:
-                        isActive = true;
-                        break;
-                    case 2:
-                        isActive = false;
-                        break;
-                }
-
-                List<UserResultDto> items;
-
-                if (string.IsNullOrWhiteSpace(keyword) && !companyId.HasValue && !departmentId.HasValue && !positionId.HasValue && !isActive.HasValue)
-                {
-                    items = await LoadAllUsersAsync(baseUrl, token);
-                }
-                else
-                {
-                    items = await SearchAndFilterUsersAsync(
-                        baseUrl,
-                        token,
-                        keyword,
-                        companyId,
-                        departmentId,
-                        positionId,
-                        month,
-                        isActive
-                    );
-                }
-
-                UserDtaGrid.ItemsSource = null;
-                UserDtaGrid.ItemsSource = items;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi lọc dữ liệu: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }       
-        public static async Task<List<UserResultDto>> SearchAndFilterUsersAsync(string baseUrl, string token, string searchKeyword, Guid? companyId, Guid? departmentId, Guid? positionId, int? month, bool? IsActive, int pageIndex = 1, int pageSize = 20)
-        {
-            try
-            {
-                var parameters = new List<string>();
-                if (!string.IsNullOrWhiteSpace(searchKeyword))
-                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
-                if (companyId.HasValue)
-                    parameters.Add($"companyId={companyId.Value}");
-                if (departmentId.HasValue)
-                    parameters.Add($"departmentId={departmentId.Value}");
-                if (positionId.HasValue)
-                    parameters.Add($"positionId={positionId.Value}");
-                if (month.HasValue) parameters.Add($"Month={month}");
-                if (IsActive.HasValue)
-                    parameters.Add($"IsActive={IsActive.Value.ToString().ToLower()}");
-                parameters.Add($"pageIndex={pageIndex}");
-                parameters.Add($"pageSize={pageSize}");
-
-                var url = baseUrl + "/api/User"; 
-                if (parameters.Any())
-                    url += "?" + string.Join("&", parameters);
-                //MessageBox.Show(url);
-                using var client = new HttpClient();
-                if (!string.IsNullOrWhiteSpace(token))
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.GetAsync(url);
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Lỗi khi lọc người dùng: {response.StatusCode}\n{errorContent}");
-                    return new List<UserResultDto>();
-                }
-
-                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<UserResultDto>>>(json, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-                return result?.Data?.Items?.ToList() ?? new List<UserResultDto>();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-                return new List<UserResultDto>();
-            }
-        }
+      
         private async void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbIsActive_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -366,7 +296,9 @@ namespace FEQuanLyNhanSu
         }
         private async void cbDepartment_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await LoadPositionsByDepartmentAsync();
+            if (cbDepartment.SelectedItem == null)
+                await LoadPositionByCompanyAsync();
+            else await LoadPositionsByDepartmentAsync();
             await FilterAsync();
         }
         private async void cbPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -488,7 +420,7 @@ namespace FEQuanLyNhanSu
 
                 if (string.IsNullOrEmpty(keyword))
                 {
-                    await LoadCompanies();               // load lại toàn bộ
+                    await LoadCompanies();               
                     cbCompany.SelectedItem = null;
                     cbCompany.IsDropDownOpen = true;
                 }

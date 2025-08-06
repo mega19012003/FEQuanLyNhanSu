@@ -13,7 +13,15 @@
         <StackPanel Margin="10,90,10,10" VerticalAlignment="Top"/>
         <DataGrid x:Name="PositionDtaGrid" RowHeight="60" Margin="20,100,20,50" FontSize="15" ColumnWidth="*" IsReadOnly="True" VerticalContentAlignment="Center" AutoGenerateColumns="False">
             <DataGrid.Columns>
-
+                <DataGridTemplateColumn x:Name="SelectedColumnHeader" Width="35">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn x:Name="DtaGridActionPosition" Header="Hành động" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -38,6 +46,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="AddPositionBtn" Content="Thêm chức vụ" HorizontalAlignment="Left" Height="35" Margin="20,59,0,0" VerticalAlignment="Top" Width="150" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="AddPosition" FontWeight="Bold"/>
+        <Button x:Name="btnDeleteSelected" Content="Xóa" Width="120" HorizontalAlignment="Left" Height="35" Margin="180,59,0,0" VerticalAlignment="Top" FontSize="20" Background="#FF66A8D5" Foreground="White" Click="btnDeleteSelected_Click"/>
         <Grid HorizontalAlignment="Right" Margin="0,60,20,0" VerticalAlignment="Top" Width="250" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

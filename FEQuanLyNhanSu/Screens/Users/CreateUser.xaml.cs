@@ -1,9 +1,13 @@
-﻿using FEQuanLyNhanSu.Base;
+﻿using EmployeeAPI.Models;
+using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Enums;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.Departments;
+using FEQuanLyNhanSu.Models.Positions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -37,9 +41,36 @@ namespace FEQuanLyNhanSu.Screens.Users
 
         private void LoadRoles()
         {
-            var roles = Enum.GetNames(typeof(RoleType)).ToList();
+            var currentUserRole = Application.Current.Properties["UserRole"]?.ToString();
+            List<string> roles;
+
+            switch (currentUserRole)
+            {
+                case "SystemAdmin":
+                    roles = Enum.GetNames(typeof(RoleType)).Where(r => r != "Manager" && r != "Employee").ToList();
+                    break;
+
+                case "Administrator":
+                    roles = Enum.GetNames(typeof(RoleType)).Where(r => r != "SystemAdmin" && r!= "Administrator").ToList();
+                    break;
+
+                case "Manager":
+                    roles = new List<string> { "Employee" };
+                    break;
+
+                default:
+                    roles = new List<string>();
+                    break;
+            }
+
             cmbRole.ItemsSource = roles;
         }
+
+        //private void LoadRoles()
+        //{
+        //    var roles = Enum.GetNames(typeof(RoleType)).ToList();
+        //    cmbRole.ItemsSource = roles;
+        //}
         private async void btnCreate_Click(object sender, RoutedEventArgs e)
         {
             btnCreate.IsEnabled = false;
@@ -63,6 +94,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                 Fullname = txtFullname.Text.Trim(),
                 Username = txtUsername.Text.Trim(),
                 Password = txtPassword.Text.Trim(),
+                Email = txtEmail.Text.Trim(),
                 Role = (int)roleEnum
             };
 
@@ -70,7 +102,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
-            
+           
             var response = client.PostAsync(baseUrl, content).Result;
             //if (response.IsSuccessStatusCode)
             //{

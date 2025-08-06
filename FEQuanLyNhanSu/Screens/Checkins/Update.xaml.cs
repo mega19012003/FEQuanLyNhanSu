@@ -40,6 +40,8 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             _checkinId = checkinId;
             _ = LoadDataAsync();
         }
+
+
         private HttpClient CreateAuthorizedClient(string token)
         {
             var client = new HttpClient();
@@ -66,9 +68,9 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 if (result?.Data != null)
                 {
                     txtFullname.Text = result.Data.Name;
-                    dtpCheckinTime.Text = result.Data.CheckinTime.ToString("dd/MM/yyyy HH:mm:ss");
-                    dtpCheckoutTime.Text = result.Data.CheckoutTime.ToString("dd/MM/yyyy HH:mm:ss");
-                    txtNote.Text = result.Data.Note ?? "";
+                    dtpCheckinTime.Value = result.Data.CheckinTime;
+                    dtpCheckoutTime.Value = result.Data.CheckoutTime;
+                    //txtNote.Text = result.Data.Note ?? "";
                 }
             }
             else
@@ -90,6 +92,12 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 var checkinTime = dtpCheckinTime.Value;
                 var checkoutTime = dtpCheckoutTime.Value;
                 var updateNote = txtNote.Text;
+
+                if(string.IsNullOrEmpty(txtNote.Text))
+                    {
+                    MessageBox.Show("Vui lòng nhập ghi chú cập nhật.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
                 var dataToSend = new
                 {

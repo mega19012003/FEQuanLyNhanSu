@@ -18,7 +18,7 @@
     <Grid Background="White" Margin="0,-3,0,0">
         
         <TextBlock x:Name="lblTitle" Text="Trang quản lý công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
-        <DataGrid x:Name="DutyDtaGrid" MinRowHeight="60" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False">
+        <DataGrid x:Name="DutyDtaGrid" MinRowHeight="60" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False" PreviewMouseLeftButtonDown="DtaGrid_PreviewMouseLeftButtonDown">
             <DataGrid.Columns>
                 <DataGridTemplateColumn x:Name="DtaGridActionDuty" Header="Hành động" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
@@ -195,7 +195,7 @@
                                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Status}" Value="Pending">
-                                                                <Setter Property="Foreground" Value="Gray"/>
+                                                                <Setter Property="Foreground" Value="Black"/>
                                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
@@ -283,11 +283,12 @@
                       SelectedValuePath="CompanyId"
                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                       SelectionChanged="cbCompany_SelectionChanged" Text="Nhập tên công ty"/>
-                <Grid HorizontalAlignment="Center" Width="200">
+                <Grid HorizontalAlignment="Center" Width="Auto">
                     <ComboBox x:Name="cbDay" HorizontalAlignment="Left" Margin="0,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbDay_SelectionChanged"/>
                     <ComboBox x:Name="cbMonth" HorizontalAlignment="Left" Margin="60,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectionChanged="cbMonth_SelectionChanged"/>
                     <ComboBox x:Name="cbYear" HorizontalAlignment="Left" Margin="120,3.5,0,0" VerticalAlignment="Top" Width="55" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbYear_SelectionChanged"/>
-                </Grid>
+                    <ComboBox x:Name="cbIsCompleted" HorizontalAlignment="Center" Margin="180,3.5,0,0" VerticalAlignment="Top" Width="150" Height="34" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="cbIsCompleted_SelectionChanged"/>
+            </Grid>
             </StackPanel>
     </Grid>
     

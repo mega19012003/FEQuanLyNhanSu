@@ -5,12 +5,14 @@ using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Duties;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using static FEQuanLyNhanSu.ResponseModels.Companies;
@@ -38,11 +40,11 @@ namespace FEQuanLyNhanSu
             };
             _debounceTimer.Tick += async (s, e) =>
             {
-                _debounceTimer.Stop(); // Dừng timer để tránh gọi lặp
+                _debounceTimer.Stop(); 
                 await FilterAsync();
             };
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            //_ = FilterAsync();
+            LoadIsCompletedComboBox();
             LoadDateComboboxes();
             Loaded += async (s, e) => await FilterAsync();
         }
@@ -76,22 +78,35 @@ namespace FEQuanLyNhanSu
             }
         }
         /// Load duty
-        private void LoadDuty()
+        private void LoadIsCompletedComboBox()
+        {
+            var statusMap = new Dictionary<string, string>
+            {
+                { "Tất cả", "" },
+                { "Chờ xử lý", "Pending" },
+                { "Đang xử lý", "InProgress" },
+                { "Hoàn tất", "Completed" }
+            };
+            cbIsCompleted.ItemsSource = statusMap;
+            cbIsCompleted.DisplayMemberPath = "Key";  
+            cbIsCompleted.SelectedValuePath = "Value"; 
+            cbIsCompleted.SelectedIndex = 0;
+        }
+        private async Task LoadDuty()
         {
             try
             {
                 var token = Application.Current.Properties["Token"]?.ToString();
-
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty";
-
-                int pageSize = 20;
+                int pageSize = 10;
                 _paginationHelper = new PaginationHelper<DutyResultDto>(
                     baseUrl,
                     pageSize,
                     token,
                     items => DutyDtaGrid.ItemsSource = items,
-                    txtPage
-                );
+                    txtPage,
+                    page => BuildDutyUrlWithFilter(page, pageSize)
+				);
                 _ = _paginationHelper.LoadPageAsync(1);
             }
             catch (Exception ex)
@@ -99,8 +114,46 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Có lỗi xảy ra: {ex.Message}\n{ex.StackTrace}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        /// Search
-        private void LoadDateComboboxes()
+		private string BuildDutyUrlWithFilter(int pageIndex, int pageSize)
+		{
+			var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty";
+			var parameters = new List<string>();
+
+			string keyword = txtSearch.Text?.Trim();
+			if (!string.IsNullOrWhiteSpace(keyword))
+				parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
+
+			if (cbDay.SelectedIndex > 0 && int.TryParse(cbDay.SelectedItem.ToString(), out int selectedDay))
+				parameters.Add($"Day={selectedDay}");
+
+			if (cbMonth.SelectedIndex > 0 && int.TryParse(cbMonth.SelectedItem.ToString(), out int selectedMonth))
+				parameters.Add($"Month={selectedMonth}");
+
+			if (cbYear.SelectedIndex > 0 && int.TryParse(cbYear.SelectedItem.ToString(), out int selectedYear))
+				parameters.Add($"Year={selectedYear}");
+
+			if (cbIsCompleted.SelectedItem is KeyValuePair<string, string> selectedStatus)
+			{
+				string statusValue = selectedStatus.Value;
+				if (!string.IsNullOrWhiteSpace(statusValue))
+					parameters.Add($"Status={Uri.EscapeDataString(statusValue)}");
+			}
+
+			if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
+				parameters.Add($"companyId={selectedComp.CompanyId}");
+
+			parameters.Add($"pageIndex={pageIndex}");
+			parameters.Add($"pageSize={pageSize}");
+
+			return parameters.Any() ? $"{baseUrl}?{string.Join("&", parameters)}" : baseUrl;
+		}
+		private async Task FilterAsync()
+		{
+			await LoadDuty();
+		}
+
+		/// Search
+		private void LoadDateComboboxes()
         {
             var days = new List<string> { "Ngày" };
             days.AddRange(Enumerable.Range(1, 31).Select(i => i.ToString()));
@@ -144,81 +197,6 @@ namespace FEQuanLyNhanSu
             }
         }
         
-        private async Task FilterAsync()
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl();
-
-            string keyword = txtSearch.Text?.Trim();
-            int? day = cbDay.SelectedIndex > 0 ? int.Parse(cbDay.SelectedItem.ToString()) : (int?)null;
-            int? month = cbMonth.SelectedIndex > 0 ? int.Parse(cbMonth.SelectedItem.ToString()) : (int?)null;
-            int? year = cbYear.SelectedIndex > 0 ? int.Parse(cbYear.SelectedItem.ToString()) : (int?)null;
-
-            //Guid? companyId = null;
-            //string companyText = cbCompany.Text?.Trim();
-            //if (cbCompany.SelectedItem is CompanyResultDto selectedCompany)
-            //{
-            //    companyId = selectedCompany.CompanyId;
-            //}
-            //else if (!string.IsNullOrEmpty(companyText))
-            //{
-            //    var found = (cbCompany.ItemsSource as IEnumerable<CompanyResultDto>)
-            //        ?.FirstOrDefault(c => c.Name.Equals(companyText, StringComparison.OrdinalIgnoreCase));
-            //    if (found != null)
-            //        companyId = found.CompanyId;
-            //}
-            Guid? companyId = null;
-            if (cbCompany.SelectedItem is CompanyResultDto selectedComp)
-                companyId = selectedComp.CompanyId;
-
-            var items = await SearchAndFilterDutiesAsync(baseUrl, token, keyword, day, month, year, companyId);
-            DutyDtaGrid.ItemsSource = items;
-        }
-        public static async Task<List<DutyResultDto>> SearchAndFilterDutiesAsync(string baseUrl, string token, string searchKeyword, int? day, int? month, int? year, Guid? companyId, int pageIndex = 1, int pageSize = 20)
-        {
-            try
-            {
-                var parameters = new List<string>();
-                if (!string.IsNullOrWhiteSpace(searchKeyword))
-                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
-                if (companyId.HasValue) parameters.Add($"companyId={companyId}");
-                if (day.HasValue) parameters.Add($"Day={day}");
-                if (month.HasValue) parameters.Add($"Month={month}");
-                if (year.HasValue) parameters.Add($"Year={year}");
-                
-                parameters.Add($"pageIndex={pageIndex}");
-                parameters.Add($"pageSize={pageSize}");
-
-                var url = baseUrl + "/api/Duty";
-                if (parameters.Any()) url += "?" + string.Join("&", parameters);
-
-                using var client = new HttpClient();
-                if (!string.IsNullOrWhiteSpace(token))
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.GetAsync(url);
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Lỗi khi lọc công việc: {response.StatusCode}\n{errorContent}");
-                    return new List<DutyResultDto>();
-                }
-
-                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<DutyResultDto>>>(json, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                return result?.Data?.Items?.ToList() ?? new List<DutyResultDto>();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-                return new List<DutyResultDto>();
-            }
-        }
         private async void cbCompany_KeyUp(object sender, KeyEventArgs e)
         {
             try
@@ -264,6 +242,7 @@ namespace FEQuanLyNhanSu
         private void cbDay_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
         private void cbMonth_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
         private void cbYear_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
+        private void cbIsCompleted_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
         private void txtTextChanged(object sender, TextChangedEventArgs e) => _debounceTimerRestart();
         private void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e) => _debounceTimerRestart();
 
@@ -385,15 +364,19 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show($"Không thể xóa công việc: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        /// ///////////////////////////////////////
-        /// /////////////////////////////////////// Duty Detail 
-        /// Create Detail
-        private void btnAddDetail_Click(object sender, RoutedEventArgs e)
+		/// ///////////////////////////////////////
+		/// /////////////////////////////////////// Duty Detail 
+		private void RefreshDutyList()
+		{
+			_ = LoadDuty(); 
+		}
+		/// Create Detail
+		private void btnAddDetail_Click(object sender, RoutedEventArgs e)
         {
             if (DutyDtaGrid.SelectedItem is DutyResultDto selectedDuty)
             {
                // var window = new CreateDetail(OnDetailCreated, selectedDuty.Id);
-                var window = new CreateDetail(LoadDuty, selectedDuty.Id);
+                var window = new CreateDetail(RefreshDutyList, selectedDuty.Id);
                 window.Show();
             }
             else
@@ -411,7 +394,7 @@ namespace FEQuanLyNhanSu
             if (!string.IsNullOrWhiteSpace(tagValue) && Guid.TryParse(tagValue, out Guid detailId))
             {
                 //var window = new UpdateDetail(detailId, OnDetailUpdated);
-                var window = new UpdateDetail(detailId, LoadDuty);
+                var window = new UpdateDetail(detailId, RefreshDutyList);
                 window.Show();
             }
             else
@@ -516,6 +499,41 @@ namespace FEQuanLyNhanSu
                 //MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 //MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành.\nStatusCode: {response.StatusCode}\nUrl: {baseUrl}\nChi tiết: {errorContent}");
+            }
+        }
+        private void DtaGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var dep = (DependencyObject)e.OriginalSource;
+
+            // Nếu click vào Button (hoặc phần tử con của Button), thì bỏ qua để nút hoạt động bình thường
+            while (dep != null)
+            {
+                if (dep is Button)
+                    return;
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+
+            dep = (DependencyObject)e.OriginalSource;
+
+            while (dep != null && !(dep is DataGridRow))
+            {
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+
+            if (dep is DataGridRow row)
+            {
+                var item = row.Item;
+
+                if (DutyDtaGrid.SelectedItems.Contains(item))
+                {
+                    DutyDtaGrid.SelectedItems.Remove(item); // Ẩn details
+                }
+                else
+                {
+                    DutyDtaGrid.SelectedItems.Add(item); // Hiện details
+                }
+
+                e.Handled = true; // Ngăn chọn lại dòng
             }
         }
     }
