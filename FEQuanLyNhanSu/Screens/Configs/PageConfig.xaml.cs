@@ -4,41 +4,18 @@ using FEQuanLyNhanSu.Enums;
 using FEQuanLyNhanSu.Helpers;
 using FEQuanLyNhanSu.Models.Configs;
 using FEQuanLyNhanSu.Models.Departments;
-using FEQuanLyNhanSu.Models.Positions;
 using FEQuanLyNhanSu.ResponseModels;
 using FEQuanLyNhanSu.Screens.Configs;
 using FEQuanLyNhanSu.Screens.Configs.HolidayConfig;
 using FEQuanLyNhanSu.Screens.Configs.LogStatusConfig;
 using FEQuanLyNhanSu.Screens.Configs.ScheduleTimeConfig;
-using FEQuanLyNhanSu.Screens.Positions;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Security.Policy;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static FEQuanLyNhanSu.ResponseModels.AllowedIPs;
 using static FEQuanLyNhanSu.ResponseModels.Companies;
-using static FEQuanLyNhanSu.ResponseModels.Departments;
-using static FEQuanLyNhanSu.ResponseModels.LogStatusConfigs;
-using static FEQuanLyNhanSu.ResponseModels.Positions;
-using static FEQuanLyNhanSu.Services.UserService.Users;
 
 namespace FEQuanLyNhanSu
 {
@@ -177,25 +154,26 @@ namespace FEQuanLyNhanSu
 
         public async Task LoadAllowedIPStatus()
         {
-            //try
-            //{
-            //    var token = Application.Current.Properties["Token"]?.ToString();
-            //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/AllowedIP";
-            //    int pageSize = 20;
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/AllowedIP";
+                int pageSize = 20;
 
-            //    _ipPaginationHelper = new PaginationHelper<AllowedIPs.IPResultDto>(
-            //        baseUrl,
-            //        pageSize,
-            //        token,
-            //        items => AllowedIPDtaGrid.ItemsSource = items,
-            //        txtPageIP
-            //    );
-            //    _ = _ipPaginationHelper.LoadPageAsync(1);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Lỗi khi tải cấu hình IP: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
+                _ipPaginationHelper = new PaginationHelper<AllowedIPs.IPResultDto>(
+                    baseUrl,
+                    pageSize,
+                    token,
+                    items => AllowedIPDtaGrid.ItemsSource = items,
+                    txtPageIP,
+                    Page => BuildAllowedIPUrlWithFilter(Page, pageSize)
+                );
+                _ = _ipPaginationHelper.LoadPageAsync(1);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải cấu hình IP: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         private string BuildAllowedIPUrlWithFilter(int pageIndex, int pageSize)
         {
@@ -294,7 +272,7 @@ namespace FEQuanLyNhanSu
             //if (!string.IsNullOrWhiteSpace(keyword))
             //    parameters.Add($"Search={Uri.EscapeDataString(keyword)}");
 
-            if (cbCompanyAllowedIP.SelectedItem is CompanyResultDto selectedComp)
+            if (cbCompanySchedule.SelectedItem is CompanyResultDto selectedComp)
                 parameters.Add($"companyId={selectedComp.CompanyId}");
 
             parameters.Add($"pageIndex={pageIndex}");
@@ -308,46 +286,46 @@ namespace FEQuanLyNhanSu
         }
         public async void LoadScheduleTime()
         {
-            //try
-            //{
-            //    var token = Application.Current.Properties["Token"]?.ToString();
-            //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
+            try
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/ScheduleTime";
 
-            //    using var client = new HttpClient();
-            //    client.DefaultRequestHeaders.Authorization =
-            //        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            //    var response = await client.GetAsync(baseUrl);
+                var response = await client.GetAsync(baseUrl);
 
-            //    if (!response.IsSuccessStatusCode)
-            //    {
-            //        MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
-            //        return;
-            //    }
+                if (!response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Không thể tải cấu hình. Vui lòng thử lại sau.");
+                    return;
+                }
 
-            //    var responseStr = await response.Content.ReadAsStringAsync();
+                var responseStr = await response.Content.ReadAsStringAsync();
 
-            //    var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<ScheduleTime>>>(responseStr);
-            //    var schedule = apiResult?.Data?.Items?.FirstOrDefault();
+                var apiResult = JsonConvert.DeserializeObject<ApiResponse<PagedResult<ScheduleTime>>>(responseStr);
+                var schedule = apiResult?.Data?.Items?.FirstOrDefault();
 
-            //    if (schedule != null)
-            //    {
-            //        _currentScheduleTime = schedule;
-            //        txtStartTimeMorning.Text = schedule.StartTimeMorning.ToString();
-            //        txtEndTimeMorning.Text = schedule.EndTimeMorning.ToString();
-            //        txtAllowTime.Text = schedule.LogAllowtime.ToString();
-            //        txtStartTimeAfternoon.Text = schedule.StartTimeAfternoon.ToString();
-            //        txtEndTimeAfternoon.Text = schedule.EndTimeAfternoon.ToString();
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show("Không tìm thấy cấu hình thời gian.");
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Lỗi khi tải cấu hình thời gian: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
+                if (schedule != null)
+                {
+                    _currentScheduleTime = schedule;
+                    txtStartTimeMorning.Text = schedule.StartTimeMorning.ToString();
+                    txtEndTimeMorning.Text = schedule.EndTimeMorning.ToString();
+                    txtAllowTime.Text = schedule.LogAllowtime.ToString();
+                    txtStartTimeAfternoon.Text = schedule.StartTimeAfternoon.ToString();
+                    txtEndTimeAfternoon.Text = schedule.EndTimeAfternoon.ToString();
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy cấu hình thời gian.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi tải cấu hình thời gian: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async Task LoadCompanies()
@@ -558,7 +536,8 @@ namespace FEQuanLyNhanSu
         {
             await _holidayPaginationHelper.PrevPageAsync();
         }
-        //////////////////////////////////////////////// Schedule
+        // Schedule
+        ////////////////////////////////////////////////
         private void btnUpdateWorkTime_Click(object sender, RoutedEventArgs e)
         {
             var window = new UpdateSchedule(LoadScheduleTime, _currentScheduleTime);

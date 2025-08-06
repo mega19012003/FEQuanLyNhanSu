@@ -42,7 +42,6 @@ namespace FEQuanLyNhanSu
     public partial class PageCheckin : Page
     {
         private PaginationHelper<Checkins.UserWithCheckinsDto> _paginationHelper;
-        //public ObservableCollection<CheckinResultDto> Checkins { get; set; } = new();
         public ObservableCollection<UserWithCheckinsDto> UserList { get; set; } = new();
         public PageCheckin()
         {
@@ -50,26 +49,29 @@ namespace FEQuanLyNhanSu
             CheckinDtaGrid.ItemsSource = UserList;
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             LoadDateComboboxes();
-            _ = LoadCompanies();
-            _ = LoadDepartmentByCompanyAsync();
-            _ = LoadPositionsByDepartmentAsync();
             Loaded += async (s, e) => await FilterAsync();
         }
 
-        private void HandleUI(string role)
+        private async Task HandleUI(string role)
         {
             switch (role)
             {
                 case "SystemAdmin":
                     AddCheckinBtn.Visibility = Visibility.Collapsed;
                     AddCheckouBtn.Visibility = Visibility.Collapsed;
+                    await LoadCompanies();
+                    await LoadDepartmentByCompanyAsync();
+                    await LoadPositionsByDepartmentAsync();
                     break;
                 case "Administrator":
-                    cbCompany.Visibility = Visibility.Collapsed;
+                    cbCompany.Visibility = Visibility.Collapsed;;
+                    await LoadDepartments();
+                    await LoadPositionsByDepartmentAsync();
                     break;
                 case "Manager":
                     cbCompany.Visibility = Visibility.Collapsed;
                     cbDepartment.Visibility = Visibility.Collapsed;
+                    await LoadPositions();
                     break;
                 case "Employee":
                     lblTitle.Text = "Checkin";
@@ -122,6 +124,29 @@ namespace FEQuanLyNhanSu
                 }
             }
         }
+        private async Task LoadDepartments()
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Department";
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync(baseUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = response.Content.ReadAsStringAsync().Result;
+                var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<DepartmentResultDto>>>(json);
+                cbDepartment.ItemsSource = result.Data.Items;
+
+                if (result.Data.Items != null && result.Data.Items.Any())
+                {
+                    cbDepartment.SelectedItem = result.Data.Items.First();
+                    await FilterAsync();
+                }
+            }
+        }
         private async Task LoadDepartmentsByCompanyId(Guid? companyId)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -151,6 +176,29 @@ namespace FEQuanLyNhanSu
                 //    await LoadPositionsByDepartmentAsync();
                 //    await FilterAsync();
                 //}
+            }
+        }
+        private async Task LoadPositions()
+        {
+            {
+                var token = Application.Current.Properties["Token"]?.ToString();
+                var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+                var response = await client.GetAsync(baseUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = response.Content.ReadAsStringAsync().Result;
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                    cbPosition.ItemsSource = result.Data.Items;
+                    if (result.Data.Items != null && result.Data.Items.Any())
+                    {
+                        cbPosition.SelectedItem = result.Data.Items.First();
+                        await FilterAsync();
+                    }
+                }
             }
         }
 

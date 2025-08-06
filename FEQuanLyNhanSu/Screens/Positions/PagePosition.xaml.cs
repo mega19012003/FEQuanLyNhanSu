@@ -44,23 +44,23 @@ namespace FEQuanLyNhanSu
             LoadPosition();
         }
 
-        private void HandleUI(string Role)
+        private async Task HandleUI(string Role)
         {
             switch(Role)
             {
                 case "Manager":
                     cbDepartment.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
-                    _ = LoadDepartments();
+                    //_ = LoadDepartments();
                     break;
                 case "Administrator":
-                    _ = LoadDepartments();
+                    await LoadDepartments();
                     cbCompany.Visibility = Visibility.Collapsed;
                     break;
                 case "SystemAdmin":
-                    _ = LoadCompanies();
+                    await LoadCompanies();
                     //_ = LoadDepartments();
-                    _ =LoadDepartmentByCompanyAsync();
+                    await LoadDepartmentByCompanyAsync();
                     DtaGridActionPosition.Visibility = Visibility.Collapsed;
                     AddPositionBtn.Visibility = Visibility.Collapsed;
                     btnDeleteSelected.Visibility = Visibility.Collapsed;

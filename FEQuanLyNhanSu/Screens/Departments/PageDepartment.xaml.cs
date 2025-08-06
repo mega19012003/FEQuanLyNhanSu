@@ -39,11 +39,10 @@ namespace FEQuanLyNhanSu
         {
             InitializeComponent();
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            LoadDepartment();
-            _ = LoadCompanies();
+            _ = LoadDepartment();
         }
 
-        private void HandleUI(string role)
+        private async Task HandleUI(string role)
         {
             switch (role)
             {
@@ -52,11 +51,11 @@ namespace FEQuanLyNhanSu
                     AddDprtmntBtn.Visibility = Visibility.Collapsed;
                     btnDeleteSelected.Visibility = Visibility.Collapsed;
                     SelectedColumnHeader.Visibility = Visibility.Collapsed;
+                    await LoadCompanies();
                     break;
 
                 case "Administrator":
                     cbCompany.Visibility = Visibility.Collapsed;
-                    //DtaGridColumnCompany.Visibility = Visibility.Collapsed;
                     break;
             }
         }
@@ -185,46 +184,6 @@ namespace FEQuanLyNhanSu
         }
         //Search
        
-        public static async Task<List<DepartmentResultDto>> SearchAndFilterDepartmentsAsync(string baseUrl, string token, string searchKeyword, Guid? CompanyId, int pageIndex = 1, int pageSize = 20)
-        {
-            try
-            {
-                var parameters = new List<string>();
-                if (!string.IsNullOrWhiteSpace(searchKeyword))
-                    parameters.Add($"Search={Uri.EscapeDataString(searchKeyword.Trim())}");
-                if (CompanyId.HasValue)
-                    parameters.Add($"companyId={CompanyId}");
-                parameters.Add($"pageIndex={pageIndex}");
-                parameters.Add($"pageSize={pageSize}");
-
-                var url = baseUrl + "/api/Department";
-                if (parameters.Any())
-                    url += "?" + string.Join("&", parameters);
-
-                using var client = new HttpClient();
-                if (!string.IsNullOrWhiteSpace(token))
-                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var response = await client.GetAsync(url);
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show($"Lỗi khi lọc phòng ban: {response.StatusCode}");
-                    return new List<DepartmentResultDto>();
-                }
-
-                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<PagedResult<DepartmentResultDto>>>(json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return result?.Data?.Items?.ToList() ?? new List<DepartmentResultDto>();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-                return new List<DepartmentResultDto>();
-            }
-        }
         private async void txtTextChanged(object sender, TextChangedEventArgs e) => await FilterAsync();
         private async void cbCompany_SelectionChanged(object sender, SelectionChangedEventArgs e) => await FilterAsync();
         private async void cbCompany_KeyUp(object sender, KeyEventArgs e)

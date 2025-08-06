@@ -49,7 +49,7 @@ namespace FEQuanLyNhanSu
             Loaded += async (s, e) => await FilterAsync();
         }
 
-        private void HandleUI(string role)
+        private async Task HandleUI(string role)
         {
             switch (role)
             {
@@ -73,7 +73,7 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     DtaGridActionDuty.Visibility = Visibility.Collapsed;
                     AdDutyBtn.Visibility = Visibility.Collapsed;
-                    _ = LoadCompanies();
+                    await LoadCompanies();
                     break;
             }
         }

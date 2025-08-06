@@ -47,28 +47,34 @@ namespace FEQuanLyNhanSu
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             //_ = LoadPositionsByDepartmentAsync();
             //_ = FilterAsync();
-            _ = LoadCompanies();
-            _ = LoadDepartmentByCompanyAsync();
-            _ = LoadPositionsByDepartmentAsync();
+            //_ = LoadCompanies();
+            //_ = LoadDepartmentByCompanyAsync();
+            //_ = LoadPositionsByDepartmentAsync();
             LoadDateComboboxes();
             LoadIsActiveComboBox();
             Loaded += async (s, e) => await FilterAsync();
         }
 
-        private void HandleUI(string role)
+        private async Task HandleUI(string role)
         {
             switch (role)
             {
                 case "Manager":
                     cbDepartment.Visibility = Visibility.Collapsed;
                     cbCompany.Visibility = Visibility.Collapsed;
+                    await LoadPositions();
                     break;
+
                 case "Administrator":
+                    await LoadDepartments();
+                    await LoadPositionsByDepartmentAsync();
                     cbCompany.Visibility = Visibility.Collapsed;
                   
                     break;
                 case "SystemAdmin":
-
+                    await LoadCompanies();
+                    await LoadDepartmentByCompanyAsync();
+                    await LoadPositionsByDepartmentAsync();
                     break;
             }
         }
