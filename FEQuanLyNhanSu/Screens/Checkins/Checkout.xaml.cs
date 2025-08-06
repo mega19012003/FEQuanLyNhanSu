@@ -62,7 +62,6 @@ namespace FEQuanLyNhanSu.Screens.Checkins
             }
         }
 
-
         private async Task FilterAsync()
         {
             try
@@ -415,8 +414,8 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/Checkout";
 
                 var form = new MultipartFormDataContent();
-                var deviceInfo = Environment.MachineName;
-                form.Add(new StringContent(deviceInfo), "DeviceInfo");
+                var deviceSignature = DeviceHelper.GetDeviceSignature();
+                form.Add(new StringContent(deviceSignature), "DeviceInfo");
                 var note = txtNote.Text ?? "";
                 form.Add(new StringContent(note), "Note");
 

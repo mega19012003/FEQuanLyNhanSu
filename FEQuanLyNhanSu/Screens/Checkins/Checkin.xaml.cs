@@ -444,14 +444,13 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                     form.Add(new StringContent(selectedUser.UserId.ToString()), "userId");
                     if (selectedUser.UserId == Guid.Parse(currentUserId))
                     {
-                        var deviceInfo = Environment.MachineName;
+                        var deviceInfo = DeviceHelper.GetDeviceSignature();
                         form.Add(new StringContent(deviceInfo), "DeviceInfo");
                     }
                 }
                 else
                 {
-                    // Trường hợp employee, không có ComboBox
-                    var deviceInfo = Environment.MachineName;
+                    var deviceInfo = DeviceHelper.GetDeviceSignature();
                     form.Add(new StringContent(deviceInfo), "DeviceInfo");
                 }
 
