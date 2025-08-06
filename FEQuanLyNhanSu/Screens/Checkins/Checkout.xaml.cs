@@ -58,6 +58,8 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                     lblName.Visibility = Visibility.Collapsed;
                     lblNote.Visibility = Visibility.Collapsed;
                     txtNote.Visibility = Visibility.Collapsed;
+                    cbDepartment.Visibility = Visibility.Collapsed;
+                    cbPosition.Visibility = Visibility.Collapsed;
                     break;
             }
         }

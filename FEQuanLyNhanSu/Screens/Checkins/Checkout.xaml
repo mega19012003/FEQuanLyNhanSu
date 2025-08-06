@@ -16,6 +16,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -85,48 +86,51 @@
                 Margin="10,0" FontSize="15" Background="#FF66A8D5"
                 Foreground="White" FontWeight="Bold" Click="btnCreate_Click"/>
             </StackPanel>
-        </Grid>
 
-        <Grid Margin="150,320,100,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <!--<RowDefinition Height="Auto"/>
+            <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal"
+    HorizontalAlignment="Center">
+                <Grid Margin="0,20,0,0" Width="500">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <!--<RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>-->
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="*"/>
-               
-            </Grid.ColumnDefinitions>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
 
-            <!--Label Left-->
-            <Label Grid.Row="0" Grid.Column="0" Content="Thời gian checkin" FontSize="15"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="Thời gian checkout" FontSize="15"/>
-            <Label Grid.Row="2" Grid.Column="0" Content="LogStatus" FontSize="15"/>
-            <Label Grid.Row="3" Grid.Column="0" Content="Ghi chú" FontSize="15"/>
-            <!--Content Left-->
-            <Label Grid.Row="0" Grid.Column="2" x:Name="lblCheckinMor" Content="....." FontSize="15"/>
-            <Label x:Name="lblCheckoutMor" Grid.Row="1" Grid.Column="2" Content="....." FontSize="15"/>
-            <Label x:Name="lblCheckinAft" Grid.Row="2" Grid.Column="2" Content="....." FontSize="15"/>
-            <Label x:Name="lblNoteResult" Grid.Row="3" Grid.Column="2" Content="....." FontSize="15"/>
+                    </Grid.ColumnDefinitions>
 
-
-            <!--Middle-->
-            <Label Grid.Row="0" Grid.Column="1" Content=":" FontSize="15"/>
-            <Label Grid.Row="1" Grid.Column="1" Content=":" FontSize="15"/>
-            <Label Grid.Row="2" Grid.Column="1" Content=":" FontSize="15"/>
-            <Label Grid.Row="3" Grid.Column="1" Content=":" FontSize="15"/>
+                    <!--Label Left-->
+                    <Label Grid.Row="0" Grid.Column="0" Content="Thời gian checkin" FontSize="15"/>
+                    <Label Grid.Row="1" Grid.Column="0" Content="Thời gian checkout" FontSize="15"/>
+                    <Label Grid.Row="2" Grid.Column="0" Content="LogStatus" FontSize="15"/>
+                    <Label Grid.Row="3" Grid.Column="0" Content="Ghi chú" FontSize="15"/>
+                    <!--Content Left-->
+                    <Label Grid.Row="0" Grid.Column="2" x:Name="lblCheckinMor" Content="....." FontSize="15"/>
+                    <Label x:Name="lblCheckoutMor" Grid.Row="1" Grid.Column="2" Content="....." FontSize="15"/>
+                    <Label x:Name="lblCheckinAft" Grid.Row="2" Grid.Column="2" Content="....." FontSize="15"/>
+                    <Label x:Name="lblNoteResult" Grid.Row="3" Grid.Column="2" Content="....." FontSize="15"/>
 
 
-            <StackPanel Grid.Row="4" Grid.ColumnSpan="6" Orientation="Horizontal"
+                    <!--Middle-->
+                    <Label Grid.Row="0" Grid.Column="1" Content=":" FontSize="15"/>
+                    <Label Grid.Row="1" Grid.Column="1" Content=":" FontSize="15"/>
+                    <Label Grid.Row="2" Grid.Column="1" Content=":" FontSize="15"/>
+                    <Label Grid.Row="3" Grid.Column="1" Content=":" FontSize="15"/>
+
+
+                    <StackPanel Grid.Row="4" Grid.ColumnSpan="6" Orientation="Horizontal"
                 HorizontalAlignment="Center" Margin="0,20,0,20">
-                <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
+                        <Button x:Name="btnExit" Content="Thoát" Width="150" Height="41"
                 Margin="10,0" FontSize="15" Click="btnExit_Click"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </Grid>
     </Grid>

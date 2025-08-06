@@ -41,7 +41,7 @@ namespace FEQuanLyNhanSu
         {
             InitializeComponent();
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            LoadPosition();
+            _ = FilterAsync();
         }
 
         private async Task HandleUI(string Role)
@@ -68,7 +68,7 @@ namespace FEQuanLyNhanSu
                     break;
             }
         } 
-        private void LoadPosition()
+        private async Task LoadPositions()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
@@ -87,7 +87,7 @@ namespace FEQuanLyNhanSu
         }
         private string BuildPositionUrlWithFilter(int pageIndex, int pageSize)
         {
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll/Position";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
             var parameters = new List<string>();
 
             string keyword = txtSearch.Text?.Trim();
@@ -107,7 +107,7 @@ namespace FEQuanLyNhanSu
         }
         private async Task FilterAsync()
         {
-            await LoadCompanies();
+            await LoadPositions();
         }
 
         private async Task LoadCompanies()

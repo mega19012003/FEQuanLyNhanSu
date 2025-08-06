@@ -558,7 +558,6 @@ namespace FEQuanLyNhanSu
                     }
                     else
                     {
-                        // Nếu không có cả department và company, load toàn bộ Position
                         url = baseUrl;
                     }
                 }
