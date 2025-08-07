@@ -51,6 +51,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
             {
                 case "Employee":
                     cbEmployee.Visibility = Visibility.Collapsed;
+                    cbDepartment.Visibility = Visibility.Collapsed;
+                    cbPosition.Visibility = Visibility.Collapsed;
                     txtEmployee.Visibility = Visibility.Collapsed;
                     txtDescription.IsEnabled = false;
                     txtTitle.IsEnabled = false;

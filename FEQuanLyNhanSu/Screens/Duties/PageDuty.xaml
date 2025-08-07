@@ -18,7 +18,8 @@
     <Grid Background="White" Margin="0,-3,0,0">
         
         <TextBlock x:Name="lblTitle" Text="Trang quản lý công việc" FontSize="24" HorizontalAlignment="Center" Padding="0,20,0,0" VerticalAlignment="Top"/>
-        <DataGrid x:Name="DutyDtaGrid" MinRowHeight="60" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False" PreviewMouseLeftButtonDown="DtaGrid_PreviewMouseLeftButtonDown">
+        <DataGrid x:Name="DutyDtaGrid" MinRowHeight="60" Margin="20,100,20,50" FontSize="15" RowDetailsVisibilityMode="VisibleWhenSelected" IsReadOnly="True" AutoGenerateColumns="False">
+            <!--PreviewMouseLeftButtonDown="DtaGrid_PreviewMouseLeftButtonDown"-->
             <DataGrid.Columns>
                 <DataGridTemplateColumn x:Name="DtaGridActionDuty" Header="Hành động" Width="150">
                     <DataGridTemplateColumn.CellTemplate>

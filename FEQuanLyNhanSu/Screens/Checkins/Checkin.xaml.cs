@@ -209,6 +209,7 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
 
                 Guid? departmentId = null;
+
                 if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
                     departmentId = selectedDept.DepartmentId;
 
@@ -216,51 +217,39 @@ namespace FEQuanLyNhanSu.Screens.Checkins
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
+                string url;
+
                 if (string.IsNullOrEmpty(keyword))
                 {
-                    if (!departmentId.HasValue)
+                    if (departmentId.HasValue)
                     {
-                        cbPosition.ItemsSource = null;
-                        cbPosition.SelectedItem = null;
-                        cbPosition.IsDropDownOpen = false;
-                        return;
-                    }
-
-                    string url = $"{baseUrl}?departmentId={departmentId.Value}";
-
-                    var response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                        cbPosition.ItemsSource = result?.Data?.Items;
-                        cbPosition.SelectedItem = null;
-                        cbPosition.IsDropDownOpen = true;
+                        url = $"{baseUrl}?departmentId={departmentId.Value}";
                     }
                     else
                     {
-                        cbPosition.ItemsSource = null;
+                        url = baseUrl;
                     }
                 }
                 else
                 {
-                    string url = $"{baseUrl}?Search={Uri.EscapeDataString(keyword)}";
+                    url = $"{baseUrl}?Search={Uri.EscapeDataString(keyword)}";
+
                     if (departmentId.HasValue)
                         url += $"&departmentId={departmentId.Value}";
+                }
 
-                    var response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                        cbPosition.ItemsSource = result?.Data?.Items;
-                        cbPosition.SelectedItem = null;
-                        cbPosition.IsDropDownOpen = true;
-                    }
-                    else
-                    {
-                        cbPosition.ItemsSource = null;
-                    }
+                var response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                    cbPosition.ItemsSource = result?.Data?.Items;
+                    cbPosition.SelectedItem = null;
+                    cbPosition.IsDropDownOpen = true;
+                }
+                else
+                {
+                    cbPosition.ItemsSource = null;
                 }
             }
             catch (Exception ex)

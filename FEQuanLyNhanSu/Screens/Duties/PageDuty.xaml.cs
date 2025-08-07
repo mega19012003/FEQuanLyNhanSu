@@ -501,40 +501,40 @@ namespace FEQuanLyNhanSu
                 //MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành.\nStatusCode: {response.StatusCode}\nUrl: {baseUrl}\nChi tiết: {errorContent}");
             }
         }
-        private void DtaGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var dep = (DependencyObject)e.OriginalSource;
+        //private void DtaGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    var dep = (DependencyObject)e.OriginalSource;
 
-            // Nếu click vào Button (hoặc phần tử con của Button), thì bỏ qua để nút hoạt động bình thường
-            while (dep != null)
-            {
-                if (dep is Button)
-                    return;
-                dep = VisualTreeHelper.GetParent(dep);
-            }
+        //    // Nếu click vào Button (hoặc phần tử con của Button), thì bỏ qua để nút hoạt động bình thường
+        //    while (dep != null)
+        //    {
+        //        if (dep is Button)
+        //            return;
+        //        dep = VisualTreeHelper.GetParent(dep);
+        //    }
 
-            dep = (DependencyObject)e.OriginalSource;
+        //    dep = (DependencyObject)e.OriginalSource;
 
-            while (dep != null && !(dep is DataGridRow))
-            {
-                dep = VisualTreeHelper.GetParent(dep);
-            }
+        //    while (dep != null && !(dep is DataGridRow))
+        //    {
+        //        dep = VisualTreeHelper.GetParent(dep);
+        //    }
 
-            if (dep is DataGridRow row)
-            {
-                var item = row.Item;
+        //    if (dep is DataGridRow row)
+        //    {
+        //        var item = row.Item;
 
-                if (DutyDtaGrid.SelectedItems.Contains(item))
-                {
-                    DutyDtaGrid.SelectedItems.Remove(item); // Ẩn details
-                }
-                else
-                {
-                    DutyDtaGrid.SelectedItems.Add(item); // Hiện details
-                }
+        //        if (DutyDtaGrid.SelectedItems.Contains(item))
+        //        {
+        //            DutyDtaGrid.SelectedItems.Remove(item); // Ẩn details
+        //        }
+        //        else
+        //        {
+        //            DutyDtaGrid.SelectedItems.Add(item); // Hiện details
+        //        }
 
-                e.Handled = true; // Ngăn chọn lại dòng
-            }
-        }
+        //        e.Handled = true; // Ngăn chọn lại dòng
+        //    }
+        //}
     }
 }

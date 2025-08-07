@@ -80,14 +80,33 @@ namespace FEQuanLyNhanSu.Screens.Users
                 txtboxDepartment.Visibility = Visibility.Collapsed;
                 cbPosition.Visibility = Visibility.Collapsed;
                 txtboxPosition.Visibility = Visibility.Collapsed;
-                cbCompany.Visibility = Visibility.Collapsed;
-                txtboxCompany.Visibility = Visibility.Collapsed;
             }
         }
-      
+
         private void LoadRoles()
         {
-            var roles = Enum.GetNames(typeof(RoleType)).ToList();
+            var currentUserRole = Application.Current.Properties["UserRole"]?.ToString();
+            List<string> roles;
+
+            switch (currentUserRole)
+            {
+                case "SystemAdmin":
+                    roles = Enum.GetNames(typeof(RoleType)).Where(r => r != "Manager" && r != "Employee").ToList();
+                    break;
+
+                case "Administrator":
+                    roles = Enum.GetNames(typeof(RoleType)).Where(r => r != "SystemAdmin" && r != "Administrator").ToList();
+                    break;
+
+                case "Manager":
+                    roles = new List<string> { "Employee" };
+                    break;
+
+                default:
+                    roles = new List<string>();
+                    break;
+            }
+
             cmbRole.ItemsSource = roles;
         }
         private async Task LoadUserAsync()

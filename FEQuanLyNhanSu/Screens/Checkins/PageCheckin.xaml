@@ -217,6 +217,7 @@
                                         <Setter Property="HorizontalAlignment" Value="Left"/>
                                         <Setter Property="VerticalAlignment" Value="Center"/>
                                         <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>

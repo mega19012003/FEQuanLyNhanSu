@@ -43,7 +43,7 @@ namespace FEQuanLyNhanSu
         public PageUser()
         {
             InitializeComponent();
-            _ = LoadUser();
+            //_ = LoadUser();
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             //_ = LoadPositionsByDepartmentAsync();
             //_ = FilterAsync();
@@ -52,7 +52,7 @@ namespace FEQuanLyNhanSu
             //_ = LoadPositionsByDepartmentAsync();
             LoadDateComboboxes();
             LoadIsActiveComboBox();
-            Loaded += async (s, e) => await FilterAsync();
+            _ = FilterAsync();
         }
 
         private async Task HandleUI(string role)
@@ -653,7 +653,7 @@ namespace FEQuanLyNhanSu
 
                     if (response.IsSuccessStatusCode)
                     {
-                        MessageBox.Show("Đặt lại mật khẩu thành công. Pass là username");
+                        MessageBox.Show("Đặt lại mật khẩu thành công. VUi lòng kiểm tra gmail");
                     }
                     else
                     {

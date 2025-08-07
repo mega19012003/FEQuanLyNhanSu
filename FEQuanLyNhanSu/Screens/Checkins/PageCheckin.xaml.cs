@@ -205,7 +205,7 @@ namespace FEQuanLyNhanSu
         private async Task LoadUserWithCheckin()
         {
             var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll/user-checkins";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/users-checkins";
             int pageSize = 10;
 
             _paginationHelper = new PaginationHelper<UserWithCheckinsDto>(
@@ -221,7 +221,7 @@ namespace FEQuanLyNhanSu
         }
         private string BuildCheckinUrlWithFilter(int pageIndex, int pageSize)
         {
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Payroll/user-payrolls";
+            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Checkin/users-checkins";
             var parameters = new List<string>();
 
             string keyword = txtSearch.Text?.Trim();

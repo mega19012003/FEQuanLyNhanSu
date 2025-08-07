@@ -1,5 +1,8 @@
-﻿using FEQuanLyNhanSu.Base;
+﻿using EmployeeAPI.Models;
+using FEQuanLyNhanSu.Base;
 using FEQuanLyNhanSu.Helpers;
+using FEQuanLyNhanSu.Models.Departments;
+using FEQuanLyNhanSu.Models.Positions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -28,9 +31,24 @@ namespace FEQuanLyNhanSu.Screens.Users
         public UserInfo()
         {
             InitializeComponent();
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             _ = LoadCurrentUserAsync();
         }
 
+        private async void HandleUI(string role)
+        {
+            switch (role)
+            {
+                case "SystemAdmin":
+                    txtboxCompany.Visibility = Visibility.Collapsed;
+                    txtCompany.Visibility = Visibility.Collapsed;
+                    txtboxDepartment.Visibility = Visibility.Collapsed;
+                    txtDepartment.Visibility = Visibility.Collapsed;
+                    txtboxPosition.Visibility = Visibility.Collapsed;
+                    txtPosition.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
         private async Task LoadCurrentUserAsync()
         {
             try
