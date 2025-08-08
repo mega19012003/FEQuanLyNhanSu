@@ -42,10 +42,23 @@ namespace FEQuanLyNhanSu
         public PagePayroll()
         {
             InitializeComponent();
-            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+            //LoadDateComboboxes();
+            ////_ = LoadUserWithPayroll();
+            //HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+            //Loaded += async (s, e) => await FilterAsync();
+            Loaded += PageUser_Loaded;
+        }
+
+        private async void PageUser_Loaded(object sender, RoutedEventArgs e)
+        {
             LoadDateComboboxes();
-            //_ = LoadUserWithPayroll();
-            Loaded += async (s, e) => await FilterAsync();
+
+
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+
+            await Task.Delay(200);
+
+            await FilterAsync(); 
         }
 
         private async void HandleUI(string role)

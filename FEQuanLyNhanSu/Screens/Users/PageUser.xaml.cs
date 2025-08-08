@@ -43,16 +43,20 @@ namespace FEQuanLyNhanSu
         public PageUser()
         {
             InitializeComponent();
-            //_ = LoadUser();
-            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            //_ = LoadPositionsByDepartmentAsync();
-            //_ = FilterAsync();
-            //_ = LoadCompanies();
-            //_ = LoadDepartmentByCompanyAsync();
-            //_ = LoadPositionsByDepartmentAsync();
+            Loaded += PageUser_Loaded;
+        }
+
+        private async void PageUser_Loaded(object sender, RoutedEventArgs e)
+        {
             LoadDateComboboxes();
             LoadIsActiveComboBox();
-            _ = FilterAsync();
+
+            await HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+
+            // Delay 200ms để UI ổn định (combobox selectionchanged dừng gọi FilterAsync)
+            await Task.Delay(200);
+
+            await FilterAsync(); // Chỉ gọi sau khi mọi thứ đã load xong
         }
 
         private async Task HandleUI(string role)

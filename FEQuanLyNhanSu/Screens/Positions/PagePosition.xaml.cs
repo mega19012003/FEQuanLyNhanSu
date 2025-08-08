@@ -41,7 +41,7 @@ namespace FEQuanLyNhanSu
         {
             InitializeComponent();
             HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            _ = FilterAsync();
+            Loaded += async (s, e) => await FilterAsync();
         }
 
         private async Task HandleUI(string Role)

@@ -47,9 +47,21 @@ namespace FEQuanLyNhanSu
         {
             InitializeComponent();
             CheckinDtaGrid.ItemsSource = UserList;
-            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+            //LoadDateComboboxes();
+            //HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+            //Loaded += async (s, e) => await FilterAsync();
+            Loaded += PageUser_Loaded;
+        }
+
+        private async void PageUser_Loaded(object sender, RoutedEventArgs e)
+        {
             LoadDateComboboxes();
-            Loaded += async (s, e) => await FilterAsync();
+
+            await HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+
+            await Task.Delay(200);
+
+            await FilterAsync(); 
         }
 
         private async Task HandleUI(string role)

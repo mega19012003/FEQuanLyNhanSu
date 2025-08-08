@@ -37,7 +37,8 @@ namespace FEQuanLyNhanSu.Screens.Companies
         {
             InitializeComponent();
             LoadIsActive();
-            LoadCompany();
+            //LoadCompany();
+            Loaded += async (s, e) => await FilterAsync();
         }
         // btnAdd_Click
         private void btnAdd_Click(object sender, RoutedEventArgs e)
