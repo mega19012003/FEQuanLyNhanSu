@@ -43,7 +43,7 @@ namespace FEQuanLyNhanSu.Screens.Companies
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             var window = new CreateCompany(OnCompanyCreated);
-            window.Show();
+            window.ShowDialog();
         }
         private void OnCompanyCreated(CompanyResultDto newComp)
         {

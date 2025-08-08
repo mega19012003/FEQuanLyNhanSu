@@ -50,7 +50,7 @@ namespace FEQuanLyNhanSu.Helpers
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorJson = await response.Content.ReadAsStringAsync();
-                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson); // dòng 53
                     var errorData = apiResponse?.Data ?? errorJson ?? "Có lỗi xảy ra";
                     //MessageBox.Show($"{url}");
                     //MessageBox.Show($"Lỗi phân trang: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);

@@ -303,7 +303,7 @@ namespace FEQuanLyNhanSu
         private void AdDutyBtn_Click(object sender, RoutedEventArgs e)
         {
             var window = new CreateDuty(OnDutyCreated);
-            window.Show();
+            window.ShowDialog();
         }
         /// Update
         private void btnDutyUpdate_Click(object sender, RoutedEventArgs e)
@@ -311,7 +311,7 @@ namespace FEQuanLyNhanSu
             if (DutyDtaGrid.SelectedItem is DutyResultDto selectedDuty)
             {
                 var window = new UpdateDuty(selectedDuty.Id, OnDutyUpdated);
-                window.Show();
+                window.ShowDialog();
             }
         }
         /// Delete
@@ -356,6 +356,7 @@ namespace FEQuanLyNhanSu
             if (response.IsSuccessStatusCode)
             {
                 MessageBox.Show("Xóa công việc thành công.");
+                await FilterAsync();
             }
             else
             {
@@ -378,7 +379,7 @@ namespace FEQuanLyNhanSu
             {
                // var window = new CreateDetail(OnDetailCreated, selectedDuty.Id);
                 var window = new CreateDetail(RefreshDutyList, selectedDuty.Id);
-                window.Show();
+                window.ShowDialog();
             }
             else
             {
@@ -396,7 +397,7 @@ namespace FEQuanLyNhanSu
             {
                 //var window = new UpdateDetail(detailId, OnDetailUpdated);
                 var window = new UpdateDetail(detailId, RefreshDutyList);
-                window.Show();
+                window.ShowDialog();
             }
             else
             {
@@ -404,7 +405,7 @@ namespace FEQuanLyNhanSu
             }
         }
         /// Delete Detail
-        private void btnDeleteDetail_Click(object sender, RoutedEventArgs e)
+        private async void btnDeleteDetail_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var tagValue = button?.Tag?.ToString();
@@ -422,7 +423,7 @@ namespace FEQuanLyNhanSu
                     button.IsEnabled = false;
 
                     // Chờ hàm xóa chạy xong
-                    _ = DeleteDutyDetailAsync(dutyId);
+                    await DeleteDutyDetailAsync(dutyId);
 
                     button.Content = oldText;
                     button.IsEnabled = true;
@@ -433,6 +434,7 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show("Không lấy được ID chi tiết công việc cần xóa. Tag: " + tagValue);
             }
         }
+
         private async Task DeleteDutyDetailAsync(Guid detailId)
         {
             var token = Application.Current.Properties["Token"]?.ToString();
@@ -453,6 +455,7 @@ namespace FEQuanLyNhanSu
             {
                 MessageBox.Show("Xóa chi tiết công việc thành công.");
                 //LoadDuty();
+                await FilterAsync();
             }
             else
             {
@@ -464,55 +467,55 @@ namespace FEQuanLyNhanSu
             }
         }
         /// Done Task
-        private void btnDoneTask_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var tagValue = button?.Tag?.ToString();
+        //private void btnDoneTask_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var button = sender as Button;
+        //    var tagValue = button?.Tag?.ToString();
 
-            if (!string.IsNullOrWhiteSpace(tagValue) && Guid.TryParse(tagValue, out Guid dutyId))
-            {
-                var result = MessageBox.Show("Bạn có chắc chắn là đã hoàn thành công việc này?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    _ = MarkAsCompletedAsync(dutyId);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Không lấy được ID chi tiết công việc. Tag: " + tagValue);
-            }
-        }
-        private async Task MarkAsCompletedAsync(Guid detailId)
-        {
-            var token = Application.Current.Properties["Token"]?.ToString();
-            var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty/MarkCompleted/" + detailId;
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            var formData = new MultipartFormDataContent();
-            formData.Add(new StringContent(detailId.ToString()), "detailId");
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri(baseUrl),
-                Content = formData
-            };
-            var response = await client.SendAsync(request);
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Đánh dấu công việc là đã hoàn thành thành công.");
-                //LoadDuty();
-                await FilterAsync();
-            }
-            else
-            {
-                var errorJson = await response.Content.ReadAsStringAsync();
-                var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
-                var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
-                //MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                //MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành.\nStatusCode: {response.StatusCode}\nUrl: {baseUrl}\nChi tiết: {errorContent}");
-            }
-        }
+        //    if (!string.IsNullOrWhiteSpace(tagValue) && Guid.TryParse(tagValue, out Guid dutyId))
+        //    {
+        //        var result = MessageBox.Show("Bạn có chắc chắn là đã hoàn thành công việc này?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        //        if (result == MessageBoxResult.Yes)
+        //        {
+        //            _ = MarkAsCompletedAsync(dutyId);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Không lấy được ID chi tiết công việc. Tag: " + tagValue);
+        //    }
+        //}
+        //private async Task MarkAsCompletedAsync(Guid detailId)
+        //{
+        //    var token = Application.Current.Properties["Token"]?.ToString();
+        //    var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty/MarkCompleted/" + detailId;
+        //    using var client = new HttpClient();
+        //    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        //    var formData = new MultipartFormDataContent();
+        //    formData.Add(new StringContent(detailId.ToString()), "detailId");
+        //    var request = new HttpRequestMessage
+        //    {
+        //        Method = HttpMethod.Put,
+        //        RequestUri = new Uri(baseUrl),
+        //        Content = formData
+        //    };
+        //    var response = await client.SendAsync(request);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        MessageBox.Show("Đánh dấu công việc là đã hoàn thành thành công.");
+        //        //LoadDuty();
+        //        await FilterAsync();
+        //    }
+        //    else
+        //    {
+        //        var errorJson = await response.Content.ReadAsStringAsync();
+        //        var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(errorJson);
+        //        var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+        //        //MessageBox.Show($"Có lỗi xảy ra: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        //MessageBox.Show($"Không thể đánh dấu công việc là đã hoàn thành.\nStatusCode: {response.StatusCode}\nUrl: {baseUrl}\nChi tiết: {errorContent}");
+        //    }
+        //}
         //private void DtaGrid_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         //{
         //    var dep = (DependencyObject)e.OriginalSource;

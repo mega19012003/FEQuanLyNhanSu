@@ -608,7 +608,7 @@ namespace FEQuanLyNhanSu
         private void CreateUser(object sender, RoutedEventArgs e)
         {
             var window = new CreateUser(OnUserCreated);
-            window.Show();
+            window.ShowDialog();
         }
         /// Update
         private void btnUpdate_Click(object sender, RoutedEventArgs e)

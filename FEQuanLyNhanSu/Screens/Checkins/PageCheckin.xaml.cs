@@ -59,6 +59,7 @@ namespace FEQuanLyNhanSu
                 case "SystemAdmin":
                     AddCheckinBtn.Visibility = Visibility.Collapsed;
                     AddCheckouBtn.Visibility = Visibility.Collapsed;
+
                     await LoadCompanies();
                     await LoadDepartmentByCompanyAsync();
                     await LoadPositionsByDepartmentAsync();

@@ -279,6 +279,12 @@ namespace FEQuanLyNhanSu
                 }
             }
 
+            if (selectedDepartments.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn ít nhất một chức vụ để xóa.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             var confirm = MessageBox.Show($"Bạn có chắc muốn xóa {selectedDepartments.Count} phòng ban?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
@@ -286,18 +292,27 @@ namespace FEQuanLyNhanSu
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
+            bool hasError = false;
+
             foreach (var department in selectedDepartments)
             {
-                var url = $"{AppsettingConfigHelper.GetBaseUrl()}/api/Department/{department.DepartmentId}"; 
+                var url = $"{AppsettingConfigHelper.GetBaseUrl()}/api/Department/{department.DepartmentId}";
                 var response = await client.DeleteAsync(url);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var msg = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Xóa thất bại phòng ban {department.Name}: {msg}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    hasError = true;
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Lỗi khi xóa phòng ban: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            MessageBox.Show("Xóa thành công các phòng ban đã chọn.");
+
+            if (!hasError)
+            {
+                MessageBox.Show("Xóa thành công các chức vụ đã chọn.");
+            }
             //await _paginationHelper.RefreshAsync();
             //_ = _paginationHelper.LoadPageAsync(1);
             await FilterAsync();

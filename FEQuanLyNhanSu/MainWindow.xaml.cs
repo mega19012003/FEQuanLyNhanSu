@@ -6,6 +6,7 @@ using FEQuanLyNhanSu.Screens.Dashboard;
 using FEQuanLyNhanSu.Screens.Users;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Runtime;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,10 +41,23 @@ namespace FEQuanLyNhanSu
             if (role != "SystemAdmin")
             {
                 _ = LoadCompanyImageAsync();
-                _ = CheckCompanyStatusAsync();
+                _ = InitChecksAsync(role);
             }
 
             this.DataContext = this;
+        }
+
+        private async Task InitChecksAsync(string role)
+        {
+            var userInfo = await GetCurrentUserInfoAsync();
+            if (userInfo == null) return;
+
+            HasCompany(userInfo.CompanyId);
+            if (userInfo.CompanyId.HasValue)
+                await CheckCompanyStatusAsync(userInfo.CompanyId.Value);
+
+            if (role != "Administrator")
+                HasDepartment(userInfo.DepartmentId);
         }
 
         private async Task<Guid?> GetCurrentUserCompanyIdAsync()
@@ -144,61 +158,77 @@ namespace FEQuanLyNhanSu
             var img = sender as Image;
             img.Source = new BitmapImage(new Uri("assets/images.png", UriKind.Relative));
         }
-        public async Task CheckCompanyStatusAsync()
+        private async Task<UserResultDetailDto?> GetCurrentUserInfoAsync()
         {
-            try
+            var token = Application.Current.Properties["Token"]?.ToString();
+            var userIdStr = Application.Current.Properties["UserId"]?.ToString();
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userIdStr))
+                return null;
+
+            if (!Guid.TryParse(userIdStr, out var userId))
+                return null;
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var userApiUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/User/{userId}";
+            var userResponse = await client.GetAsync(userApiUrl);
+
+            if (!userResponse.IsSuccessStatusCode)
             {
-                var token = Application.Current.Properties["Token"]?.ToString();
-                var userIdStr = Application.Current.Properties["UserId"]?.ToString();
-
-                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userIdStr))
-                    return;
-
-                if (!Guid.TryParse(userIdStr, out var userId))
-                    return;
-
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                var userApiUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/User/{userId}";
-                var userResponse = await client.GetAsync(userApiUrl);
-
-                if (!userResponse.IsSuccessStatusCode)
-                {
-                    MessageBox.Show($"Không thể lấy thông tin người dùng. Status: {userResponse.StatusCode}");
-                    return;
-                }
-
-                var userJson = await userResponse.Content.ReadAsStringAsync();
-                var userResult = JsonConvert.DeserializeObject<ApiResponse<UserResultDetailDto>>(userJson);
-
-                var companyId = userResult?.Data?.CompanyId;
-
-                var companyApiUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/Company/{companyId}";
-                var companyResponse = await client.GetAsync(companyApiUrl);
-
-                if (!companyResponse.IsSuccessStatusCode)
-                {
-                    MessageBox.Show($"Không thể lấy thông tin công ty. Status: {companyResponse.StatusCode}");
-                    return;
-                }
-
-                var companyJson = await companyResponse.Content.ReadAsStringAsync();
-                var companyResult = JsonConvert.DeserializeObject<ApiResponse<CompanyResultDto>>(companyJson);
-
-                if (companyResult?.Data?.IsDeleted == true || companyResult?.Data?.IsActive == false)
-                {
-                    MessageBox.Show("Công ty của bạn đã bị vô hiệu hóa. Vui lòng liên hệ admin.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    Application.Current.Shutdown();
-                }
+                MessageBox.Show($"Không thể lấy thông tin người dùng. Status: {userResponse.StatusCode}");
+                return null;
             }
-            catch (Exception ex)
+
+            var userJson = await userResponse.Content.ReadAsStringAsync();
+            var userResult = JsonConvert.DeserializeObject<ApiResponse<UserResultDetailDto>>(userJson);
+            return userResult?.Data;
+        }
+        public async Task CheckCompanyStatusAsync(Guid companyId)
+        {
+            var token = Application.Current.Properties["Token"]?.ToString();
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var companyApiUrl = AppsettingConfigHelper.GetBaseUrl() + $"/api/Company/{companyId}";
+            var companyResponse = await client.GetAsync(companyApiUrl);
+
+            if (!companyResponse.IsSuccessStatusCode)
             {
-                MessageBox.Show($"Không thể kiểm tra trạng thái công ty: {ex.Message}");
+                MessageBox.Show("Bạn chưa có công ty. Vui lòng liên hệ admin.",
+                                "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var companyJson = await companyResponse.Content.ReadAsStringAsync();
+            var companyResult = JsonConvert.DeserializeObject<ApiResponse<CompanyResultDto>>(companyJson);
+
+            if (companyResult?.Data?.IsDeleted == true || companyResult?.Data?.IsActive == false)
+            {
+                MessageBox.Show("Công ty của bạn đã bị vô hiệu hóa. Vui lòng liên hệ admin.",
+                                "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Application.Current.Shutdown();
             }
         }
-
+        public void HasCompany(Guid? companyId)
+        {
+            if (companyId == null)
+            {
+                MessageBox.Show("Bạn chưa có công ty. Vui lòng liên hệ admin.",
+                                "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+        public void HasDepartment(Guid? departmentId)
+        {
+            if (departmentId == null)
+            {
+                MessageBox.Show("Bạn chưa có phòng ban. Vui lòng liên hệ admin.",
+                                "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
         private void StartClockTimer()
         {
             timer = new DispatcherTimer();
@@ -315,7 +345,7 @@ namespace FEQuanLyNhanSu
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var window = new UserInfo();
-            window.Show();
+            window.ShowDialog();
         }
 
 

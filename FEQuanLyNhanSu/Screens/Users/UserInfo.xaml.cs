@@ -47,6 +47,16 @@ namespace FEQuanLyNhanSu.Screens.Users
                     txtboxPosition.Visibility = Visibility.Collapsed;
                     txtPosition.Visibility = Visibility.Collapsed;
                     break;
+                case "Administrator":
+                    txtboxDepartment.Visibility = Visibility.Collapsed;
+                    txtDepartment.Visibility = Visibility.Collapsed;
+                    txtboxPosition.Visibility = Visibility.Collapsed;
+                    txtPosition.Visibility = Visibility.Collapsed;
+                    break;
+                case "Manager":
+                    txtboxPosition.Visibility = Visibility.Collapsed;
+                    txtPosition.Visibility = Visibility.Collapsed;
+                    break;
             }
         }
         private async Task LoadCurrentUserAsync()
@@ -161,7 +171,7 @@ namespace FEQuanLyNhanSu.Screens.Users
         private void btnChangePass_Click(object sender, RoutedEventArgs e)
         {
             var changePassWindow = new ChangePass();
-            changePassWindow.Show();
+            changePassWindow.ShowDialog();
         }
 
         private async void btnUpdateInfo_Click(object sender, RoutedEventArgs e)

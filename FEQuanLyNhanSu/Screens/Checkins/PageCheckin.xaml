@@ -158,6 +158,9 @@
                                                         <DataTrigger Binding="{Binding Status}" Value="OnHoliday">
                                                             <Setter Property="Background" Value="LightGreen"/>
                                                         </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="OnHolidayOverTime">
+                                                            <Setter Property="Background" Value="LightGreen"/>
+                                                        </DataTrigger>
 
                                                         <!-- Vàng: Trung bình -->
                                                         <DataTrigger Binding="{Binding Status}" Value="Late">
@@ -167,6 +170,15 @@
                                                             <Setter Property="Background" Value="Khaki"/>
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Status}" Value="LateAndOvertime">
+                                                            <Setter Property="Background" Value="Khaki"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="OnHolidayLateAndOvertime">
+                                                            <Setter Property="Background" Value="Khaki"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="OnHolidayLate">
+                                                            <Setter Property="Background" Value="Khaki"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="OnHolidayLeaveEarly">
                                                             <Setter Property="Background" Value="Khaki"/>
                                                         </DataTrigger>
 
@@ -182,6 +194,9 @@
                                                         </DataTrigger>
 
                                                         <!-- Các trạng thái còn lại (Others...) -->
+                                                        <DataTrigger Binding="{Binding Status}" Value="None">
+                                                            <Setter Property="Background" Value="LightGray"/>
+                                                        </DataTrigger>
                                                         <DataTrigger Binding="{Binding Status}" Value="Others">
                                                             <Setter Property="Background" Value="LightGray"/>
                                                         </DataTrigger>
@@ -192,7 +207,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Thiết bị" Binding="{Binding DeviceInfo}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}">
+                            <DataGridTextColumn Header="Thiết bị" Binding="{Binding DeviceInfo}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee, SystemAdmin'}">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -201,7 +216,7 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="CheckinIP" Binding="{Binding CheckinIP}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}">
+                            <DataGridTextColumn Header="CheckinIP" Binding="{Binding CheckinIP}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee, SystemAdmin'}">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -211,7 +226,7 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
                             <!--<DataGridTextColumn Header="CheckoutIp" Binding="{Binding CheckoutIp}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}"/>-->
-                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee'}">
+                            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Visibility="{Binding Source={StaticResource AppStateProvider}, Converter={StaticResource RoleToVisibilityConverter}, ConverterParameter='Employee, SystemAdmin'}">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Left"/>

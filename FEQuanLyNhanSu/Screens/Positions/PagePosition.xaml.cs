@@ -345,7 +345,7 @@ namespace FEQuanLyNhanSu
         private void AddPosition(object sender, RoutedEventArgs e)
         {
             var window = new CreatePosition(OnPositionCreated);
-            window.Show();
+            window.ShowDialog();
         }
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -405,12 +405,20 @@ namespace FEQuanLyNhanSu
                 }
             }
 
+            if (selectedPositions.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn ít nhất một chức vụ để xóa.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             var confirm = MessageBox.Show($"Bạn có chắc muốn xóa {selectedPositions.Count} chức vụ?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
             var token = Application.Current.Properties["Token"]?.ToString();
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            bool hasError = false;
 
             foreach (var position in selectedPositions)
             {
@@ -419,11 +427,18 @@ namespace FEQuanLyNhanSu
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var msg = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Xóa thất bại chức vụ {position.Name}: {msg}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    hasError = true;
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Lỗi khi xóa chức vụ: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            MessageBox.Show("Xóa thành công các chức vụ đã chọn.");
+
+            if (!hasError)
+            {
+                MessageBox.Show("Xóa thành công các chức vụ đã chọn.");
+            }
             //await _paginationHelper.RefreshAsync();
             //_ = _paginationHelper.LoadPageAsync(1);
             await FilterAsync();
