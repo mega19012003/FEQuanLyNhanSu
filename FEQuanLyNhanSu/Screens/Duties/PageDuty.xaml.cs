@@ -315,7 +315,7 @@ namespace FEQuanLyNhanSu
             }
         }
         /// Delete
-        private void btnDutyDelete_Click(object sender, RoutedEventArgs e)
+        private async void btnDutyDelete_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var tagValue = button?.Tag?.ToString();
@@ -325,7 +325,34 @@ namespace FEQuanLyNhanSu
                 var result = MessageBox.Show("Bạn có chắc chắn muốn xóa công việc này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
-                    _ = DeleteDutyAsync(dutyId);
+                    // Disable all buttons in this row
+                    var stackPanel = VisualTreeHelper.GetParent(button);
+                    if (stackPanel is StackPanel sp)
+                    {
+                        foreach (var child in sp.Children)
+                        {
+                            if (child is Button b)
+                                b.IsEnabled = false;
+                        }
+                    }
+
+                    // 🔒 Disable DtaGridDetail (RowDetails)
+                    DisableRowDetails(button, false);
+
+                    await DeleteDutyAsync(dutyId);
+
+                    // Enable buttons again
+                    if (stackPanel is StackPanel sp2)
+                    {
+                        foreach (var child in sp2.Children)
+                        {
+                            if (child is Button b)
+                                b.IsEnabled = true;
+                        }
+                    }
+
+                    // 🔓 Enable DtaGridDetail
+                    DisableRowDetails(button, true);
                 }
             }
             else
@@ -333,6 +360,48 @@ namespace FEQuanLyNhanSu
                 MessageBox.Show("Không lấy được ID công việc cần xóa. Tag: " + tagValue);
             }
         }
+
+        // 👇 Helper method to disable/enable row details
+        private void DisableRowDetails(DependencyObject button, bool enable)
+        {
+            var row = FindVisualParent<DataGridRow>(button);
+            if (row != null)
+            {
+                var presenter = FindVisualChild<DataGridDetailsPresenter>(row);
+                if (presenter != null)
+                {
+                    presenter.IsEnabled = enable;
+                }
+            }
+        }
+
+        // 👇 Generic visual tree helper
+        private T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject parent = VisualTreeHelper.GetParent(child);
+            while (parent != null && !(parent is T))
+            {
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+            return parent as T;
+        }
+
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T)
+                    return (T)child;
+
+                var result = FindVisualChild<T>(child);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
+
+
         private async Task DeleteDutyAsync(Guid dutyId)
         {
             
@@ -407,8 +476,8 @@ namespace FEQuanLyNhanSu
         /// Delete Detail
         private async void btnDeleteDetail_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            var tagValue = button?.Tag?.ToString();
+            var deleteButton = sender as Button;
+            var tagValue = deleteButton?.Tag?.ToString();
 
             if (!string.IsNullOrWhiteSpace(tagValue) && Guid.TryParse(tagValue, out Guid dutyId))
             {
@@ -416,17 +485,38 @@ namespace FEQuanLyNhanSu
                                              "Xác nhận xóa",
                                              MessageBoxButton.YesNo,
                                              MessageBoxImage.Warning);
+
                 if (result == MessageBoxResult.Yes)
                 {
-                    string oldText = button.Content.ToString();
-                    button.Content = "Đang xóa...";
-                    button.IsEnabled = false;
+                    // Tìm StackPanel chứa 2 nút
+                    var panel = VisualTreeHelper.GetParent(deleteButton);
+                    while (panel != null && !(panel is StackPanel))
+                    {
+                        panel = VisualTreeHelper.GetParent(panel);
+                    }
 
-                    // Chờ hàm xóa chạy xong
+                    // Tìm nút Sửa trong StackPanel
+                    Button updateButton = null;
+                    if (panel is StackPanel sp)
+                    {
+                        updateButton = sp.Children.OfType<Button>().FirstOrDefault(b => b != deleteButton && b.Name == "btnUpdateDetail");
+                    }
+
+                    // Lưu trạng thái cũ
+                    string oldText = deleteButton.Content.ToString();
+                    deleteButton.Content = "Đang xóa...";
+                    deleteButton.IsEnabled = false;
+                    if (updateButton != null)
+                        updateButton.IsEnabled = false;
+
+                    // Gọi API xóa
                     await DeleteDutyDetailAsync(dutyId);
 
-                    button.Content = oldText;
-                    button.IsEnabled = true;
+                    // Khôi phục lại trạng thái
+                    deleteButton.Content = oldText;
+                    deleteButton.IsEnabled = true;
+                    if (updateButton != null)
+                        updateButton.IsEnabled = true;
                 }
             }
             else
