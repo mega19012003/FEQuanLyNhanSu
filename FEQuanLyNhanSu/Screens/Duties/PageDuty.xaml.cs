@@ -335,6 +335,7 @@ namespace FEQuanLyNhanSu
         }
         private async Task DeleteDutyAsync(Guid dutyId)
         {
+            
             var token = Application.Current.Properties["Token"]?.ToString();
             var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty/dutyId";
 
@@ -410,10 +411,21 @@ namespace FEQuanLyNhanSu
 
             if (!string.IsNullOrWhiteSpace(tagValue) && Guid.TryParse(tagValue, out Guid dutyId))
             {
-                var result = MessageBox.Show("Bạn có chắc chắn muốn xóa chi tiết công việc này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                var result = MessageBox.Show("Bạn có chắc chắn muốn xóa chi tiết công việc này không?",
+                                             "Xác nhận xóa",
+                                             MessageBoxButton.YesNo,
+                                             MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
+                    string oldText = button.Content.ToString();
+                    button.Content = "Đang xóa...";
+                    button.IsEnabled = false;
+
+                    // Chờ hàm xóa chạy xong
                     _ = DeleteDutyDetailAsync(dutyId);
+
+                    button.Content = oldText;
+                    button.IsEnabled = true;
                 }
             }
             else

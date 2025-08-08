@@ -209,7 +209,6 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 MessageBox.Show($"Lỗi khi tìm kiếm phòng ban: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private async void cbPosition_KeyUp(object sender, KeyEventArgs e)
         {
             try
@@ -219,6 +218,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Position";
 
                 Guid? departmentId = null;
+
                 if (cbDepartment.SelectedItem is DepartmentResultDto selectedDept)
                     departmentId = selectedDept.DepartmentId;
 
@@ -226,51 +226,39 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
+                string url;
+
                 if (string.IsNullOrEmpty(keyword))
                 {
-                    if (!departmentId.HasValue)
+                    if (departmentId.HasValue)
                     {
-                        cbPosition.ItemsSource = null;
-                        cbPosition.SelectedItem = null;
-                        cbPosition.IsDropDownOpen = false;
-                        return;
-                    }
-
-                    string url = $"{baseUrl}?departmentId={departmentId.Value}";
-
-                    var response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                        cbPosition.ItemsSource = result?.Data?.Items;
-                        cbPosition.SelectedItem = null;
-                        cbPosition.IsDropDownOpen = true;
+                        url = $"{baseUrl}?departmentId={departmentId.Value}";
                     }
                     else
                     {
-                        cbPosition.ItemsSource = null;
+                        url = baseUrl;
                     }
                 }
                 else
                 {
-                    string url = $"{baseUrl}?Search={Uri.EscapeDataString(keyword)}";
+                    url = $"{baseUrl}?Search={Uri.EscapeDataString(keyword)}";
+
                     if (departmentId.HasValue)
                         url += $"&departmentId={departmentId.Value}";
+                }
 
-                    var response = await client.GetAsync(url);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
-                        cbPosition.ItemsSource = result?.Data?.Items;
-                        cbPosition.SelectedItem = null;
-                        cbPosition.IsDropDownOpen = true;
-                    }
-                    else
-                    {
-                        cbPosition.ItemsSource = null;
-                    }
+                var response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
+                    cbPosition.ItemsSource = result?.Data?.Items;
+                    cbPosition.SelectedItem = null;
+                    cbPosition.IsDropDownOpen = true;
+                }
+                else
+                {
+                    cbPosition.ItemsSource = null;
                 }
             }
             catch (Exception ex)
@@ -296,7 +284,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
 
                 if (result.Data.Items != null && result.Data.Items.Any())
                 {
-                    cbDepartment.SelectedItem = result.Data.Items.First();
+                    //cbDepartment.SelectedItem = result.Data.Items.First();
+                    cbDepartment.SelectedItem = result.Data.Items;
                     await FilterAsync();
                 }
             }
@@ -318,7 +307,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
                     cbPosition.ItemsSource = result.Data.Items;
                     if (result.Data.Items != null && result.Data.Items.Any())
                     {
-                        cbPosition.SelectedItem = result.Data.Items.First();
+                        //cbPosition.SelectedItem = result.Data.Items.First();
+                        cbPosition.SelectedItem = result.Data.Items;
                         await FilterAsync();
                     }
                 }
@@ -350,7 +340,8 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<PositionResultDto>>>(json);
                 cbPosition.ItemsSource = result?.Data?.Items;
                 if (result?.Data?.Items?.Any() == true)
-                    cbPosition.SelectedItem = result.Data.Items.First();
+                    //cbPosition.SelectedItem = result.Data.Items.First();
+                    cbPosition.SelectedItem = result.Data.Items;
             }
             else
             {
@@ -485,6 +476,12 @@ namespace FEQuanLyNhanSu.Screens.Duties
                 var baseUrl = AppsettingConfigHelper.GetBaseUrl() + "/api/Duty/DutyDetail";
 
                 object dutyDetail;
+
+                if (string.IsNullOrWhiteSpace(txtNote.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập nội dung cập nhật.");
+                    return;
+                }
 
                 if (role == "Employee")
                 {

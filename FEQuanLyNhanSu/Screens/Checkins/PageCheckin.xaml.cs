@@ -538,6 +538,15 @@ namespace FEQuanLyNhanSu
         {
             if (newCheckin == null) return;
 
+            var currentUserRole = Application.Current.Properties["Role"]?.ToString();
+            var currentUserIdStr = Application.Current.Properties["UserId"]?.ToString();
+            if ((currentUserRole == "Admin" || currentUserRole == "Manager")
+                && Guid.TryParse(currentUserIdStr, out Guid currentUserId)
+                && newCheckin.UserId != currentUserId)
+            {
+                newCheckin.DeviceInfo = null;
+            }
+
             var list = CheckinDtaGrid.ItemsSource as List<Checkins.UserWithCheckinsDto>;
             if (list == null) return;
 

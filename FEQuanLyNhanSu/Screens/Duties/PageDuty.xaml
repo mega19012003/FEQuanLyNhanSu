@@ -87,6 +87,10 @@
                                                 <Setter Property="Foreground" Value="Black"/>
                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                <Setter Property="Foreground" Value="Red"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBlock.Style>
@@ -197,6 +201,10 @@
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Status}" Value="Pending">
                                                                 <Setter Property="Foreground" Value="Black"/>
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                                <Setter Property="Foreground" Value="Red"/>
                                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>

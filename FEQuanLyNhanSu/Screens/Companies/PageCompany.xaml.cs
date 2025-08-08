@@ -224,12 +224,20 @@ namespace FEQuanLyNhanSu.Screens.Companies
                 }
             }
 
+            if (selectedCompanies.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn ít nhất một công ty để xóa.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             var confirm = MessageBox.Show($"Bạn có chắc muốn xóa {selectedCompanies.Count} công ty?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.Yes) return;
 
             var token = Application.Current.Properties["Token"]?.ToString();
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            bool hasError = false;
 
             foreach (var company in selectedCompanies)
             {
@@ -238,11 +246,18 @@ namespace FEQuanLyNhanSu.Screens.Companies
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var msg = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Xóa thất bại công ty {company.Name}: {msg}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                    hasError = true;
+                    var json = await response.Content.ReadAsStringAsync();
+                    var apiResponse = JsonConvert.DeserializeObject<ApiResponse<string>>(json);
+                    var errorData = apiResponse?.Data ?? "Có lỗi xảy ra";
+                    MessageBox.Show($"Lỗi khi xóa công ty: {errorData}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-            MessageBox.Show("Xóa thành công các công ty đã chọn.");
+
+            if (!hasError)
+            {
+                MessageBox.Show("Xóa thành công các công ty đã chọn.");
+            }
             //await _paginationHelper.RefreshAsync();
             //_ = _paginationHelper.LoadPageAsync(1);
             await FilterAsync();

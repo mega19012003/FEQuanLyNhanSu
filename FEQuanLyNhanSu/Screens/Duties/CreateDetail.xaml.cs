@@ -98,7 +98,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
                     var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
                     cbEmployee.ItemsSource = result.Data.Items;
                     cbEmployee.SelectedValuePath = "UserId";
-                    cbEmployee.IsDropDownOpen = true;
+                    cbEmployee.IsDropDownOpen = false;
                 }
                 else
                 {
@@ -138,7 +138,7 @@ namespace FEQuanLyNhanSu.Screens.Duties
                     var json = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<ApiResponse<PagedResult<UserResultDto>>>(json);
                     cbEmployee.ItemsSource = result.Data.Items;
-                    cbEmployee.IsDropDownOpen = true;
+                    cbEmployee.IsDropDownOpen = false;
                 }
                 else
                 {
