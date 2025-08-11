@@ -32,11 +32,10 @@ namespace FEQuanLyNhanSu.Screens.Users
         public UpdateUser(Guid userId, Action<UserResultDto> onUpdated)
         {
             InitializeComponent();
-            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            LoadRoles();
+
             _userId = userId;
             _onUpdated = onUpdated;
-
+            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
             _ = InitDataAsync(); 
         }
 
@@ -60,6 +59,20 @@ namespace FEQuanLyNhanSu.Screens.Users
         }
         private void HandleUI(string role)
         {
+            var currentUserId = Application.Current.Properties["UserId"]?.ToString();
+            MessageBox.Show($"Current User ID: {currentUserId}", "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Current Role: {role}", "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Nếu là Admin/SystemAdmin và đang sửa chính mình → ẩn Role
+            if ((role == RoleType.Administrator.ToString() || role == RoleType.SystemAdmin.ToString()) && _userId.ToString() == currentUserId)
+            {
+                cmbRole.Visibility = Visibility.Collapsed;
+                txtboxRole.Visibility = Visibility.Collapsed;
+                cbDepartment.Visibility = Visibility.Collapsed;
+                txtboxDepartment.Visibility = Visibility.Collapsed;
+                cbPosition.Visibility = Visibility.Collapsed;
+                txtboxPosition.Visibility = Visibility.Collapsed;
+            }
+
             if (role == "Manager")
             {
                 cmbRole.Visibility = Visibility.Collapsed;
@@ -73,6 +86,7 @@ namespace FEQuanLyNhanSu.Screens.Users
             {
                 cbCompany.Visibility = Visibility.Collapsed;
                 txtboxCompany.Visibility = Visibility.Collapsed;
+                LoadRoles();
             }
             else if(role == "SystemAdmin")
             {
@@ -80,6 +94,7 @@ namespace FEQuanLyNhanSu.Screens.Users
                 txtboxDepartment.Visibility = Visibility.Collapsed;
                 cbPosition.Visibility = Visibility.Collapsed;
                 txtboxPosition.Visibility = Visibility.Collapsed;
+                LoadRoles();
             }
         }
 
@@ -489,12 +504,15 @@ namespace FEQuanLyNhanSu.Screens.Users
                 var selectedDepartment = cbDepartment.SelectedItem as DepartmentResultDto;
                 var selectedPosition = cbPosition.SelectedItem as PositionResultDto;
                 var selectedRole = cmbRole.SelectedItem as string;
-               
-                if (!Enum.TryParse(selectedRole, out RoleType roleType))
-                {
-                    MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
-                    return;
-                }
+
+
+                var currentUserRole = Application.Current.Properties["UserRole"]?.ToString();
+                var currentUserId = Application.Current.Properties["UserId"]?.ToString();
+                //if (!Enum.TryParse(selectedRole, out RoleType roleType))
+                //{
+                //    MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
+                //    return;
+                //}
                 //if (!string.IsNullOrWhiteSpace(txtSalary.Text))
                 //{
                 //    if (!int.TryParse(txtSalary.Text, out var salary) || salary < 0)
@@ -520,11 +538,27 @@ namespace FEQuanLyNhanSu.Screens.Users
                     { new StringContent(txtPhoneNo.Text), "PhoneNumber" },
                     { new StringContent(txtAddress.Text), "Address" },
                     { new StringContent(txtEmail.Text), "Email" },
-                    { new StringContent(roleType.ToString()), "Role" },
+                    //{ new StringContent(roleType.ToString()), "Role" },
                     //{ new StringContent(txtSalary.Text), "SalaryPerHour" },
                     { new StringContent(txtImage.Text), "ImageUrl" },
                     { new StringContent(chkIsActive.IsChecked == true ? "true" : "false"), "IsActive" } 
                 };
+
+                // Chỉ Admin mới được gửi Role
+                if ((currentUserRole == RoleType.Administrator.ToString() || currentUserRole == RoleType.SystemAdmin.ToString()) && _userId.ToString() != currentUserId)
+                {
+                    if (!Enum.TryParse(selectedRole, out RoleType roleType))
+                    {
+                        MessageBox.Show("Vui lòng chọn vai trò hợp lệ.");
+                        return;
+                    }
+                    formData.Add(new StringContent(roleType.ToString()), "Role");
+                }
+                //else if ((currentUserRole == RoleType.Administrator.ToString() || currentUserRole == RoleType.SystemAdmin.ToString()) && _userId.ToString() == currentUserId)
+                //{
+                //    txtboxRole.Visibility = Visibility.Collapsed;
+                //    cmbRole.Visibility = Visibility.Collapsed;
+                //}
 
                 if (selectedCompany?.CompanyId != null)
                     formData.Add(new StringContent(selectedCompany.CompanyId.ToString()), "CompanyId");
