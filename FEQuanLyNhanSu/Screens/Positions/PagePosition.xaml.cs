@@ -40,8 +40,18 @@ namespace FEQuanLyNhanSu
         public PagePosition()
         {
             InitializeComponent();
-            HandleUI(Application.Current.Properties["UserRole"]?.ToString());
-            Loaded += async (s, e) => await FilterAsync();
+            //HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+            //Loaded += async (s, e) => await FilterAsync();
+            Loaded += PagePosition_Loaded;
+        }
+
+        private async void PagePosition_Loaded(object sender, RoutedEventArgs e)
+        {
+            await HandleUI(Application.Current.Properties["UserRole"]?.ToString());
+
+            await Task.Delay(200);
+
+            await FilterAsync();
         }
 
         private async Task HandleUI(string Role)

@@ -60,8 +60,8 @@ namespace FEQuanLyNhanSu.Screens.Users
         private void HandleUI(string role)
         {
             var currentUserId = Application.Current.Properties["UserId"]?.ToString();
-            MessageBox.Show($"Current User ID: {currentUserId}", "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information);
-            MessageBox.Show($"Current Role: {role}", "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            //MessageBox.Show($"Current User ID: {currentUserId}", "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            //MessageBox.Show($"Current Role: {role}", "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information);
             // Nếu là Admin/SystemAdmin và đang sửa chính mình → ẩn Role
             if ((role == RoleType.Administrator.ToString() || role == RoleType.SystemAdmin.ToString()) && _userId.ToString() == currentUserId)
             {
